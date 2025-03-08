@@ -6,6 +6,8 @@ import { RolesModule } from './roles/roles.module';
 import { PermissionsModule } from './permissions/permissions.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { LineModule } from './admin/line/line.module';
+import { AreaModule } from './admin/area/area.module';
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import { AuthModule } from './auth/auth.module';
     RolesModule,
     PermissionsModule,
     AuthModule,
+    LineModule,
+    AreaModule,
   ],
   controllers: [],
   providers: [],

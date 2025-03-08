@@ -17,11 +17,18 @@ export const defaultNavigation: FuseNavigationItem[] = [
         link: '/example',
     },
     {
-        id: 'test',
-        title: 'Test',
+        id: 'line',
+        title: 'Line',
         type: 'basic',
         icon: 'heroicons_outline:chart-pie',
-        link: '/test',
+        link: '/line',
+    },
+    {
+        id: 'area',
+        title: 'Area',
+        type: 'basic',
+        icon: 'heroicons_outline:chart-pie',
+        link: '/area',
     },
 ];
 export const compactNavigation: FuseNavigationItem[] = [

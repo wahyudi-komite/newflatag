@@ -1,0 +1,247 @@
+<div class="flex min-w-0 flex-auto flex-col">
+    <!-- Main -->
+    <div class="-mt-px flex-auto border-t pt-4 sm:pt-6">
+        <div class="mx-auto w-full max-w-screen-xl">
+            <!-- CONTENT GOES HERE -->
+            <div class="flex w-full items-center justify-between">
+                <div class="overflow-x-auto">
+                    <h2 class="text-3xl font-semibold leading-8 tracking-tight">
+                        List Data LINE
+                    </h2>
+                    <form
+                        [formGroup]="form"
+                        (submit)="submit()"
+                        autocomplete="off"
+                    >
+                        <div class="gt-xs:flex-row mt-4 flex space-x-2">
+                            <mat-form-field
+                                class="gt-xs:pr-3 custom-input-height flex-auto"
+                            >
+                                <input
+                                    matInput
+                                    [placeholder]="'Line..'"
+                                    (keyup)="applyFilter($event)"
+                                />
+                                <mat-icon
+                                    class="icon-size-5"
+                                    matPrefix
+                                    [svgIcon]="
+                                        'heroicons_solid:magnifying-glass'
+                                    "
+                                ></mat-icon>
+                            </mat-form-field>
+
+                            <mat-form-field class="gt-xs:pl-3 flex-auto">
+                                <input matInput [placeholder]="'Aliases..'" />
+                                <mat-icon
+                                    class="icon-size-5"
+                                    matPrefix
+                                    [svgIcon]="
+                                        'heroicons_solid:magnifying-glass'
+                                    "
+                                ></mat-icon>
+                            </mat-form-field>
+                            <mat-form-field class="gt-xs:pl-3 flex-auto">
+                                <input matInput [placeholder]="'Status'" />
+                                <mat-icon
+                                    class="icon-size-5"
+                                    matPrefix
+                                    [svgIcon]="
+                                        'heroicons_solid:magnifying-glass'
+                                    "
+                                ></mat-icon>
+                            </mat-form-field>
+                        </div>
+                    </form>
+                    <div
+                        class="-mt-3 flex items-center justify-between space-y-1"
+                    >
+                        <div class="flex justify-between py-1">
+                            <app-paginate-take
+                                (limitChanged)="changeLimit($event)"
+                            ></app-paginate-take>
+                        </div>
+                        <div class="group relative">
+                            <button
+                                data-tooltip-target="tooltip-default"
+                                (click)="exportToExcel()"
+                                class="hover:indigo-green-700 relative flex items-center gap-2 rounded-md border-[1.5px] border-indigo-600 px-4 py-2 text-sm font-medium text-indigo-800 shadow-md transition-all duration-300 ease-in-out hover:bg-indigo-100 hover:shadow-lg active:scale-95"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke-width="1.5"
+                                    stroke="currentColor"
+                                    class="h-5 w-5 text-indigo-600"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
+                                    />
+                                </svg>
+                            </button>
+                            <div
+                                class="pointer-events-none absolute bottom-full mb-2 -translate-x-1/2 whitespace-nowrap break-words rounded-md bg-gray-800 px-3 py-1 text-sm font-semibold text-gray-100 opacity-0 shadow-md transition-opacity duration-300 group-hover:opacity-100"
+                            >
+                                Export Excel
+                            </div>
+                        </div>
+                    </div>
+                    <div class="relative overflow-x-auto py-1">
+                        <table
+                            id="excel-table"
+                            matSort
+                            (matSortChange)="sortData($event)"
+                            matSortActive="{{ tblName }}.create"
+                            matSortDirection="desc"
+                            matSortDisableClear
+                            class="w-full border-collapse overflow-x-scroll rounded-sm"
+                        >
+                            <thead
+                                class="bg-blue-900 p-8 text-sm font-semibold tracking-wide text-white"
+                            >
+                                <tr class="">
+                                    @for (
+                                        columnTitle of columnTitles;
+                                        track columnTitle.title
+                                    ) {
+                                        <th
+                                            *ngIf="
+                                                columnTitle.field !== '';
+                                                else noSortHeader
+                                            "
+                                            [mat-sort-header]="
+                                                tblName +
+                                                '.' +
+                                                columnTitle.field
+                                            "
+                                            class="{{
+                                                columnTitle.class
+                                            }} py-4 px-6  border-l border-blue-100 border"
+                                        >
+                                            {{ columnTitle.title }}
+                                        </th>
+                                        <ng-template #noSortHeader>
+                                            <th
+                                                class="{{
+                                                    columnTitle.class
+                                                }} py-4 px-6  border-l border-blue-100 border"
+                                            >
+                                                {{ columnTitle.title }}
+                                            </th>
+                                        </ng-template>
+                                    }
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @if (this.total == 0) {
+                                    <tr
+                                        style="
+                                            border-bottom: 2px;
+                                            text-align: center;
+                                            font-weight: 500;
+                                            font-size: 1.5rem;
+                                            line-height: 1.25rem;
+                                            padding: 1rem 1.5rem;
+                                            color: #be123c;
+                                        "
+                                    >
+                                        <td colspan="5" class="h-12">
+                                            No Data Avalaible
+                                        </td>
+                                    </tr>
+                                }
+
+                                @for (data of datas; track $index) {
+                                    <tr class="odd:bg-gray-50 even:bg-blue-100">
+                                        <td
+                                            class="border border-x border-blue-900 px-4 py-2 text-md font-semibold"
+                                        >
+                                            <a
+                                                href="javascript:void(0)"
+                                                (click)="
+                                                    openDialog('Read', data)
+                                                "
+                                            >
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    viewBox="0 0 24 24"
+                                                    fill="currentColor"
+                                                    class="h-5"
+                                                >
+                                                    <path
+                                                        d="M12 15a3 3 0 100-6 3 3 0 000 6z"
+                                                    />
+                                                    <path
+                                                        fill-rule="evenodd"
+                                                        d="M1.323 11.447C2.811 6.976 7.028 3.75 12.001 3.75c4.97 0 9.185 3.223 10.675 7.69.12.362.12.752 0 1.113-1.487 4.471-5.705 7.697-10.677 7.697-4.97 0-9.186-3.223-10.675-7.69a1.762 1.762 0 010-1.113zM17.25 12a5.25 5.25 0 11-10.5 0 5.25 5.25 0 0110.5 0z"
+                                                        clip-rule="evenodd"
+                                                    />
+                                                </svg>
+                                            </a>
+                                        </td>
+                                        <td
+                                            class="border border-x border-blue-900 px-4 py-2 text-md font-semibold"
+                                        >
+                                            {{
+                                                $index +
+                                                    1 +
+                                                    (this.page - 1) *
+                                                        this.pageSize
+                                                    | number: '0.0-0'
+                                            }}
+                                        </td>
+                                        <td
+                                            class="whitespace-nowrap border border-x border-blue-900 px-4 py-2 text-md font-semibold"
+                                        >
+                                            {{ data.name }}
+                                        </td>
+                                        <td
+                                            class="whitespace-nowrap border border-x border-blue-900 px-4 py-2 text-md font-semibold"
+                                        >
+                                            {{ data.alias }}
+                                        </td>
+                                        <td
+                                            class="whitespace-nowrap border border-x border-blue-900 px-4 py-2 text-md font-semibold"
+                                        >
+                                            {{ data.status }}
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <app-paginate
+                            [last_page]="this.last_page"
+                            (pageChanged)="load($event)"
+                        ></app-paginate>
+                        <div class="">
+                            <span
+                                >Showing
+                                <span class="font-bold">{{
+                                    this.pageSize * (this.page - 1) + 1
+                                }}</span>
+                                to
+                                <span class="font-bold">{{
+                                    this.pageSize * this.page > this.total
+                                        ? this.total
+                                        : this.pageSize * this.page
+                                }}</span>
+                                off
+                                <span class="font-bold">{{
+                                    this.total | number: '0.0-0'
+                                }}</span>
+                                Entries
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
