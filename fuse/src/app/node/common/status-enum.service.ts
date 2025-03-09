@@ -7,7 +7,7 @@ export class StatusEnumService {
     getStatus(status: number): { text: string; color: string } {
         switch (status) {
             case 0:
-                return { text: 'OK', color: 'bg-teal-800' };
+                return { text: 'Active', color: 'bg-green-600' };
             case 1:
                 return { text: 'DISABLE', color: 'bg-yellow-500' };
             case 2:

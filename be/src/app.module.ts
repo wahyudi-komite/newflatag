@@ -8,6 +8,7 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { LineModule } from './admin/line/line.module';
 import { AreaModule } from './admin/area/area.module';
+import { MachineModule } from './admin/machine/machine.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { AreaModule } from './admin/area/area.module';
     AuthModule,
     LineModule,
     AreaModule,
+    MachineModule,
   ],
   controllers: [],
   providers: [],

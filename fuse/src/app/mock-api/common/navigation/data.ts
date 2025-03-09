@@ -30,6 +30,13 @@ export const defaultNavigation: FuseNavigationItem[] = [
         icon: 'heroicons_outline:chart-pie',
         link: '/area',
     },
+    {
+        id: 'machine',
+        title: 'Machine',
+        type: 'basic',
+        icon: 'heroicons_outline:chart-pie',
+        link: '/machine',
+    },
 ];
 export const compactNavigation: FuseNavigationItem[] = [
     {

@@ -2,3 +2,33 @@
 /*  @ Import/write your custom styles here.
 /*  @ Styles from this file will override 'vendors.scss' and Fuse's base styles.
 /* ----------------------------------------------------------------------------------------------------- */
+
+table.datatable {
+    @apply w-full border-collapse border border-gray-300;
+
+    thead {
+        @apply border-collapse border border-emerald-700 bg-emerald-700 text-sm font-bold tracking-wider text-white;
+
+        tr {
+            th {
+                @apply border-none p-4 md:p-3 text-md capitalize;
+
+                svg {
+                    @apply w-5 text-white;
+                }
+            }
+        }
+    }
+
+    tbody {
+        @apply divide-y divide-gray-200;
+
+        tr {
+            @apply odd:bg-gray-100 even:bg-gray-300;
+
+            td {
+                @apply whitespace-nowrap p-1 text-center text-sm capitalize md:p-1;
+            }
+        }
+    }
+}

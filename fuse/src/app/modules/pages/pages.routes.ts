@@ -10,5 +10,19 @@ export default [
         path: 'area',
         loadChildren: () =>
             import('./area/area.module').then((m) => m.AreaModule),
-    }, // Tambahkan rute modul.
+    },
+    {
+        path: 'machine',
+        loadChildren: () =>
+            import('./machine/machine.module').then((m) => m.MachineModule),
+    },
+    // admin routes
+    {
+        path: 'role',
+        loadChildren: () => import('./app/role/role.routes'),
+    },
+    {
+        path: 'permission',
+        loadChildren: () => import('./app/permission/permission.routes'),
+    },
 ] as Routes;
