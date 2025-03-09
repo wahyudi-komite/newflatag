@@ -13,14 +13,39 @@
                 ><mat-label>Permision Name</mat-label>
                 <input
                     matInput
-                    [placeholder]="'Role..'"
+                    #name
+                    formControlName="name"
+                    [placeholder]="'Permission..'"
+                    required
                     value="{{ this.local_data.name }}"
                 />
+                <mat-error
+                    *ngIf="f['name'].errors && f['name'].errors['required']"
+                >
+                    You must enter a value
+                </mat-error>
+                <mat-error
+                    *ngIf="f['name'].errors && f['name'].errors['minlength']"
+                >
+                    Min 5 Character
+                </mat-error>
+                <mat-error
+                    *ngIf="
+                        f['name'].errors && f['name'].errors['alreadyExists']
+                    "
+                >
+                    The name already exist
+                </mat-error>
             </mat-form-field>
         </div>
     </mat-dialog-content>
     <mat-dialog-actions align="end">
-        <button mat-raised-button color="warn" (click)="closeDialog()">
+        <button
+            mat-raised-button
+            type="reset"
+            color="warn"
+            (click)="closeDialog()"
+        >
             <mat-icon>cancel</mat-icon>
             CANCEL
         </button>

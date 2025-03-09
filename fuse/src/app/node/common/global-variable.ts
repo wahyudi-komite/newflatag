@@ -1,10 +1,10 @@
 export class GlobalVariable {
     public static pageTake: number = window.innerWidth > 1366 ? 15 : 10;
     public static audioSuccess: HTMLAudioElement = new Audio(
-        'public/sound/success-notification-alert_A_major.wav'
+        '/sound/success-notification-alert_A_major.wav'
     );
 
     public static audioFailed: HTMLAudioElement = new Audio(
-        'public/sound/windows-xp-error.wav'
+        '/sound/windows-xp-error.wav'
     );
 }

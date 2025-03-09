@@ -121,7 +121,7 @@ export class PermissionComponent implements OnInit {
             if (result.event == 'Add') {
                 this.redirectToAdd(result.formValue);
             } else if (result.event == 'Update') {
-                // this.redirectToUpdate(result.data, result.formValue);
+                this.redirectToUpdate(result.data, result.formValue);
             } else if (result.event == 'Delete') {
                 // this.redirectToDelete(result.data.id);
             }
@@ -142,6 +142,21 @@ export class PermissionComponent implements OnInit {
                     this.errorNotif(error);
                 }
             );
+    }
+
+    redirectToUpdate(data: any, formValue: any): void {
+        this._service.update(data.id, formValue).subscribe(
+            (res) => {
+                console.log(res);
+
+                GlobalVariable.audioSuccess.play();
+                // this.toastr.success('Success', 'Update data success');
+                this.load();
+            },
+            (error) => {
+                this.errorNotif(error);
+            }
+        );
     }
 
     errorNotif(error: any) {

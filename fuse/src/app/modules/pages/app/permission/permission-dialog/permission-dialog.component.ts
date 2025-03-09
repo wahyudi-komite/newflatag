@@ -73,8 +73,11 @@ export class PermissionDialogComponent implements OnInit {
                               ),
                 },
             ],
-            permissions: this.fb.array([]),
         });
+
+        if (this.action != 'Add') {
+            this.form.patchValue(this.local_data);
+        }
 
         this.dialogRef.keydownEvents().subscribe((event) => {
             if (event.key === 'Escape') {
@@ -88,8 +91,6 @@ export class PermissionDialogComponent implements OnInit {
     }
 
     doAction() {
-        console.log(1);
-
         if (this.form.invalid) {
             return;
         }

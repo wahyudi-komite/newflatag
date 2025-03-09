@@ -49,7 +49,7 @@
         >
             <div class="relative overflow-x-auto p-4">
                 <table
-                    class="datatable w-2/6"
+                    class="datatable w-full lg:w-3/6 xl:w-2/6"
                     id="excel-table"
                     matSort
                     (matSortChange)="sortData($event)"
@@ -102,7 +102,9 @@
                 </table>
             </div>
 
-            <div class="flex w-2/6 items-center justify-between pl-4">
+            <div
+                class="flex w-full items-center justify-between pl-4 lg:w-3/6 xl:w-2/6"
+            >
                 <app-paginate
                     [last_page]="this.last_page"
                     (pageChanged)="load($event)"
