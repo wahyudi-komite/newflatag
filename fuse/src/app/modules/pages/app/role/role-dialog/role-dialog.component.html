@@ -6,16 +6,16 @@
         <mat-icon>close</mat-icon>
     </button>
 </div>
-<mat-dialog-content>
+<mat-dialog-content class="px-0">
     <form [formGroup]="form" (submit)="doAction()" autocomplete="off">
-        <div class="gt-xs:flex-row mt-4 flex space-x-2">
-            <mat-form-field class="gt-xs:pr-3 custom-input-height flex-auto">
-                <input matInput [placeholder]="'Line..'" />
-                <mat-icon
-                    class="icon-size-5"
-                    matPrefix
-                    [svgIcon]="'heroicons_solid:magnifying-glass'"
-                ></mat-icon>
+        <div class="gt-xs:flex-row mt-4 flex">
+            <mat-form-field class="custom-input-height flex-auto capitalize"
+                ><mat-label>Role Name</mat-label>
+                <input
+                    matInput
+                    [placeholder]="'Role..'"
+                    value="{{ this.local_data.name }}"
+                />
             </mat-form-field>
         </div>
     </form>
@@ -24,5 +24,7 @@
     <button mat-raised-button color="warn" (click)="closeDialog()">
         CANCEL
     </button>
-    <button mat-raised-button color="primary" cdkFocusInitial>SUBMIT</button>
+    <button class="ml-6" mat-raised-button color="primary" cdkFocusInitial>
+        SUBMIT
+    </button>
 </mat-dialog-actions>

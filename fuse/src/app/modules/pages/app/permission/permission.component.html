@@ -1,1 +1,132 @@
-<p>permission works!</p>
+<div
+    class="bg-card flex min-w-0 flex-auto flex-col dark:bg-transparent sm:absolute sm:inset-0 sm:overflow-hidden"
+>
+    <!-- Header -->
+    <div
+        class="relative flex flex-0 flex-col border-b px-6 py-4 sm:flex-row sm:items-center sm:justify-between md:px-8"
+    >
+        <!-- Loader -->
+
+        <!-- Title -->
+        <div class="text-4xl font-extrabold tracking-tight">PERMISSION</div>
+        <!-- Actions -->
+        <div class="mt-4 flex shrink-0 items-center sm:ml-4 sm:mt-0">
+            <!-- Search -->
+            <!-- <mat-form-field
+                class="fuse-mat-dense fuse-mat-rounded min-w-64"
+                [subscriptSizing]="'dynamic'"
+            >
+                <mat-icon
+                    class="icon-size-5"
+                    matPrefix
+                    [svgIcon]="'heroicons_solid:magnifying-glass'"
+                ></mat-icon>
+                <input
+                    matInput
+                    [formControl]="searchInputControl"
+                    [autocomplete]="'off'"
+                    [placeholder]="'Search products'"
+                />
+            </mat-form-field> -->
+            <!-- Add product button -->
+            <!-- <button
+                class="ml-4"
+                mat-flat-button
+                [color]="'primary'"
+                (click)="createProduct()"
+            >
+                <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                <span class="ml-2 mr-1">Add</span>
+            </button> -->
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div class="flex flex-auto overflow-hidden">
+        <!-- Products list -->
+        <div
+            class="flex flex-auto flex-col overflow-hidden sm:mb-18 sm:overflow-y-auto"
+        >
+            <div class="relative overflow-x-auto p-4">
+                <table
+                    class="datatable w-2/6"
+                    id="excel-table"
+                    matSort
+                    (matSortChange)="sortData($event)"
+                    matSortActive="{{ tblName }}.updated_at"
+                    matSortDirection="desc"
+                    matSortDisableClear
+                >
+                    <thead>
+                        <tr>
+                            <th class="w-5">#</th>
+                            <th
+                                class="text-left"
+                                mat-sort-header="{{ tblName }}.name"
+                            >
+                                Permission
+                            </th>
+                            <th>
+                                <mat-icon
+                                    svgIcon="heroicons_outline:cursor-arrow-ripple"
+                                ></mat-icon>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (data of datas; track $index) {
+                            <tr class="">
+                                <td>
+                                    {{
+                                        $index +
+                                            1 +
+                                            (this.page - 1) * this.pageSize
+                                            | number: '0.0-0'
+                                    }}
+                                </td>
+                                <td class="text-left">{{ data.name }}</td>
+                                <td>
+                                    <a
+                                        href="javascript:void(0)"
+                                        (click)="openDialog('Update', data)"
+                                        title="Edit"
+                                    >
+                                        <mat-icon color="primary"
+                                            >edit_note</mat-icon
+                                        >
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="flex w-2/6 items-center justify-between pl-4">
+                <app-paginate
+                    [last_page]="this.last_page"
+                    (pageChanged)="load($event)"
+                ></app-paginate>
+                <div class="">
+                    <span
+                        >Showing
+                        <span class="font-bold">{{
+                            this.pageSize * (this.page - 1) + 1
+                        }}</span>
+                        to
+                        <span class="font-bold">{{
+                            this.pageSize * this.page > this.total
+                                ? this.total
+                                : this.pageSize * this.page
+                        }}</span>
+                        off
+                        <span class="font-bold">{{
+                            this.total | number: '0.0-0'
+                        }}</span>
+                        Entries
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
