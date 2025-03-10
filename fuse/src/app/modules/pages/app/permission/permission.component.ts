@@ -2,6 +2,7 @@ import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSort, Sort } from '@angular/material/sort';
+import { ToastrService } from 'ngx-toastr';
 import { first } from 'rxjs';
 import { Permission } from '../../../../node/app/permission/permission';
 import { PermissionService } from '../../../../node/app/permission/permission.service';
@@ -35,6 +36,7 @@ export class PermissionComponent implements OnInit {
     statusService = inject(StatusEnumService);
     readonly dialog = inject(MatDialog);
     fb = inject(FormBuilder);
+    private toastr = inject(ToastrService);
 
     ngOnInit(): void {
         this.load();
@@ -135,7 +137,7 @@ export class PermissionComponent implements OnInit {
             .subscribe(
                 (res) => {
                     GlobalVariable.audioSuccess.play();
-                    // this.toastr.success('Updated', 'Store data success');
+                    this.toastr.success('Updated', 'Store data success');
                     this.load();
                 },
                 (error) => {
@@ -150,7 +152,7 @@ export class PermissionComponent implements OnInit {
                 console.log(res);
 
                 GlobalVariable.audioSuccess.play();
-                // this.toastr.success('Success', 'Update data success');
+                this.toastr.success('Success', 'Update data success');
                 this.load();
             },
             (error) => {
@@ -161,8 +163,8 @@ export class PermissionComponent implements OnInit {
 
     errorNotif(error: any) {
         GlobalVariable.audioFailed.play();
-        // this.toastr.error('Failed', error.error.message, {
-        //   timeOut: 3000,
-        // });
+        this.toastr.error('Failed', error.error.message, {
+            timeOut: 3000,
+        });
     }
 }

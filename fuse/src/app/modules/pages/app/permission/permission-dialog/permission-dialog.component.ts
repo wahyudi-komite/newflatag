@@ -90,6 +90,10 @@ export class PermissionDialogComponent implements OnInit {
         });
     }
 
+    get f() {
+        return this.form.controls;
+    }
+
     doAction() {
         if (this.form.invalid) {
             return;

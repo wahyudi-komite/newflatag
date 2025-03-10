@@ -2,6 +2,7 @@
 /*  @ Import/write your custom styles here.
 /*  @ Styles from this file will override 'vendors.scss' and Fuse's base styles.
 /* ----------------------------------------------------------------------------------------------------- */
+@import 'ngx-toastr/toastr';
 
 table.datatable {
     @apply w-full border-collapse border border-gray-300;

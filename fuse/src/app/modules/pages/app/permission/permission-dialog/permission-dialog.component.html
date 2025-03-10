@@ -17,6 +17,8 @@
                     formControlName="name"
                     [placeholder]="'Permission..'"
                     required
+                    trim="blur"
+                    cdkFocusInitial
                     value="{{ this.local_data.name }}"
                 />
                 <mat-error
