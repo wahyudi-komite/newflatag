@@ -1,44 +1,31 @@
-import { CommonModule, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import {
     Component,
+    inject,
     OnInit,
     ViewChild,
     ViewEncapsulation,
-    inject,
 } from '@angular/core';
-import {
-    FormBuilder,
-    FormGroup,
-    FormsModule,
-    ReactiveFormsModule,
-} from '@angular/forms';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
-import { Subject, takeUntil } from 'rxjs';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSort, Sort } from '@angular/material/sort';
+import { ToastrModule, ToastrService } from 'ngx-toastr';
+import { first, Subject, takeUntil } from 'rxjs';
 import { UserService } from '../../../core/user/user.service';
 import { User } from '../../../core/user/user.types';
 import { GlobalVariable } from '../../../node/common/global-variable';
 import { Paginate } from '../../../node/common/paginate';
+import { SharedModule } from '../../../node/common/shared.module';
+import { StatusEnumService } from '../../../node/common/status-enum.service';
 import { Line } from '../../../node/line/line';
 import { LineService } from '../../../node/line/line.service';
-import { PaginateTakeComponent } from '../../shared/paginate-take/paginate-take.component';
-import { PaginateComponent } from '../../shared/paginate/paginate.component';
+import { SearchInputComponent } from '../../comp/tabel/search-input/search-input.component';
 import { LINE_TITLES } from './line-column-title';
+import { LineDialogComponent } from './line-dialog/line-dialog.component';
 
 @Component({
     selector: 'app-line',
-    standalone: true,
-    imports: [
-        CommonModule,
-        MatSortModule,
-        FormsModule,
-        ReactiveFormsModule,
-        MatInputModule,
-        MatIconModule,
-        PaginateComponent,
-        PaginateTakeComponent,
-    ],
+    imports: [SharedModule, SearchInputComponent, ToastrModule],
     templateUrl: './line.component.html',
     styleUrl: './line.component.scss',
     providers: [DatePipe],
@@ -64,7 +51,10 @@ export class LineComponent implements OnInit {
 
     _service = inject(LineService);
     _userService = inject(UserService);
+    statusService = inject(StatusEnumService);
     fb = inject(FormBuilder);
+    private toastr = inject(ToastrService);
+    readonly dialog = inject(MatDialog);
 
     ngOnInit(): void {
         this._userService.user$
@@ -100,8 +90,6 @@ export class LineComponent implements OnInit {
                 this.find
             )
             .subscribe((res: Paginate) => {
-                console.log(res);
-
                 this.datas = res.data;
                 this.total = res.meta.total;
                 this.page = res.meta.page;
@@ -114,8 +102,8 @@ export class LineComponent implements OnInit {
         this.load();
     }
 
-    applyFilter(event: Event) {
-        this.find = (event.target as HTMLInputElement).value;
+    applyFilter(value: string): void {
+        this.find = value;
         this.load();
     }
 
@@ -140,5 +128,72 @@ export class LineComponent implements OnInit {
         // this.eg = this.form.value.eg;
         // this.uniq = this.form.value.uniq;
         this.load();
+    }
+
+    getStatus(status: number): { text: string; color: string } {
+        return this.statusService.getStatus(status);
+    }
+
+    openDialog(action: string, obj: any) {
+        obj.action = action;
+        let dialogBoxSettings = {
+            position: { top: '10px' },
+            width: '400px',
+            margin: '0 auto',
+            disableClose: true,
+            hasBackdrop: true,
+            data: obj,
+        };
+
+        const dialogRef = this.dialog.open(
+            LineDialogComponent,
+            dialogBoxSettings
+        );
+
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result.event == 'Add') {
+                this.redirectToAdd(result.formValue);
+            } else if (result.event == 'Update') {
+                this.redirectToUpdate(result.data, result.formValue);
+            } else if (result.event == 'Delete') {
+                // this.redirectToDelete(result.data.id);
+            }
+        });
+    }
+
+    redirectToAdd(row_obj: any) {
+        this._service
+            .create(row_obj)
+            .pipe(first())
+            .subscribe(
+                (res) => {
+                    GlobalVariable.audioSuccess.play();
+                    this.toastr.success('Updated', 'Store data success');
+                    this.load();
+                },
+                (error) => {
+                    this.errorNotif(error);
+                }
+            );
+    }
+
+    redirectToUpdate(data: any, formValue: any): void {
+        this._service.update(data.id, formValue).subscribe(
+            (res) => {
+                GlobalVariable.audioSuccess.play();
+                this.toastr.success('Success', 'Update data success');
+                this.load();
+            },
+            (error) => {
+                this.errorNotif(error);
+            }
+        );
+    }
+
+    errorNotif(error: any) {
+        GlobalVariable.audioFailed.play();
+        this.toastr.error('Failed', error.error.message, {
+            timeOut: 3000,
+        });
     }
 }

@@ -23,7 +23,6 @@ import { UserService } from 'app/core/user/user.service';
     templateUrl: './unlock-session.component.html',
     encapsulation: ViewEncapsulation.None,
     animations: fuseAnimations,
-    standalone: true,
     imports: [
         FuseAlertComponent,
         FormsModule,
@@ -34,7 +33,7 @@ import { UserService } from 'app/core/user/user.service';
         MatIconModule,
         MatProgressSpinnerModule,
         RouterLink,
-    ],
+    ]
 })
 export class AuthUnlockSessionComponent implements OnInit {
     @ViewChild('unlockSessionNgForm') unlockSessionNgForm: NgForm;

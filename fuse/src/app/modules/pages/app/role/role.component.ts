@@ -1,13 +1,6 @@
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import {
-    MatDialog,
-    MatDialogActions,
-    MatDialogClose,
-    MatDialogContent,
-    MatDialogModule,
-    MatDialogTitle,
-} from '@angular/material/dialog';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSort, Sort } from '@angular/material/sort';
 import { Role } from '../../../../node/app/role/role';
 import { RoleService } from '../../../../node/app/role/role.service';
@@ -15,19 +8,12 @@ import { GlobalVariable } from '../../../../node/common/global-variable';
 import { Paginate } from '../../../../node/common/paginate';
 import { SharedModule } from '../../../../node/common/shared.module';
 import { StatusEnumService } from '../../../../node/common/status-enum.service';
+import { SearchInputComponent } from '../../../comp/tabel/search-input/search-input.component';
 import { RoleDialogComponent } from './role-dialog/role-dialog.component';
 
 @Component({
     selector: 'app-role',
-    standalone: true,
-    imports: [
-        SharedModule,
-        MatDialogActions,
-        MatDialogClose,
-        MatDialogContent,
-        MatDialogTitle,
-        MatDialogModule,
-    ],
+    imports: [SharedModule, MatDialogModule, SearchInputComponent],
     templateUrl: './role.component.html',
     styleUrl: './role.component.scss',
 })
@@ -71,8 +57,6 @@ export class RoleComponent implements OnInit {
                 this.find
             )
             .subscribe((res: Paginate) => {
-                console.log(res);
-
                 this.datas = res.data;
                 this.total = res.meta.total;
                 this.page = res.meta.page;
@@ -85,8 +69,8 @@ export class RoleComponent implements OnInit {
         this.load();
     }
 
-    applyFilter(event: Event) {
-        this.find = (event.target as HTMLInputElement).value;
+    applyFilter(value: string) {
+        this.find = value;
         this.load();
     }
 

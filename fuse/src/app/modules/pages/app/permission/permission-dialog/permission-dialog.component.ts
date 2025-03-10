@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
     ChangeDetectionStrategy,
     Component,
@@ -26,8 +27,8 @@ import { ExistingValidator } from '../../../../../node/common/existing.validator
 
 @Component({
     selector: 'app-permission-dialog',
-    standalone: true,
     imports: [
+        CommonModule,
         MatFormFieldModule,
         MatInputModule,
         FormsModule,

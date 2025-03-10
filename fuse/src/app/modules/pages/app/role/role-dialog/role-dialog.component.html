@@ -1,6 +1,6 @@
 <div class="flex items-center justify-between border-b-2 border-gray-200">
     <h1 class="items-start text-right text-xl font-bold uppercase">
-        Form {{ this.action }} Permission
+        Form {{ this.action }} Role
     </h1>
     <button mat-icon-button (click)="closeDialog()">
         <mat-icon>close</mat-icon>
@@ -8,15 +8,42 @@
 </div>
 <mat-dialog-content class="px-0">
     <form [formGroup]="form" (submit)="doAction()" autocomplete="off">
-        <div class="gt-xs:flex-row mt-4 flex">
+        <div class="gt-xs:flex-row flex">
             <mat-form-field class="custom-input-height flex-auto capitalize"
                 ><mat-label>Role Name</mat-label>
                 <input
                     matInput
+                    #name
+                    hideRequiredMarker="true"
+                    formControlName="name"
                     [placeholder]="'Role..'"
+                    trim="blur"
+                    cdkFocusInitial
                     value="{{ this.local_data.name }}"
                 />
             </mat-form-field>
+        </div>
+        <div formArrayName="permissions">
+            <label class="block font-medium text-gray-700">Permission</label>
+
+            <div
+                class="mt-2 grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4"
+            >
+                @for (permission of permissions; track $index; let i = $index) {
+                    <div [formGroupName]="i">
+                        <label class="flex items-center space-x-2">
+                            <input
+                                type="checkbox"
+                                formControlName="value"
+                                class="h-5 w-5 border-gray-300 text-emerald-600 focus:ring-emerald-500"
+                            />
+                            <span class="text-gray-800">{{
+                                permission.name
+                            }}</span>
+                        </label>
+                    </div>
+                }
+            </div>
         </div>
     </form>
 </mat-dialog-content>

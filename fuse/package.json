@@ -13,17 +13,17 @@
     "test": "ng test"
   },
   "dependencies": {
-    "@angular/animations": "^18.0.6",
+    "@angular/animations": "^19.2.1",
     "@angular/cdk": "18.0.6",
-    "@angular/common": "18.0.6",
-    "@angular/compiler": "18.0.6",
-    "@angular/core": "18.0.6",
-    "@angular/forms": "18.0.6",
+    "@angular/common": "19.2.1",
+    "@angular/compiler": "19.2.1",
+    "@angular/core": "19.2.1",
+    "@angular/forms": "19.2.1",
     "@angular/material": "18.0.6",
     "@angular/material-luxon-adapter": "18.0.6",
-    "@angular/platform-browser": "18.0.6",
-    "@angular/platform-browser-dynamic": "18.0.6",
-    "@angular/router": "18.0.6",
+    "@angular/platform-browser": "19.2.1",
+    "@angular/platform-browser-dynamic": "19.2.1",
+    "@angular/router": "19.2.1",
     "@ngneat/transloco": "6.0.4",
     "apexcharts": "3.49.1",
     "crypto-js": "4.2.0",
@@ -38,12 +38,12 @@
     "quill": "2.0.2",
     "rxjs": "7.8.1",
     "tslib": "2.6.2",
-    "zone.js": "0.14.6"
+    "zone.js": "0.15.0"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^19.2.1",
-    "@angular/cli": "18.0.7",
-    "@angular/compiler-cli": "18.0.6",
+    "@angular/cli": "19.2.1",
+    "@angular/compiler-cli": "19.2.1",
     "@tailwindcss/typography": "0.5.13",
     "@types/chroma-js": "2.4.4",
     "@types/crypto-js": "4.2.2",
@@ -66,6 +66,6 @@
     "prettier-plugin-organize-imports": "3.2.4",
     "prettier-plugin-tailwindcss": "0.6.1",
     "tailwindcss": "3.4.3",
-    "typescript": "5.4.5"
+    "typescript": "5.8.2"
   }
 }

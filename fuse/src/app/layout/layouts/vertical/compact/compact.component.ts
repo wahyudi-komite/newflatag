@@ -24,7 +24,6 @@ import { Subject, takeUntil } from 'rxjs';
     selector: 'compact-layout',
     templateUrl: './compact.component.html',
     encapsulation: ViewEncapsulation.None,
-    standalone: true,
     imports: [
         FuseLoadingBarComponent,
         MatButtonModule,
@@ -39,7 +38,7 @@ import { Subject, takeUntil } from 'rxjs';
         RouterOutlet,
         QuickChatComponent,
         FuseVerticalNavigationComponent,
-    ],
+    ]
 })
 export class CompactLayoutComponent implements OnInit, OnDestroy {
     isScreenSmall: boolean;

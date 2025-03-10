@@ -2,7 +2,9 @@
 /*  @ Import/write your custom styles here.
 /*  @ Styles from this file will override 'vendors.scss' and Fuse's base styles.
 /* ----------------------------------------------------------------------------------------------------- */
-@import 'ngx-toastr/toastr';
+.mat-mdc-form-field.mat-form-field-appearance-fill .mat-mdc-text-field-wrapper .mat-mdc-form-field-flex .mat-mdc-form-field-infix {
+    min-height: 40px;
+}
 
 table.datatable {
     @apply w-full border-collapse border border-gray-300;

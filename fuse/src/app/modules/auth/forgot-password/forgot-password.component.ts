@@ -22,7 +22,6 @@ import { finalize } from 'rxjs';
     templateUrl: './forgot-password.component.html',
     encapsulation: ViewEncapsulation.None,
     animations: fuseAnimations,
-    standalone: true,
     imports: [
         FuseAlertComponent,
         FormsModule,
@@ -32,7 +31,7 @@ import { finalize } from 'rxjs';
         MatButtonModule,
         MatProgressSpinnerModule,
         RouterLink,
-    ],
+    ]
 })
 export class AuthForgotPasswordComponent implements OnInit {
     @ViewChild('forgotPasswordNgForm') forgotPasswordNgForm: NgForm;

@@ -14,10 +14,9 @@ import { MACHINE_TITLES } from './machine-column-title';
 
 @Component({
     selector: 'app-machine',
-    standalone: true,
     imports: [SharedModule],
     templateUrl: './machine.component.html',
-    styleUrl: './machine.component.scss',
+    styleUrl: './machine.component.scss'
 })
 export class MachineComponent implements OnInit {
     user: User;

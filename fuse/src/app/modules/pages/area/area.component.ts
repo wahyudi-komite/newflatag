@@ -29,7 +29,6 @@ import { AREA_TITLES } from './area-column-title';
 
 @Component({
     selector: 'app-area',
-    standalone: true,
     imports: [
         CommonModule,
         MatSortModule,
@@ -42,7 +41,7 @@ import { AREA_TITLES } from './area-column-title';
     ],
     templateUrl: './area.component.html',
     styleUrl: './area.component.scss',
-    encapsulation: ViewEncapsulation.None,
+    encapsulation: ViewEncapsulation.None
 })
 export class AreaComponent implements OnInit {
     user: User;

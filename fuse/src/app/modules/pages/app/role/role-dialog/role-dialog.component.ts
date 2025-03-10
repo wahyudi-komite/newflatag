@@ -1,10 +1,14 @@
+import { CommonModule } from '@angular/common';
 import {
     ChangeDetectionStrategy,
+    ChangeDetectorRef,
     Component,
     inject,
+    NgZone,
     OnInit,
 } from '@angular/core';
 import {
+    FormArray,
     FormBuilder,
     FormGroup,
     FormsModule,
@@ -22,13 +26,15 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { Permission } from '../../../../../node/app/permission/permission';
+import { PermissionService } from '../../../../../node/app/permission/permission.service';
 import { Role } from '../../../../../node/app/role/role';
+import { RoleService } from '../../../../../node/app/role/role.service';
 import { ExistingValidator } from '../../../../../node/common/existing.validator';
 
 @Component({
     selector: 'app-role-dialog',
-    standalone: true,
     imports: [
+        CommonModule,
         MatFormFieldModule,
         MatInputModule,
         FormsModule,
@@ -52,6 +58,11 @@ export class RoleDialogComponent implements OnInit {
     readonly data = inject<Role>(MAT_DIALOG_DATA);
     private fb = inject(FormBuilder);
     private existingValidator = inject(ExistingValidator);
+    permissionService = inject(PermissionService);
+    roleService = inject(RoleService);
+    private ngZone = inject(NgZone);
+
+    constructor(private cdr: ChangeDetectorRef) {}
 
     ngOnInit(): void {
         this.local_data = { ...this.data };
@@ -71,15 +82,52 @@ export class RoleDialogComponent implements OnInit {
             permissions: this.fb.array([]),
         });
 
+        this.permissionService
+            .getAll('name', 'ASC')
+            .subscribe((permissions: any) => {
+                this.permissions = permissions;
+                this.permissions.forEach((p) => {
+                    this.permissionArray.push(
+                        this.fb.group({
+                            value: false,
+                            id: p.id,
+                        })
+                    );
+                });
+            });
+
+        this.cdr.detectChanges();
+
+        if (this.action != 'Add') {
+            this.roleService.get(this.local_data.id).subscribe((role: Role) => {
+                const values = this.permissions.map((p: any) => {
+                    return {
+                        value: this.local_data.permissions.some(
+                            (r: any) => r.id === p.id
+                        ),
+                        id: p.id,
+                    };
+                });
+
+                this.form.patchValue({
+                    name: this.local_data.name,
+                    // permissions: values,
+                });
+            });
+        }
+
         this.dialogRef.keydownEvents().subscribe((event) => {
             if (event.key === 'Escape') {
                 this.closeDialog();
             }
         });
-
         this.dialogRef.backdropClick().subscribe((event) => {
             this.closeDialog();
         });
+    }
+
+    get permissionArray(): FormArray {
+        return this.form.get('permissions') as FormArray;
     }
 
     doAction() {

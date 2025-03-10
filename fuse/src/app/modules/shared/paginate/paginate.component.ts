@@ -3,10 +3,9 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 @Component({
     selector: 'app-paginate',
-    standalone: true,
     imports: [CommonModule],
     templateUrl: './paginate.component.html',
-    styleUrl: './paginate.component.scss',
+    styleUrl: './paginate.component.scss'
 })
 export class PaginateComponent implements OnInit {
     @Input() last_page!: number;

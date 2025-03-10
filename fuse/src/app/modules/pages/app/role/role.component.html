@@ -1,55 +1,56 @@
 <div
     class="bg-card flex min-w-0 flex-auto flex-col dark:bg-transparent sm:absolute sm:inset-0 sm:overflow-hidden"
 >
-    <!-- Header -->
     <div
-        class="relative flex flex-0 flex-col border-b px-6 py-4 sm:flex-row sm:items-center sm:justify-between md:px-8"
+        class="relative flex flex-0 flex-col px-4 py-4 sm:flex-row sm:items-center sm:justify-between md:px-4"
     >
-        <!-- Loader -->
-
-        <!-- Title -->
-        <div class="text-4xl font-extrabold tracking-tight">ROLE</div>
-        <!-- Actions -->
-        <div class="mt-4 flex shrink-0 items-center sm:ml-4 sm:mt-0">
-            <!-- Search -->
-            <!-- <mat-form-field
-                class="fuse-mat-dense fuse-mat-rounded min-w-64"
-                [subscriptSizing]="'dynamic'"
-            >
-                <mat-icon
-                    class="icon-size-5"
-                    matPrefix
-                    [svgIcon]="'heroicons_solid:magnifying-glass'"
-                ></mat-icon>
-                <input
-                    matInput
-                    [formControl]="searchInputControl"
-                    [autocomplete]="'off'"
-                    [placeholder]="'Search products'"
-                />
-            </mat-form-field> -->
-            <!-- Add product button -->
-            <!-- <button
-                class="ml-4"
-                mat-flat-button
-                [color]="'primary'"
-                (click)="createProduct()"
-            >
-                <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
-                <span class="ml-2 mr-1">Add</span>
-            </button> -->
+        <div class="text-3xl font-extrabold tracking-tight text-emerald-950">
+            ROLES
         </div>
     </div>
 
     <!-- Main -->
     <div class="flex flex-auto overflow-hidden">
-        <!-- Products list -->
         <div
             class="flex flex-auto flex-col overflow-hidden sm:mb-18 sm:overflow-y-auto"
         >
-            <div class="relative overflow-x-auto p-4">
+            <div
+                class="flex w-full items-center justify-between px-4 lg:w-3/6 xl:w-2/6"
+            >
+                <app-search-input
+                    placeholder="Search..."
+                    (search)="applyFilter($event)"
+                ></app-search-input>
+
+                <div class="flex justify-between py-1">
+                    <app-paginate-take
+                        (limitChanged)="changeLimit($event)"
+                    ></app-paginate-take>
+                </div>
+                <div class="group relative space-x-2">
+                    <button
+                        mat-mini-fab
+                        color="primary"
+                        matTooltip="Add Data"
+                        matTooltipPosition="above"
+                        (click)="openDialog('Add', {})"
+                    >
+                        <mat-icon>add</mat-icon>
+                    </button>
+                    <button
+                        mat-mini-fab
+                        color="accent"
+                        matTooltip="Export Excel"
+                        matTooltipPosition="above"
+                        (click)="exportToExcel()"
+                    >
+                        <mat-icon>download</mat-icon>
+                    </button>
+                </div>
+            </div>
+            <div class="relative overflow-x-auto px-4 pb-1">
                 <table
-                    class="datatable w-2/6"
+                    class="datatable w-full lg:w-3/6 xl:w-2/6"
                     id="excel-table"
                     matSort
                     (matSortChange)="sortData($event)"
@@ -60,8 +61,13 @@
                     <thead>
                         <tr>
                             <th class="w-5">#</th>
-                            <th>Roles</th>
-                            <th>
+                            <th
+                                class="text-left"
+                                mat-sort-header="{{ tblName }}.name"
+                            >
+                                Role
+                            </th>
+                            <th class="w-12">
                                 <mat-icon
                                     svgIcon="heroicons_outline:cursor-arrow-ripple"
                                 ></mat-icon>
@@ -79,7 +85,7 @@
                                             | number: '0.0-0'
                                     }}
                                 </td>
-                                <td>{{ data.name }}</td>
+                                <td class="text-left">{{ data.name }}</td>
                                 <td>
                                     <a
                                         href="javascript:void(0)"
@@ -97,7 +103,9 @@
                 </table>
             </div>
 
-            <div class="flex w-2/6 items-center justify-between pl-4">
+            <div
+                class="flex w-full items-center justify-between px-4 lg:w-3/6 xl:w-2/6"
+            >
                 <app-paginate
                     [last_page]="this.last_page"
                     (pageChanged)="load($event)"

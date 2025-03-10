@@ -25,7 +25,6 @@ import { Subject, takeUntil } from 'rxjs';
     selector: 'modern-layout',
     templateUrl: './modern.component.html',
     encapsulation: ViewEncapsulation.None,
-    standalone: true,
     imports: [
         FuseLoadingBarComponent,
         FuseVerticalNavigationComponent,
@@ -41,7 +40,7 @@ import { Subject, takeUntil } from 'rxjs';
         UserComponent,
         RouterOutlet,
         QuickChatComponent,
-    ],
+    ]
 })
 export class ModernLayoutComponent implements OnInit, OnDestroy {
     isScreenSmall: boolean;

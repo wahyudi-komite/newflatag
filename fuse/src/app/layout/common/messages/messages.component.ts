@@ -26,7 +26,6 @@ import { Subject, takeUntil } from 'rxjs';
     encapsulation: ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush,
     exportAs: 'messages',
-    standalone: true,
     imports: [
         MatButtonModule,
         MatIconModule,
@@ -35,7 +34,7 @@ import { Subject, takeUntil } from 'rxjs';
         NgTemplateOutlet,
         RouterLink,
         DatePipe,
-    ],
+    ]
 })
 export class MessagesComponent implements OnInit, OnDestroy {
     @ViewChild('messagesOrigin') private _messagesOrigin: MatButton;

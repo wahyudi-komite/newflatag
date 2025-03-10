@@ -2,7 +2,7 @@ import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSort, Sort } from '@angular/material/sort';
-import { ToastrService } from 'ngx-toastr';
+import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { first } from 'rxjs';
 import { Permission } from '../../../../node/app/permission/permission';
 import { PermissionService } from '../../../../node/app/permission/permission.service';
@@ -10,12 +10,12 @@ import { GlobalVariable } from '../../../../node/common/global-variable';
 import { Paginate } from '../../../../node/common/paginate';
 import { SharedModule } from '../../../../node/common/shared.module';
 import { StatusEnumService } from '../../../../node/common/status-enum.service';
+import { SearchInputComponent } from '../../../comp/tabel/search-input/search-input.component';
 import { PermissionDialogComponent } from './permission-dialog/permission-dialog.component';
 
 @Component({
     selector: 'app-permission',
-    standalone: true,
-    imports: [SharedModule],
+    imports: [SharedModule, ToastrModule, SearchInputComponent],
     templateUrl: './permission.component.html',
     styleUrl: './permission.component.scss',
 })
@@ -72,8 +72,8 @@ export class PermissionComponent implements OnInit {
         this.load();
     }
 
-    applyFilter(event: Event) {
-        this.find = (event.target as HTMLInputElement).value;
+    applyFilter(value: string) {
+        this.find = value;
         this.load();
     }
 
@@ -149,8 +149,6 @@ export class PermissionComponent implements OnInit {
     redirectToUpdate(data: any, formValue: any): void {
         this._service.update(data.id, formValue).subscribe(
             (res) => {
-                console.log(res);
-
                 GlobalVariable.audioSuccess.play();
                 this.toastr.success('Success', 'Update data success');
                 this.load();

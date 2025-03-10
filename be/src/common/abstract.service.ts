@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Brackets, Repository } from 'typeorm';
 import { PaginatedResult } from './paginated-result.interface';
 

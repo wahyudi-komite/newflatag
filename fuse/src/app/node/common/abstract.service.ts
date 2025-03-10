@@ -57,8 +57,6 @@ export abstract class AbstractService {
     }
 
     create(data: any): Observable<any> {
-        console.log(data);
-
         return this.http.post(this.url, data);
     }
 
@@ -67,7 +65,6 @@ export abstract class AbstractService {
     }
 
     update(id: number, data: any): Observable<any> {
-        console.log(data);
         return this.http.put(`${this.url}/${id}`, data);
     }
 
@@ -81,6 +78,22 @@ export abstract class AbstractService {
 
     find(data: any): Observable<any> {
         return this.http.post(`${this.url}/findIn`, data);
+    }
+
+    getAll(
+        direction: string,
+        sort: string,
+        field?: string,
+        keyword?: string | number
+    ): Observable<any> {
+        let params = new HttpParams();
+        params = params.append('sort', String(sort));
+        params = params.append('direction', String(direction));
+
+        field ? (params = params.append('field', String(field))) : params;
+        keyword ? (params = params.append('keyword', keyword)) : params;
+
+        return this.http.get(`${this.url}/all`, { params });
     }
 
     exportExcel(

@@ -26,7 +26,6 @@ import { Subject, takeUntil } from 'rxjs';
     selector: 'futuristic-layout',
     templateUrl: './futuristic.component.html',
     encapsulation: ViewEncapsulation.None,
-    standalone: true,
     imports: [
         FuseLoadingBarComponent,
         FuseVerticalNavigationComponent,
@@ -41,7 +40,7 @@ import { Subject, takeUntil } from 'rxjs';
         NotificationsComponent,
         RouterOutlet,
         QuickChatComponent,
-    ],
+    ]
 })
 export class FuturisticLayoutComponent implements OnInit, OnDestroy {
     isScreenSmall: boolean;

@@ -10,6 +10,9 @@ import {
   UseGuards,
   ClassSerializerInterceptor,
   Request,
+  Put,
+  NotFoundException,
+  ConflictException,
 } from '@nestjs/common';
 import { LineService } from './line.service';
 import { CreateLineDto } from './dto/create-line.dto';
@@ -18,11 +21,17 @@ import { AuthGuard } from '../../auth/auth.guard';
 import { HasPermission } from '../../permissions/has-permission.decorator';
 
 const tabel = 'line';
+
 @UseInterceptors(ClassSerializerInterceptor)
 @UseGuards(AuthGuard)
 @Controller('line')
 export class LineController {
   constructor(private readonly _service: LineService) {}
+
+  @Post()
+  create(@Body() createLineDto: CreateLineDto) {
+    return this._service.create(createLineDto);
+  }
 
   @Get()
   @HasPermission('roles')
@@ -36,26 +45,29 @@ export class LineController {
       column: [tabel + '.name', tabel + '.alias'],
     });
   }
+
+  @Put(':id')
+  async update(@Param('id') id: string, @Body() updateLineDto: UpdateLineDto) {
+    const cekId = await this._service.findOne({ id: +id });
+    if (!cekId) {
+      throw new NotFoundException(`Data dengan ID ${id} tidak ditemukan`);
+    }
+
+    const duplicate = await this._service.findOne({ name: updateLineDto.name });
+    if (duplicate && duplicate.id !== id) {
+      throw new ConflictException(`${updateLineDto.name} Already Exist`);
+    }
+    return this._service.update(+id, updateLineDto);
+  }
 }
-
-// @Post()
-// create(@Body() createLineDto: CreateLineDto) {
-//   return this.lineService.create(createLineDto);
-// }
-
 // @Get()
 // findAll() {
-//   return this.lineService.findAll();
+//   return this.lineService.findAll();s
 // }
 
 // @Get(':id')
 // findOne(@Param('id') id: string) {
 //   return this.lineService.findOne(+id);
-// }
-
-// @Patch(':id')
-// update(@Param('id') id: string, @Body() updateLineDto: UpdateLineDto) {
-//   return this.lineService.update(+id, updateLineDto);
 // }
 
 // @Delete(':id')

@@ -24,7 +24,6 @@ import { Subject, takeUntil } from 'rxjs';
     selector: 'thin-layout',
     templateUrl: './thin.component.html',
     encapsulation: ViewEncapsulation.None,
-    standalone: true,
     imports: [
         FuseLoadingBarComponent,
         FuseVerticalNavigationComponent,
@@ -39,7 +38,7 @@ import { Subject, takeUntil } from 'rxjs';
         UserComponent,
         RouterOutlet,
         QuickChatComponent,
-    ],
+    ]
 })
 export class ThinLayoutComponent implements OnInit, OnDestroy {
     isScreenSmall: boolean;

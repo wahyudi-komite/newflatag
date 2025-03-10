@@ -1,9 +1,12 @@
 import { CommonModule, DatePipe } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { MatSortModule } from '@angular/material/sort';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { PaginateTakeComponent } from '../../modules/shared/paginate-take/paginate-take.component';
 import { PaginateComponent } from '../../modules/shared/paginate/paginate.component';
 
@@ -16,8 +19,11 @@ import { PaginateComponent } from '../../modules/shared/paginate/paginate.compon
         ReactiveFormsModule,
         MatInputModule,
         MatIconModule,
+        MatButtonModule,
+        MatTooltipModule,
         PaginateComponent,
         PaginateTakeComponent,
+        MatSelectModule,
     ],
     exports: [
         CommonModule,
@@ -26,8 +32,11 @@ import { PaginateComponent } from '../../modules/shared/paginate/paginate.compon
         ReactiveFormsModule,
         MatInputModule,
         MatIconModule,
+        MatButtonModule,
+        MatTooltipModule,
         PaginateComponent,
         PaginateTakeComponent,
+        MatSelectModule,
         DatePipe,
     ],
     providers: [DatePipe],

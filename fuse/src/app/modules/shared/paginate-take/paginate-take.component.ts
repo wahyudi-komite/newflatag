@@ -3,10 +3,9 @@ import { GlobalVariable } from '../../../node/common/global-variable';
 
 @Component({
     selector: 'app-paginate-take',
-    standalone: true,
     imports: [],
     templateUrl: './paginate-take.component.html',
-    styleUrl: './paginate-take.component.scss',
+    styleUrl: './paginate-take.component.scss'
 })
 export class PaginateTakeComponent implements OnInit {
     @Output() limitChanged = new EventEmitter<number>();

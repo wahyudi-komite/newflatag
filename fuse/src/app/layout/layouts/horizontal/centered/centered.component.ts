@@ -24,7 +24,6 @@ import { Subject, takeUntil } from 'rxjs';
     selector: 'centered-layout',
     templateUrl: './centered.component.html',
     encapsulation: ViewEncapsulation.None,
-    standalone: true,
     imports: [
         FuseLoadingBarComponent,
         FuseVerticalNavigationComponent,
@@ -39,7 +38,7 @@ import { Subject, takeUntil } from 'rxjs';
         NotificationsComponent,
         UserComponent,
         RouterOutlet,
-    ],
+    ]
 })
 export class CenteredLayoutComponent implements OnInit, OnDestroy {
     navigation: Navigation;

@@ -25,7 +25,6 @@ import { Subject, takeUntil } from 'rxjs';
     selector: 'fuse-vertical-navigation-basic-item',
     templateUrl: './basic.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
     imports: [
         NgClass,
         RouterLink,
@@ -33,7 +32,7 @@ import { Subject, takeUntil } from 'rxjs';
         MatTooltipModule,
         NgTemplateOutlet,
         MatIconModule,
-    ],
+    ]
 })
 export class FuseVerticalNavigationBasicItemComponent
     implements OnInit, OnDestroy

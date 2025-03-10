@@ -7,8 +7,7 @@ import { fuseAnimations } from '@fuse/animations';
     templateUrl: './confirmation-required.component.html',
     encapsulation: ViewEncapsulation.None,
     animations: fuseAnimations,
-    standalone: true,
-    imports: [RouterLink],
+    imports: [RouterLink]
 })
 export class AuthConfirmationRequiredComponent {
     /**

@@ -36,7 +36,6 @@ import { Subject, takeUntil } from 'rxjs';
     encapsulation: ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush,
     exportAs: 'shortcuts',
-    standalone: true,
     imports: [
         MatButtonModule,
         MatIconModule,
@@ -49,7 +48,7 @@ import { Subject, takeUntil } from 'rxjs';
         MatFormFieldModule,
         MatInputModule,
         MatSlideToggleModule,
-    ],
+    ]
 })
 export class ShortcutsComponent implements OnInit, OnDestroy {
     @ViewChild('shortcutsOrigin') private _shortcutsOrigin: MatButton;

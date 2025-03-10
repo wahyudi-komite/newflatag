@@ -8,15 +8,15 @@
 </div>
 <form [formGroup]="form" (submit)="doAction()" autocomplete="off">
     <mat-dialog-content class="px-0">
-        <div class="gt-xs:flex-row mt-4 flex">
+        <div class="gt-xs:flex-row flex">
             <mat-form-field class="custom-input-height flex-auto capitalize"
                 ><mat-label>Permision Name</mat-label>
                 <input
                     matInput
                     #name
+                    hideRequiredMarker="true"
                     formControlName="name"
                     [placeholder]="'Permission..'"
-                    required
                     trim="blur"
                     cdkFocusInitial
                     value="{{ this.local_data.name }}"

@@ -24,7 +24,6 @@ import { Subject, takeUntil } from 'rxjs';
     selector: 'material-layout',
     templateUrl: './material.component.html',
     encapsulation: ViewEncapsulation.None,
-    standalone: true,
     imports: [
         FuseLoadingBarComponent,
         FuseVerticalNavigationComponent,
@@ -39,7 +38,7 @@ import { Subject, takeUntil } from 'rxjs';
         UserComponent,
         FuseHorizontalNavigationComponent,
         RouterOutlet,
-    ],
+    ]
 })
 export class MaterialLayoutComponent implements OnInit, OnDestroy {
     isScreenSmall: boolean;

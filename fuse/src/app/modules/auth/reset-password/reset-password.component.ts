@@ -24,7 +24,6 @@ import { finalize } from 'rxjs';
     templateUrl: './reset-password.component.html',
     encapsulation: ViewEncapsulation.None,
     animations: fuseAnimations,
-    standalone: true,
     imports: [
         FuseAlertComponent,
         FormsModule,
@@ -35,7 +34,7 @@ import { finalize } from 'rxjs';
         MatIconModule,
         MatProgressSpinnerModule,
         RouterLink,
-    ],
+    ]
 })
 export class AuthResetPasswordComponent implements OnInit {
     @ViewChild('resetPasswordNgForm') resetPasswordNgForm: NgForm;

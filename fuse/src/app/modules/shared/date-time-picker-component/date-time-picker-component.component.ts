@@ -8,7 +8,6 @@ import { MatInputModule } from '@angular/material/input';
 
 @Component({
     selector: 'app-date-time-picker-component',
-    standalone: true,
     imports: [
         CommonModule,
         FormsModule,
@@ -18,7 +17,7 @@ import { MatInputModule } from '@angular/material/input';
         MatButtonModule,
     ],
     templateUrl: './date-time-picker-component.component.html',
-    styleUrl: './date-time-picker-component.component.scss',
+    styleUrl: './date-time-picker-component.component.scss'
 })
 export class DateTimePickerComponentComponent {
     startDate!: Date;

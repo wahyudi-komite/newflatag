@@ -7,8 +7,7 @@ import { RouterLink } from '@angular/router';
     selector: 'landing-home',
     templateUrl: './home.component.html',
     encapsulation: ViewEncapsulation.None,
-    standalone: true,
-    imports: [MatButtonModule, RouterLink, MatIconModule],
+    imports: [MatButtonModule, RouterLink, MatIconModule]
 })
 export class LandingHomeComponent {
     /**

@@ -25,6 +25,10 @@ const themes = {
             ...colors.indigo,
             DEFAULT: colors.indigo[100],
         },
+        secondary: {
+            ...colors.yellow,
+            DEFAULT: colors.yellow[100],
+        },
         accent: {
             ...colors.slate,
             DEFAULT: colors.slate[800],
