@@ -9,6 +9,8 @@ import { AuthModule } from './auth/auth.module';
 import { LineModule } from './admin/line/line.module';
 import { AreaModule } from './admin/area/area.module';
 import { MachineModule } from './admin/machine/machine.module';
+import { APP_GUARD } from '@nestjs/core';
+import { PermissionsGuard } from './permissions/permissions.guard';
 
 @Module({
   imports: [
@@ -26,6 +28,11 @@ import { MachineModule } from './admin/machine/machine.module';
     MachineModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: PermissionsGuard,
+    },
+  ],
 })
 export class AppModule {}

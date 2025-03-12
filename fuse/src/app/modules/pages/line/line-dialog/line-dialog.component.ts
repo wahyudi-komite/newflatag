@@ -1,8 +1,9 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ExistingValidator } from '../../../../node/common/existing.validator';
 import { ShareDialogModule } from '../../../../node/common/share-dialog.module';
+import { StatusEnumService } from '../../../../node/common/status-enum.service';
 import { Line } from '../../../../node/line/line';
 
 @Component({
@@ -10,19 +11,24 @@ import { Line } from '../../../../node/line/line';
     imports: [ShareDialogModule],
     templateUrl: './line-dialog.component.html',
     styleUrl: './line-dialog.component.scss',
+    encapsulation: ViewEncapsulation.None,
 })
 export class LineDialogComponent implements OnInit {
     form!: FormGroup;
     action?: string;
     local_data: any;
     datas: Line[] = [];
+    selectStatus = [];
 
     readonly dialogRef = inject(MatDialogRef<LineDialogComponent>);
     readonly data = inject<Line>(MAT_DIALOG_DATA);
     private fb = inject(FormBuilder);
     private existingValidator = inject(ExistingValidator);
+    statusEnumService = inject(StatusEnumService);
 
     ngOnInit(): void {
+        this.selectStatus = this.statusEnumService.getselectStatus();
+
         this.local_data = { ...this.data };
         this.action = this.local_data.action;
 
@@ -47,10 +53,7 @@ export class LineDialogComponent implements OnInit {
                             : this.existingValidator.IsUnique('line', 'Update'),
                 },
             ],
-            status: [
-                this.local_data.role == 'user' ? 0 : '',
-                [Validators.required],
-            ],
+            status: ['', [Validators.required]],
         });
 
         if (this.action != 'Add') {

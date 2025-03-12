@@ -23,9 +23,6 @@ import { AreaService } from '../../../node/area/area.service';
 import { GlobalVariable } from '../../../node/common/global-variable';
 import { Paginate } from '../../../node/common/paginate';
 import { StatusEnumService } from '../../../node/common/status-enum.service';
-import { PaginateTakeComponent } from '../../shared/paginate-take/paginate-take.component';
-import { PaginateComponent } from '../../shared/paginate/paginate.component';
-import { AREA_TITLES } from './area-column-title';
 
 @Component({
     selector: 'app-area',
@@ -36,12 +33,10 @@ import { AREA_TITLES } from './area-column-title';
         ReactiveFormsModule,
         MatInputModule,
         MatIconModule,
-        PaginateComponent,
-        PaginateTakeComponent,
     ],
     templateUrl: './area.component.html',
     styleUrl: './area.component.scss',
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
 })
 export class AreaComponent implements OnInit {
     user: User;
@@ -55,8 +50,6 @@ export class AreaComponent implements OnInit {
     limit: number = GlobalVariable.pageTake;
     tblName: string = 'line';
     form: FormGroup;
-
-    columnTitles = AREA_TITLES;
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     @ViewChild(MatSort, { static: true }) sort!: MatSort;

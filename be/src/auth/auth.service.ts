@@ -11,7 +11,7 @@ export class AuthService {
   ) {}
 
   async userId(request: Request): Promise<number> {
-    const cookie = request.cookies['fms_token_data'];
+    const cookie = request.cookies['accessToken'];
 
     const data = await this.jwtService.verifyAsync(cookie);
 

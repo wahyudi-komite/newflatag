@@ -8,20 +8,18 @@
 </div>
 <form [formGroup]="form" (submit)="doAction()" autocomplete="off">
     <mat-dialog-content class="px-0">
-        <div *ngIf="action != 'Delete'; else elseTemplate" class="space-y-1">
+        <div *ngIf="action != 'Delete'; else elseTemplate" class="space-y-0">
             <div class="gt-xs:flex-row flex">
-                <mat-form-field class="custom-input-height flex-auto capitalize"
-                    ><mat-label>Line Name</mat-label>
+                <mat-form-field [ngClass]="" class="w-full" floatLabel="always">
+                    <mat-label>Line Name</mat-label>
                     <input
                         matInput
-                        #name
-                        hideRequiredMarker="true"
                         formControlName="name"
-                        placeholder="Line.."
+                        [placeholder]="'Line..'"
                         trim="blur"
                         oninput="this.value = this.value.toUpperCase()"
-                        cdkFocusInitial
                         value="{{ this.local_data.name }}"
+                        cdkFocusInitial
                     />
                     <mat-error
                         *ngIf="f['name'].errors && f['name'].errors['required']"
@@ -45,15 +43,14 @@
                     </mat-error>
                 </mat-form-field>
             </div>
+
             <div class="gt-xs:flex-row flex">
-                <mat-form-field class="custom-input-height flex-auto capitalize"
-                    ><mat-label>Alias</mat-label>
+                <mat-form-field [ngClass]="" class="w-full" floatLabel="always">
+                    <mat-label>Alias</mat-label>
                     <input
                         matInput
-                        #alias
-                        hideRequiredMarker="true"
                         formControlName="alias"
-                        placeholder="Alias.."
+                        [placeholder]="'Alias..'"
                         trim="blur"
                         oninput="this.value = this.value.toUpperCase()"
                         value="{{ this.local_data.alias }}"
@@ -70,7 +67,7 @@
                             f['alias'].errors && f['alias'].errors['minlength']
                         "
                     >
-                        Min 5 Character
+                        Min 2 Character
                     </mat-error>
                     <mat-error
                         *ngIf="
@@ -82,18 +79,18 @@
                     </mat-error>
                 </mat-form-field>
             </div>
+
             <div class="gt-xs:flex-row flex">
-                <mat-form-field class="custom-input-height flex-auto capitalize"
-                    ><mat-label>Status</mat-label>
+                <mat-form-field class="w-full" floatLabel="always">
+                    <mat-label>Status</mat-label>
                     <mat-select
                         name="status"
                         formControlName="status"
-                        required
-                        (selectionChange)="getRemarks($event)"
+                        [placeholder]="'--Please Choice--'"
                     >
                         <mat-option>--Please Choice--</mat-option>
                         <mat-option
-                            *ngFor="let dataStatus of status"
+                            *ngFor="let dataStatus of selectStatus"
                             [value]="dataStatus.id"
                         >
                             {{ dataStatus.value }}
@@ -110,26 +107,24 @@
             </div>
         </div>
         <ng-template #elseTemplate>
-            <div style="margin: 5px 0px 24px 0px">
-                <strong
-                    class="rounded-sm bg-indigo-700 px-2 py-1 font-normal text-white"
-                    >Are you sure to delete </strong
-                ><b
-                    color="warn"
-                    style="
-                        font-weight: 800;
-                        background-color: #b00020;
-                        border-radius: 4px;
-                        color: aliceblue;
-                        padding: 4px;
-                    "
-                    >{{ local_data.name }}</b
+            <div class="-mt-2 mb-2 flex w-full flex-col">
+                <span
+                    ><strong
+                        class="rounded-sm px-2 py-1 font-normal text-gray-800"
+                        >Are you sure to delete :
+                    </strong></span
                 >
-                ?
+                <div class="mb-4 mt-2 flex w-full items-center justify-center">
+                    <h3
+                        class="rounded-xl bg-black px-4 py-1 text-2xl font-extrabold text-indigo-50"
+                    >
+                        {{ local_data.name }} ?
+                    </h3>
+                </div>
             </div>
         </ng-template>
     </mat-dialog-content>
-    <mat-dialog-actions align="end">
+    <mat-dialog-actions align="end" class="-mt-4">
         <button
             mat-raised-button
             type="reset"
@@ -140,6 +135,9 @@
             CANCEL
         </button>
         <button
+            [disabled]="
+                action == 'Delete' ? false : !(form.valid && form.dirty)
+            "
             class="ml-6"
             mat-raised-button
             color="primary"

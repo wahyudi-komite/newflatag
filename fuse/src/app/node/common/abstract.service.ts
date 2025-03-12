@@ -120,7 +120,7 @@ export abstract class AbstractService {
                     const blob = new Blob([response], {
                         type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                     });
-                    saveAs(blob, 'Ems-Wa-Line.xlsx');
+                    saveAs(blob, 'Consumo-Export.xlsx');
                 },
                 (error) => {
                     console.error('Gagal mengunduh file:', error);

@@ -20,7 +20,6 @@ import { StatusEnumService } from '../../../node/common/status-enum.service';
 import { Line } from '../../../node/line/line';
 import { LineService } from '../../../node/line/line.service';
 import { SearchInputComponent } from '../../comp/tabel/search-input/search-input.component';
-import { LINE_TITLES } from './line-column-title';
 import { LineDialogComponent } from './line-dialog/line-dialog.component';
 
 @Component({
@@ -43,8 +42,6 @@ export class LineComponent implements OnInit {
     limit: number = GlobalVariable.pageTake;
     tblName: string = 'line';
     form: FormGroup;
-
-    columnTitles = LINE_TITLES;
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     @ViewChild(MatSort, { static: true }) sort!: MatSort;
@@ -156,7 +153,7 @@ export class LineComponent implements OnInit {
             } else if (result.event == 'Update') {
                 this.redirectToUpdate(result.data, result.formValue);
             } else if (result.event == 'Delete') {
-                // this.redirectToDelete(result.data.id);
+                this.redirectToDelete(result.data.id);
             }
         });
     }
@@ -188,6 +185,22 @@ export class LineComponent implements OnInit {
                 this.errorNotif(error);
             }
         );
+    }
+
+    redirectToDelete(row_obj: number) {
+        this._service
+            .delete(row_obj)
+            .pipe(first())
+            .subscribe(
+                (res) => {
+                    GlobalVariable.audioSuccess.play();
+                    this.toastr.success('Deleted', 'Success remove data');
+                    this.load();
+                },
+                (error) => {
+                    this.errorNotif(error);
+                }
+            );
     }
 
     errorNotif(error: any) {
