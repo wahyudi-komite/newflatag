@@ -14,7 +14,7 @@ table.datatable {
 
         tr {
             th {
-                @apply border-none p-4 md:p-3 text-md capitalize;
+                @apply border-none p-4 md:p-3 text-[15px] capitalize;
 
 
 
@@ -48,7 +48,7 @@ table.datatable {
             @apply odd:bg-gray-100 even:bg-gray-300;
 
             td {
-                @apply whitespace-nowrap p-1 text-center text-sm capitalize md:p-1;
+                @apply whitespace-nowrap p-1 text-center text-[14px] capitalize md:p-1;
             }
         }
     }

@@ -6,8 +6,8 @@
         <mat-icon>close</mat-icon>
     </button>
 </div>
-<mat-dialog-content class="px-0">
-    <form [formGroup]="form" (submit)="doAction()" autocomplete="off">
+<form [formGroup]="form" (submit)="doAction()" autocomplete="off">
+    <mat-dialog-content class="px-0">
         <div class="gt-xs:flex-row flex">
             <mat-form-field class="custom-input-height flex-auto capitalize"
                 ><mat-label>Role Name</mat-label>
@@ -18,9 +18,28 @@
                     formControlName="name"
                     [placeholder]="'Role..'"
                     trim="blur"
+                    required
+                    oninput="this.value = this.value.toLowerCase()"
                     cdkFocusInitial
                     value="{{ this.local_data.name }}"
                 />
+                <mat-error
+                    *ngIf="f['name'].errors && f['name'].errors['required']"
+                >
+                    You must enter a value
+                </mat-error>
+                <mat-error
+                    *ngIf="f['name'].errors && f['name'].errors['minlength']"
+                >
+                    Min 4 Character
+                </mat-error>
+                <mat-error
+                    *ngIf="
+                        f['name'].errors && f['name'].errors['alreadyExists']
+                    "
+                >
+                    The name already exist
+                </mat-error>
             </mat-form-field>
         </div>
         <div formArrayName="permissions">
@@ -45,13 +64,13 @@
                 }
             </div>
         </div>
-    </form>
-</mat-dialog-content>
-<mat-dialog-actions align="end">
-    <button mat-raised-button color="warn" (click)="closeDialog()">
-        CANCEL
-    </button>
-    <button class="ml-6" mat-raised-button color="primary" cdkFocusInitial>
-        SUBMIT
-    </button>
-</mat-dialog-actions>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+        <button mat-raised-button color="warn" (click)="closeDialog()">
+            CANCEL
+        </button>
+        <button class="ml-6" mat-raised-button color="primary" type="submit">
+            SUBMIT
+        </button>
+    </mat-dialog-actions>
+</form>

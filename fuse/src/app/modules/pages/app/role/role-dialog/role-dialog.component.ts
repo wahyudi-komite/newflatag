@@ -111,7 +111,7 @@ export class RoleDialogComponent implements OnInit {
 
                 this.form.patchValue({
                     name: this.local_data.name,
-                    // permissions: values,
+                    permissions: values,
                 });
             });
         }
@@ -124,6 +124,10 @@ export class RoleDialogComponent implements OnInit {
         this.dialogRef.backdropClick().subscribe((event) => {
             this.closeDialog();
         });
+    }
+
+    get f() {
+        return this.form.controls;
     }
 
     get permissionArray(): FormArray {

@@ -20,13 +20,21 @@ import { AuthGuard } from 'src/auth/auth.guard';
 
 @UseGuards(AuthGuard)
 @UseInterceptors(ClassSerializerInterceptor)
+@HasPermission('permissions')
 @Controller('permissions')
 export class PermissionsController {
   constructor(private readonly permissionsService: PermissionsService) {}
 
   @Post()
   create(@Body() createPermissionDto: CreatePermissionDto) {
-    return this.permissionsService.create(createPermissionDto);
+    const normalizedDto = Object.fromEntries(
+      Object.entries(createPermissionDto).map(([key, value]) => [
+        key,
+        typeof value === 'string' ? value.toLowerCase() : value,
+      ]),
+    );
+
+    return this.permissionsService.create(normalizedDto);
   }
 
   @Get('all')
@@ -38,7 +46,6 @@ export class PermissionsController {
   }
 
   @Get()
-  @HasPermission('permissions')
   async findAll(@Request() request) {
     return this.permissionsService.paginate('permissions', [], {
       limit: request.query.limit,
@@ -62,7 +69,14 @@ export class PermissionsController {
     @Param('id') id: string,
     @Body() updatePermissionDto: UpdatePermissionDto,
   ) {
-    return this.permissionsService.update(+id, updatePermissionDto);
+    const normalizedDto = Object.fromEntries(
+      Object.entries(updatePermissionDto).map(([key, value]) => [
+        key,
+        typeof value === 'string' ? value.toLowerCase() : value,
+      ]),
+    );
+
+    return this.permissionsService.update(+id, normalizedDto);
   }
 
   @Delete(':id')

@@ -23,8 +23,8 @@ import { HasPermission } from '../../permissions/has-permission.decorator';
 
 const tabel = 'line';
 
-// @UseInterceptors(ClassSerializerInterceptor)
-// @UseGuards(AuthGuard)
+@UseInterceptors(ClassSerializerInterceptor)
+@UseGuards(AuthGuard)
 @Controller('line')
 export class LineController {
   constructor(private readonly _service: LineService) {}

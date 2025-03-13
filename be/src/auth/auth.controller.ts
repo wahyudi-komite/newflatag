@@ -41,6 +41,7 @@ export class AuthController {
       // Verifikasi token
       this.jwtService.verify(token);
       const { user, newToken } = await this.authService.signInWithToken(token);
+
       // Jika verifikasi berhasil, user terotentikasi
       res.json({ isAuthenticated: true, user: user, accessToken: newToken });
     } catch (error) {

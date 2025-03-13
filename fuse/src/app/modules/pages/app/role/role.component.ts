@@ -2,6 +2,8 @@ import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSort, Sort } from '@angular/material/sort';
+import { ToastrService } from 'ngx-toastr';
+import { first } from 'rxjs';
 import { Role } from '../../../../node/app/role/role';
 import { RoleService } from '../../../../node/app/role/role.service';
 import { GlobalVariable } from '../../../../node/common/global-variable';
@@ -33,6 +35,7 @@ export class RoleComponent implements OnInit {
     _service = inject(RoleService);
     statusService = inject(StatusEnumService);
     readonly dialog = inject(MatDialog);
+    private toastr = inject(ToastrService);
     fb = inject(FormBuilder);
 
     ngOnInit(): void {
@@ -120,10 +123,75 @@ export class RoleComponent implements OnInit {
             if (result.event == 'Add') {
                 // this.redirectToAdd(result.formValue);
             } else if (result.event == 'Update') {
-                // this.redirectToUpdate(result.data, result.formValue);
+                this.redirectToUpdate(result.data, result.formValue);
             } else if (result.event == 'Delete') {
                 // this.redirectToDelete(result.data.id);
             }
+        });
+    }
+    redirectToUpdate(data: any, formValue: any): void {
+        const dataForm = {
+            name: formValue.name,
+            permissions: formValue.permissions
+                .filter((p: any) => p.value === true)
+                .map((p: any) => p.id),
+        };
+
+        this._service.update(data.id, dataForm).subscribe(
+            (res) => {
+                GlobalVariable.audioSuccess.play();
+                this.toastr.success('Success', 'Update data success');
+                this.load();
+            },
+            (error) => {
+                this.errorNotif(error);
+            }
+        );
+    }
+
+    redirectToAdd(row_obj: any) {
+        const dataForm = {
+            name: row_obj.name,
+            permissions: row_obj.permissions
+                .filter((p: any) => p.value === true)
+                .map((p: any) => p.id),
+        };
+
+        this._service
+            .create(dataForm)
+            .pipe(first())
+            .subscribe(
+                (res) => {
+                    GlobalVariable.audioSuccess.play();
+                    this.toastr.success('Updated', 'Store data success');
+                    this.load();
+                },
+                (error) => {
+                    this.errorNotif(error);
+                }
+            );
+    }
+
+    redirectToDelete(row_obj: number) {
+        this._service
+            .delete(row_obj)
+            .pipe(first())
+            .subscribe(
+                (res) => {
+                    GlobalVariable.audioSuccess.play();
+                    this.toastr.success('Deleted', 'Success remove data');
+                    this.load();
+                },
+                (error) => {
+                    this.errorNotif(error);
+                }
+            );
+    }
+
+    errorNotif(error: any) {
+        GlobalVariable.audioFailed.play();
+        this.toastr.error('Failed', error.message, {
+            timeOut: 3000,
         });
     }
 }
