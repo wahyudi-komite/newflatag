@@ -32,25 +32,23 @@ export class LineDialogComponent implements OnInit {
         this.local_data = { ...this.data };
         this.action = this.local_data.action;
 
+        const asyncValidator = this.existingValidator.IsUnique(
+            'line',
+            this.action
+        );
         this.form = this.fb.group({
             name: [
                 '',
                 {
                     validators: [Validators.required, Validators.minLength(4)],
-                    asyncValidators:
-                        this.action == 'Add'
-                            ? this.existingValidator.IsUnique('line', 'Add')
-                            : this.existingValidator.IsUnique('line', 'Update'),
+                    asyncValidators: asyncValidator ? asyncValidator : [],
                 },
             ],
             alias: [
                 '',
                 {
                     validators: [Validators.required, Validators.minLength(2)],
-                    asyncValidators:
-                        this.action == 'Add'
-                            ? this.existingValidator.IsUnique('line', 'Add')
-                            : this.existingValidator.IsUnique('line', 'Update'),
+                    asyncValidators: asyncValidator ? asyncValidator : [],
                 },
             ],
             status: ['', [Validators.required]],

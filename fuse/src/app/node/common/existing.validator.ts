@@ -8,7 +8,12 @@ import {
 import { debounceTime, map, Observable, of } from 'rxjs';
 import { PermissionService } from '../app/permission/permission.service';
 import { RoleService } from '../app/role/role.service';
+import { AreaService } from '../area/area.service';
 import { LineService } from '../line/line.service';
+
+interface BaseService {
+    findOne(query: any): Observable<any>;
+}
 
 @Injectable({
     providedIn: 'root',
@@ -17,166 +22,69 @@ export class ExistingValidator {
     private roleService = inject(RoleService);
     private permissionService = inject(PermissionService);
     private lineService = inject(LineService);
+    private areaService = inject(AreaService);
 
     IsUnique(table: string, method: string) {
         switch (table) {
             case 'Permission':
-                return this.ValidatePermission(method);
+                return this.ValidateEntity(this.permissionService, method);
                 break;
             case 'Role':
-                return this.ValidateRole(method);
+                return this.ValidateEntity(this.roleService, method);
                 break;
                 // case 'User':
                 //     return this.ValidateUser(method);
                 break;
             case 'line':
-                return this.ValidateLine(method);
+                return this.ValidateEntity(this.lineService, method);
                 break;
-            // case 'Plant':
-            //   return this.ValidatePlant(method);
-            //   break;
-            // case 'Division':
-            //   return this.ValidateDivision(method);
-            //   break;
-
-            // case 'Position':
-            //   return this.ValidatePosition(method);
-            //   break;
+            case 'area':
+                return this.ValidateEntity(this.areaService, method);
+                break;
             default:
                 return false;
         }
     }
 
-    // Database Table Permission
-    ValidatePermission(method: string): AsyncValidatorFn {
-        const oldValue: any[] = [];
+    ValidateEntity<T extends BaseService>(
+        service: T,
+        method: string
+    ): AsyncValidatorFn {
         return (
             control: AbstractControl
         ): Observable<ValidationErrors | null> => {
-            const inputValue: string = control.value.toString();
-            const key: any = this.getName(control);
+            const oldValue: string[] = [];
+            const inputValue: string = control.value?.toString();
+            const key: string = this.getName(control);
+
             oldValue.push(inputValue);
             if (!control.dirty || !control.value || control.value.length === 0)
                 return of(null);
 
-            return this.permissionService
-                .findOne({ [key]: control.value })
-                .pipe(
-                    debounceTime(500),
-                    map((res) => {
-                        if (res && method === 'Update') {
-                            var field = res[key];
-                            if (field != oldValue[0]) {
-                                return { alreadyExists: true };
-                            } else {
-                                return null;
-                            }
-                        } else if (res && method === 'Add') {
-                            return { alreadyExists: true };
-                        } else {
-                            return null;
-                        }
-                    })
-                );
-        };
-    }
-
-    // Database Table Role
-    ValidateRole(method: string): AsyncValidatorFn {
-        const oldValue: any[] = [];
-        return (
-            control: AbstractControl
-        ): Observable<ValidationErrors | null> => {
-            const inputValue: string = control.value.toString();
-            const key: any = this.getName(control);
-            oldValue.push(inputValue);
-            if (!control.dirty || !control.value || control.value.length === 0)
-                return of(null);
-
-            return this.roleService.findOne({ [key]: control.value }).pipe(
+            return service.findOne({ [key]: control.value }).pipe(
                 debounceTime(500),
                 map((res) => {
                     if (res && method === 'Update') {
-                        var field = res[key];
-                        if (field != oldValue[0]) {
-                            return { alreadyExists: true };
-                        } else {
-                            return null;
-                        }
-                    } else if (res && method === 'Add') {
-                        return { alreadyExists: true };
-                    } else {
-                        return null;
+                        console.log(res[key].trim().toLowerCase());
+                        console.log(oldValue[0].trim().toLowerCase());
+                        console.log(
+                            res[key].trim().toLowerCase() !==
+                                oldValue[0].trim().toLowerCase()
+                        );
+
+                        console.log(res[key] !== oldValue[0]);
+
+                        return res[key] !== oldValue[0]
+                            ? { alreadyExists: true }
+                            : null;
                     }
+                    return res && method === 'Add'
+                        ? { alreadyExists: true }
+                        : null;
                 })
             );
         };
     }
-
-    // Database Table line
-    ValidateLine(method: string): AsyncValidatorFn {
-        const oldValue: any[] = [];
-        return (
-            control: AbstractControl
-        ): Observable<ValidationErrors | null> => {
-            const inputValue: string = control.value.toString();
-            const key: any = this.getName(control);
-            oldValue.push(inputValue);
-            if (!control.dirty || !control.value || control.value.length === 0)
-                return of(null);
-
-            return this.lineService.findOne({ [key]: control.value }).pipe(
-                debounceTime(500),
-                map((res) => {
-                    if (res && method === 'Update') {
-                        var field = res[key];
-                        if (field != oldValue[0]) {
-                            return { alreadyExists: true };
-                        } else {
-                            return null;
-                        }
-                    } else if (res && method === 'Add') {
-                        return { alreadyExists: true };
-                    } else {
-                        return null;
-                    }
-                })
-            );
-        };
-    }
-
-    // Database Table User
-    // ValidateUser(method: string): AsyncValidatorFn {
-    //     const oldValue: any[] = [];
-    //     return (
-    //         control: AbstractControl
-    //     ): Observable<ValidationErrors | null> => {
-    //         const inputValue: string = control.value.toString();
-    //         const key: any = this.getName(control);
-    //         oldValue.push(inputValue);
-    //         if (!control.dirty || !control.value || control.value.length === 0)
-    //             return of(null);
-
-    //         return this.userService.findOne({ [key]: control.value }).pipe(
-    //             debounceTime(500),
-    //             map((res) => {
-    //                 if (res && method === 'Update') {
-    //                     var field = res[key];
-    //                     console.log(oldValue[0]);
-    //                     if (field != oldValue[0]) {
-    //                         return { alreadyExists: true };
-    //                     } else {
-    //                         return null;
-    //                     }
-    //                 } else if (res && method === 'Add') {
-    //                     return { alreadyExists: true };
-    //                 } else {
-    //                     return null;
-    //                 }
-    //             })
-    //         );
-    //     };
-    // }
 
     private getName(control: AbstractControl): string | null {
         let group = <FormGroup>control.parent;

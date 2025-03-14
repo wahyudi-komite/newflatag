@@ -7,6 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { NgxTrimDirectiveModule } from 'ngx-trim-directive';
 
 @NgModule({
     declarations: [],
@@ -20,6 +21,7 @@ import { MatSelectModule } from '@angular/material/select';
         ReactiveFormsModule,
         MatButtonModule,
         MatSelectModule,
+        NgxTrimDirectiveModule,
     ],
     exports: [
         CommonModule,
@@ -31,6 +33,7 @@ import { MatSelectModule } from '@angular/material/select';
         ReactiveFormsModule,
         MatButtonModule,
         MatSelectModule,
+        NgxTrimDirectiveModule,
     ],
 })
 export class ShareDialogModule {}

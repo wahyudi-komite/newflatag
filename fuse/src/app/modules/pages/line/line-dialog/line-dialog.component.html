@@ -17,7 +17,6 @@
                         formControlName="name"
                         [placeholder]="'Line..'"
                         trim="blur"
-                        oninput="this.value = this.value.toUpperCase()"
                         value="{{ this.local_data.name }}"
                         cdkFocusInitial
                     />
@@ -52,7 +51,6 @@
                         formControlName="alias"
                         [placeholder]="'Alias..'"
                         trim="blur"
-                        oninput="this.value = this.value.toUpperCase()"
                         value="{{ this.local_data.alias }}"
                     />
                     <mat-error

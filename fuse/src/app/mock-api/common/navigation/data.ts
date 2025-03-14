@@ -2,39 +2,39 @@
 import { FuseNavigationItem } from '@fuse/components/navigation';
 
 export const defaultNavigation: FuseNavigationItem[] = [
-    {
-        id: 'dashboard',
-        title: 'Dashboard',
-        type: 'basic',
-        icon: 'heroicons_outline:home',
-        link: '/dashboard',
-    },
-    {
-        id: 'example',
-        title: 'Examples',
-        type: 'basic',
-        icon: 'heroicons_outline:chart-pie',
-        link: '/example',
-    },
+    // {
+    //     id: 'dashboard',
+    //     title: 'Dashboard',
+    //     type: 'basic',
+    //     icon: 'heroicons_outline:home',
+    //     link: '/dashboard',
+    // },
+    // {
+    //     id: 'example',
+    //     title: 'Examples',
+    //     type: 'basic',
+    //     icon: 'heroicons_outline:chart-pie',
+    //     link: '/example',
+    // },
     {
         id: 'line',
         title: 'Line',
         type: 'basic',
-        icon: 'heroicons_outline:chart-pie',
+        icon: 'heroicons_outline:view-columns',
         link: '/line',
     },
     {
         id: 'area',
         title: 'Area',
         type: 'basic',
-        icon: 'heroicons_outline:chart-pie',
+        icon: 'feather:align-justify',
         link: '/area',
     },
     {
         id: 'machine',
         title: 'Machine',
         type: 'basic',
-        icon: 'heroicons_outline:chart-pie',
+        icon: 'feather:speaker',
         link: '/machine',
     },
 ];

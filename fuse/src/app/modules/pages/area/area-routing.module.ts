@@ -9,7 +9,7 @@ const routes: Routes = [
         path: '',
         component: AreaComponent,
         canActivate: [AuthGuard],
-        data: { role: [UserRole.Admin] },
+        data: { role: [UserRole.Admin, UserRole.User] },
     },
 ];
 

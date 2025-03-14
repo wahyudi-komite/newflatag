@@ -25,6 +25,7 @@ const tabel = 'line';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @UseGuards(AuthGuard)
+@HasPermission('line')
 @Controller('line')
 export class LineController {
   constructor(private readonly _service: LineService) {}
