@@ -7,11 +7,7 @@ export class CreatePartPostingDto {
 
   @IsNotEmpty()
   @IsInt()
-  line_id: number;
-
-  @IsNotEmpty()
-  @IsInt()
-  area_id: number;
+  machine_id: number;
 
   @IsNotEmpty()
   @IsInt()

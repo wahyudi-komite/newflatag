@@ -25,8 +25,17 @@ const columns = ['id', 'uniq', 'qty'].map((col) => `${tabel}.${col}`);
 const lineColumns = ['name'].map((col) => `line.${col}`);
 const areaColumns = ['name'].map((col) => `area.${col}`);
 const partColumns = ['part_no', 'part_name'].map((col) => `part.${col}`);
+const machineColumns = ['machine_no', 'machine_name'].map(
+  (col) => `machine.${col}`,
+);
 
-const allColumns = [...columns, ...lineColumns, ...areaColumns, ...partColumns];
+const allColumns = [
+  ...columns,
+  ...partColumns,
+  ...machineColumns,
+  ...lineColumns,
+  ...areaColumns,
+];
 
 @UseInterceptors(ClassSerializerInterceptor)
 @UseGuards(AuthGuard)
@@ -39,9 +48,10 @@ export class PartPostingController {
     const returnData = await this._service.paginate(
       tabel,
       [
-        [tabel + '.line', 'line'],
-        [tabel + '.area', 'area'],
         [tabel + '.part', 'part'],
+        [tabel + '.machine', 'machine'],
+        ['machine.area', 'area'],
+        ['machine.line', 'line'],
       ],
       {
         limit: isExport ? 1000000 : request.query.limit,
@@ -64,25 +74,25 @@ export class PartPostingController {
 
   @Post()
   async create(@Body() createDto: CreatePartPostingDto) {
-    const existingName = await this._service.findOne({
-      machine_no: createDto.machine_no,
-    });
-    if (existingName) {
-      throw new ConflictException(
-        `No "${createDto.machine_no}" already exists.`,
-      );
-    }
+    // const existingName = await this._service.findOne({
+    //   machine_no: createDto.machine_no,
+    // });
+    // if (existingName) {
+    //   throw new ConflictException(
+    //     `No "${createDto.machine_no}" already exists.`,
+    //   );
+    // }
 
-    const existingAlias = await this._service.findOne({
-      machine_name: createDto.machine_name,
-    });
-    if (existingAlias) {
-      throw new ConflictException(
-        `Alias "${createDto.machine_name}" already exists.`,
-      );
-    }
+    // const existingAlias = await this._service.findOne({
+    //   machine_name: createDto.machine_name,
+    // });
+    // if (existingAlias) {
+    //   throw new ConflictException(
+    //     `Alias "${createDto.machine_name}" already exists.`,
+    //   );
+    // }
 
-    createDto.machine_name = capitalize(createDto.machine_name);
+    // createDto.machine_name = capitalize(createDto.machine_name);
     return this._service.create(createDto);
   }
 

@@ -67,10 +67,16 @@
                             >
                                 PART NAME
                             </th>
-                            <th class="text-left" mat-sort-header="area.name">
+                            <th
+                                class="text-left"
+                                mat-sort-header="machine.area.name"
+                            >
                                 MC AREA
                             </th>
-                            <th class="text-left" mat-sort-header="line.name">
+                            <th
+                                class="text-left"
+                                mat-sort-header="machine.line.name"
+                            >
                                 MC LINE
                             </th>
                             <th
@@ -110,10 +116,10 @@
                                     {{ data.part.part_name }}
                                 </td>
                                 <td class="text-left">
-                                    {{ data.area.name }}
+                                    {{ data.machine.area.name }}
                                 </td>
                                 <td class="text-left">
-                                    {{ data.line.name }}
+                                    {{ data.machine.line.name }}
                                 </td>
                                 <td class="text-left">
                                     {{ data.uniq }}

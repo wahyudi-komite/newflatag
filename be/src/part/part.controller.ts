@@ -20,6 +20,7 @@ import { CreatePartDto } from './dto/create-part.dto';
 import { UpdatePartDto } from './dto/update-part.dto';
 import { HasPermission } from '../permissions/has-permission.decorator';
 import { AuthGuard } from '../auth/auth.guard';
+import { capitalize } from '../common/utils/string.util';
 
 const tabel = 'part';
 const columns = ['id', 'part_no', 'part_name', 'supplier', 'status'].map(
@@ -66,7 +67,8 @@ export class PartController {
         `Name "${createDto.part_no}" already exists.`,
       );
     }
-
+    createDto.part_name = capitalize(createDto.part_name);
+    createDto.supplier = capitalize(createDto.supplier);
     return this._service.create(createDto);
   }
 
@@ -105,7 +107,8 @@ export class PartController {
     if (duplicateName && duplicateName.id !== +id) {
       throw new ConflictException(`"${updateDto.part_no}" already exists.`);
     }
-
+    updateDto.part_name = capitalize(updateDto.part_name);
+    updateDto.supplier = capitalize(updateDto.supplier);
     return this._service.update(+id, updateDto);
   }
 

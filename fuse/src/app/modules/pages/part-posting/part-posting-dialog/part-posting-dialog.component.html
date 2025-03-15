@@ -1,1 +1,159 @@
-<p>part-posting-dialog works!</p>
+<div class="flex items-center justify-between border-b-2 border-gray-200">
+    <h1 class="items-start text-right text-xl font-bold uppercase">
+        Form {{ this.action }} Part Posting
+    </h1>
+    <button mat-icon-button (click)="closeDialog()">
+        <mat-icon>close</mat-icon>
+    </button>
+</div>
+<form [formGroup]="form" (submit)="doAction()" autocomplete="off">
+    <mat-dialog-content class="px-0">
+        <div *ngIf="action != 'Delete'; else elseTemplate" class="space-y-0">
+            <div class="gt-xs:flex-row flex">
+                <mat-form-field class="w-full" floatLabel="always">
+                    <mat-label>Part Number</mat-label>
+                    <mat-select
+                        name="part"
+                        formControlName="part"
+                        [placeholder]="'--Please Choice--'"
+                    >
+                        <mat-option>--Please Choice--</mat-option>
+                        <mat-option
+                            *ngFor="let dataPart of part"
+                            [value]="dataPart.id"
+                        >
+                            {{ dataPart.part_no }}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error
+                        *ngIf="f['part'].errors && f['part'].errors['required']"
+                    >
+                        You must choice one
+                    </mat-error>
+                </mat-form-field>
+            </div>
+
+            <!-- <div class="flex gt-xs:flex-row">
+                <mat-form-field class="w-full" floatLabel="always">
+                    <mat-label>Machine</mat-label>
+                    <mat-select
+                        name="machine"
+                        formControlName="machine"
+                        [placeholder]="'--Please Choice--'"
+                    >
+                        <mat-option>--Please Choice--</mat-option>
+                        <mat-option
+                            *ngFor="let dataMachine of machine"
+                            [value]="dataMachine.id"
+                        >
+                            {{ dataMachine.machine_no }}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error
+                        *ngIf="
+                            f['machine'].errors &&
+                            f['machine'].errors['required']
+                        "
+                    >
+                        You must choice one
+                    </mat-error>
+                </mat-form-field>
+            </div> -->
+            <!-- <div class="flex gt-xs:flex-row">
+                <mat-form-field [ngClass]="" class="w-full" floatLabel="always">
+                    <mat-label>Machine No</mat-label>
+                    <input
+                        type="number"
+                        matInput
+                        formControlName="machine"
+                        [placeholder]="'Machine Number..'"
+                        trim="blur"
+                        value="{{ this.local_data.machine_no }}"
+                        cdkFocusInitial
+                    />
+                    <mat-error
+                        *ngIf="
+                            f['machine_no'].errors &&
+                            f['machine_no'].errors['required']
+                        "
+                    >
+                        You must enter a value
+                    </mat-error>
+                    <mat-error
+                        *ngIf="
+                            f['machine_no'].errors &&
+                            f['machine_no'].errors['min']
+                        "
+                    >
+                        Minimum value is 1
+                    </mat-error>
+                    <mat-error
+                        *ngIf="
+                            f['machine_no'].errors &&
+                            f['machine_no'].errors['max']
+                        "
+                    >
+                        Minimum value is 1000
+                    </mat-error>
+                    <mat-error
+                        *ngIf="
+                            f['machine_no'].errors &&
+                            f['machine_no'].errors['pattern']
+                        "
+                    >
+                        Only numbers are allowed
+                    </mat-error>
+                    <mat-error
+                        *ngIf="
+                            f['machine_no'].errors &&
+                            f['machine_no'].errors['alreadyExists']
+                        "
+                    >
+                        The number machine already exist
+                    </mat-error>
+                </mat-form-field> 
+            </div>-->
+        </div>
+        <ng-template #elseTemplate>
+            <div class="-mt-2 mb-2 flex w-full flex-col">
+                <span
+                    ><strong
+                        class="rounded-sm px-2 py-1 font-normal text-gray-800"
+                        >Are you sure to delete :
+                    </strong></span
+                >
+                <div class="mb-4 mt-2 flex w-full items-center justify-center">
+                    <h3
+                        class="rounded-xl bg-black px-4 py-1 text-2xl font-extrabold text-indigo-50"
+                    >
+                        {{ local_data.machine_name }} ?
+                    </h3>
+                </div>
+            </div>
+        </ng-template>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end" class="-mt-4">
+        <button
+            mat-raised-button
+            type="reset"
+            color="warn"
+            (click)="closeDialog()"
+        >
+            <mat-icon>cancel</mat-icon>
+            CANCEL
+        </button>
+        <button
+            [disabled]="
+                action == 'Delete' ? false : !(form.valid && form.dirty)
+            "
+            class="ml-6"
+            mat-raised-button
+            color="primary"
+            type="submit"
+            cdkFocusInitial
+        >
+            <mat-icon>save</mat-icon>
+            {{ action != 'Delete' ? 'SAVE' : 'DELETE' }}
+        </button>
+    </mat-dialog-actions>
+</form>
