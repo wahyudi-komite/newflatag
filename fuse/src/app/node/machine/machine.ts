@@ -4,8 +4,8 @@ import { Line } from '../line/line';
 
 export interface Machine {
     id: number;
-    machineNo: string;
-    machineName: string;
+    machine_no: string;
+    machine_name: string;
     line: Line;
     area: Area;
     status: StatusEnum;

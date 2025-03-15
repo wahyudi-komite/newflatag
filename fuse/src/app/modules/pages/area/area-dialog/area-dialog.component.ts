@@ -31,25 +31,25 @@ export class AreaDialogComponent implements OnInit {
         this.local_data = { ...this.data };
         this.action = this.local_data.action;
 
+        const asyncValidator = this.existingValidator.IsUnique(
+            'area',
+            this.local_data.action,
+            this.local_data.id
+        );
+
         this.form = this.fb.group({
             name: [
                 '',
                 {
                     validators: [Validators.required, Validators.minLength(4)],
-                    asyncValidators:
-                        this.action == 'Add'
-                            ? this.existingValidator.IsUnique('area', 'Add')
-                            : this.existingValidator.IsUnique('area', 'Update'),
+                    asyncValidators: asyncValidator ? asyncValidator : [],
                 },
             ],
             alias: [
                 '',
                 {
                     validators: [Validators.required, Validators.minLength(2)],
-                    asyncValidators:
-                        this.action == 'Add'
-                            ? this.existingValidator.IsUnique('area', 'Add')
-                            : this.existingValidator.IsUnique('area', 'Update'),
+                    asyncValidators: asyncValidator ? asyncValidator : [],
                 },
             ],
             status: ['', [Validators.required]],

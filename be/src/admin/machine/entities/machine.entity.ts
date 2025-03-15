@@ -15,8 +15,8 @@ import { Area } from '../../area/entities/area.entity';
 @Entity()
 export class Machine {
   @PrimaryGeneratedColumn() id: number;
-  @Column({ name: 'machine_no', unique: true }) machineNo: string;
-  @Column({ name: 'machine_name' }) machineName: string;
+  @Column({ name: 'machine_no', unique: true }) machine_no: string;
+  @Column({ name: 'machine_name' }) machine_name: string;
   @ManyToOne(() => Line) @JoinColumn({ name: 'line_id' }) line: Line;
   @ManyToOne(() => Area) @JoinColumn({ name: 'area_id' }) area: Area;
   @Column({ type: 'enum', enum: StatusEnum, default: StatusEnum.OK })

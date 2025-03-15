@@ -34,8 +34,10 @@ export class LineDialogComponent implements OnInit {
 
         const asyncValidator = this.existingValidator.IsUnique(
             'line',
-            this.action
+            this.local_data.action,
+            this.local_data.id
         );
+
         this.form = this.fb.group({
             name: [
                 '',

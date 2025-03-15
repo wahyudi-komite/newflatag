@@ -19,6 +19,7 @@ import { CreateAreaDto } from './dto/create-area.dto';
 import { UpdateAreaDto } from './dto/update-area.dto';
 import { HasPermission } from '../../permissions/has-permission.decorator';
 import { AuthGuard } from '../../auth/auth.guard';
+import { capitalize } from '../../common/utils/string.util';
 
 const tabel = 'area';
 
@@ -73,6 +74,7 @@ export class AreaController {
       );
     }
 
+    createAreaDto.name = capitalize(createAreaDto.name);
     return this._service.create(createAreaDto);
   }
 
@@ -86,8 +88,18 @@ export class AreaController {
     return this.getData(request);
   }
 
+  @Get('all')
+  async all(@Request() request) {
+    return this._service.findAll([], {
+      sort: request.query.sort,
+      direction: request.query.direction,
+      field: request.query.field,
+      keyword: request.query.keyword,
+    });
+  }
+
   @Put(':id')
-  async update(@Param('id') id: string, @Body() updateLineDto: UpdateAreaDto) {
+  async update(@Param('id') id: string, @Body() updateDto: UpdateAreaDto) {
     const cekId = await this._service.findOne({ id: +id });
     if (!cekId) {
       throw new NotFoundException(`Data dengan ID ${id} tidak ditemukan`);
@@ -95,27 +107,23 @@ export class AreaController {
 
     // Cek apakah `name` sudah ada dengan ID berbeda
     const duplicateName = await this._service.findOne({
-      name: updateLineDto.name,
+      name: updateDto.name,
     });
 
     if (duplicateName && duplicateName.id !== +id) {
-      throw new ConflictException(
-        `Name "${updateLineDto.name}" already exists.`,
-      );
+      throw new ConflictException(`Name "${updateDto.name}" already exists.`);
     }
 
     // Cek apakah `alias` sudah ada dengan ID berbeda
     const duplicateAlias = await this._service.findOne({
-      alias: updateLineDto.alias,
+      alias: updateDto.alias,
     });
 
     if (duplicateAlias && duplicateAlias.id !== +id) {
-      throw new ConflictException(
-        `Alias "${updateLineDto.alias}" already exists.`,
-      );
+      throw new ConflictException(`Alias "${updateDto.alias}" already exists.`);
     }
-
-    return this._service.update(+id, updateLineDto);
+    updateDto.name = capitalize(updateDto.name);
+    return this._service.update(+id, updateDto);
   }
 
   @Delete(':id')

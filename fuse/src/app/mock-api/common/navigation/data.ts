@@ -20,7 +20,7 @@ export const defaultNavigation: FuseNavigationItem[] = [
         id: 'line',
         title: 'Line',
         type: 'basic',
-        icon: 'heroicons_outline:view-columns',
+        icon: 'feather:trello',
         link: '/line',
     },
     {
@@ -36,6 +36,20 @@ export const defaultNavigation: FuseNavigationItem[] = [
         type: 'basic',
         icon: 'feather:speaker',
         link: '/machine',
+    },
+    {
+        id: 'part',
+        title: 'Part',
+        type: 'basic',
+        icon: 'heroicons_outline:view-columns',
+        link: '/part',
+    },
+    {
+        id: 'part-posting',
+        title: 'Posting Part',
+        type: 'basic',
+        icon: 'heroicons_outline:table-cells',
+        link: '/part-posting',
     },
 ];
 export const compactNavigation: FuseNavigationItem[] = [

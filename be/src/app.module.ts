@@ -11,6 +11,8 @@ import { AreaModule } from './admin/area/area.module';
 import { MachineModule } from './admin/machine/machine.module';
 import { APP_GUARD } from '@nestjs/core';
 import { PermissionsGuard } from './permissions/permissions.guard';
+import { PartModule } from './part/part.module';
+import { PartPostingModule } from './part-posting/part-posting.module';
 
 @Module({
   imports: [
@@ -26,6 +28,8 @@ import { PermissionsGuard } from './permissions/permissions.guard';
     LineModule,
     AreaModule,
     MachineModule,
+    PartModule,
+    PartPostingModule,
   ],
   controllers: [],
   providers: [

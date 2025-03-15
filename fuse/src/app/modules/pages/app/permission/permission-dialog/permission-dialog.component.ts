@@ -57,21 +57,18 @@ export class PermissionDialogComponent implements OnInit {
         this.local_data = { ...this.data };
         this.action = this.local_data.action;
 
+        const asyncValidator = this.existingValidator.IsUnique(
+            'permissions',
+            this.local_data.action,
+            this.local_data.id
+        );
+
         this.form = this.fb.group({
             name: [
                 '',
                 {
                     validators: [Validators.required, Validators.minLength(4)],
-                    asyncValidators:
-                        this.action == 'Add'
-                            ? this.existingValidator.IsUnique(
-                                  'Permissions',
-                                  'Add'
-                              )
-                            : this.existingValidator.IsUnique(
-                                  'Permissions',
-                                  'Update'
-                              ),
+                    asyncValidators: asyncValidator ? asyncValidator : [],
                 },
             ],
         });

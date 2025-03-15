@@ -1,19 +1,28 @@
 <div
-    class="flex flex-col items-center flex-auto min-w-0 sm:justify-center bg-gradient-to-t from-crayola-100 via-sunset-100 to-white">
-    <div class="w-full px-4 py-8 sm:bg-card sm:w-auto sm:rounded-2xl sm:p-12 sm:shadow">
-        <div class="w-full mx-auto max-w-80 sm:mx-0 sm:w-80">
+    class="flex min-w-0 flex-auto flex-col items-center bg-gradient-to-t from-emerald-100 via-sunset-200 to-white sm:justify-center"
+>
+    <div
+        class="w-full px-4 py-8 sm:bg-card sm:w-auto sm:rounded-2xl sm:p-12 sm:shadow"
+    >
+        <div class="mx-auto w-full max-w-80 sm:mx-0 sm:w-80">
             <!-- Logo -->
-            <div class="flex justify-center w-full">
-                <img src="images/logo/logo_ed_small.png" class="max-w-48 animate-spin-very-slow" />
+            <div class="flex w-full justify-center">
+                <img src="images/logo/logo_small.png" class="max-w-42" />
             </div>
 
-            <h4 class="mt-4 font-sans text-4xl antialiased font-bold leading-snug tracking-normal text-risd-500">
-                <span class="text-crayola-500">Employee</span> Day
+            <h4
+                class="mt-4 font-sans text-4xl font-bold leading-snug tracking-normal text-risd-500 antialiased"
+            >
+                <span class="text-emerald-600">CONSUMO</span>
             </h4>
-            <h1 class="mt-1 font-mono text-xl font-bold text-sunset-700">ADM-KEP 2024</h1>
+            <h3 class="mt-1 font-sans text-md font-normal text-gray-700">
+                Inhouse Production Consum Part Apps
+            </h3>
 
             <!-- Title -->
-            <div class="mt-4 text-lg font-extrabold leading-tight tracking-tight">
+            <div
+                class="mt-4 text-lg font-extrabold leading-tight tracking-tight"
+            >
                 Sign in
             </div>
             <!-- <div class="mt-0.5 flex items-baseline font-medium">
@@ -24,42 +33,67 @@
 
             <!-- Alert -->
             @if (showAlert) {
-            <fuse-alert class="mt-8" [appearance]="'outline'" [showIcon]="false" [type]="alert.type"
-                [@shake]="alert.type === 'error'">
-                {{ alert.message }}
-            </fuse-alert>
+                <fuse-alert
+                    class="mt-8"
+                    [appearance]="'outline'"
+                    [showIcon]="false"
+                    [type]="alert.type"
+                    [@shake]="alert.type === 'error'"
+                >
+                    {{ alert.message }}
+                </fuse-alert>
             }
 
             <!-- Sign in form -->
-            <form class="mt-8" [formGroup]="signInForm" #signInNgForm="ngForm" novalidate>
+            <form
+                class="mt-8"
+                [formGroup]="signInForm"
+                #signInNgForm="ngForm"
+                novalidate
+            >
                 <!-- Email field -->
                 <mat-form-field class="w-full">
-                    <mat-label>NPK</mat-label>
+                    <mat-label>Email</mat-label>
                     <input id="email" matInput [formControlName]="'email'" />
                     @if (signInForm.get('email').hasError('required')) {
-                    <mat-error> Npk is required </mat-error>
+                        <mat-error> Npk is required </mat-error>
                     }
                     @if (signInForm.get('email').hasError('email')) {
-                    <mat-error>
-                        Please enter a valid npk
-                    </mat-error>
+                        <mat-error> Please enter a valid npk </mat-error>
                     }
                 </mat-form-field>
 
                 <!-- Password field -->
                 <mat-form-field class="w-full">
                     <mat-label>Password</mat-label>
-                    <input id="password" matInput type="password" [formControlName]="'password'" #passwordField />
-                    <button mat-icon-button type="button" (click)="
+                    <input
+                        id="password"
+                        matInput
+                        type="password"
+                        [formControlName]="'password'"
+                        #passwordField
+                    />
+                    <button
+                        mat-icon-button
+                        type="button"
+                        (click)="
                             passwordField.type === 'password'
                                 ? (passwordField.type = 'text')
                                 : (passwordField.type = 'password')
-                        " matSuffix>
+                        "
+                        matSuffix
+                    >
                         @if (passwordField.type === 'password') {
-                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:eye'"></mat-icon>
+                            <mat-icon
+                                class="icon-size-5"
+                                [svgIcon]="'heroicons_solid:eye'"
+                            ></mat-icon>
                         }
                         @if (passwordField.type === 'text') {
-                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:eye-slash'"></mat-icon>
+                            <mat-icon
+                                class="icon-size-5"
+                                [svgIcon]="'heroicons_solid:eye-slash'"
+                            ></mat-icon>
                         }
                     </button>
                     <mat-error> Password is required </mat-error>
@@ -76,13 +110,21 @@
                 </div> -->
 
                 <!-- Submit button -->
-                <button class="w-full mt-6 fuse-mat-button-large" mat-flat-button [color]="'primary'"
-                    [disabled]="signInForm.disabled" (click)="signIn()">
+                <button
+                    class="fuse-mat-button-large mt-6 w-full"
+                    mat-flat-button
+                    [color]="'primary'"
+                    [disabled]="signInForm.disabled"
+                    (click)="signIn()"
+                >
                     @if (!signInForm.disabled) {
-                    <span> Sign in </span>
+                        <span> Sign in </span>
                     }
                     @if (signInForm.disabled) {
-                    <mat-progress-spinner [diameter]="24" [mode]="'indeterminate'"></mat-progress-spinner>
+                        <mat-progress-spinner
+                            [diameter]="24"
+                            [mode]="'indeterminate'"
+                        ></mat-progress-spinner>
                     }
                 </button>
 

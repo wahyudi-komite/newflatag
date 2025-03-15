@@ -2,10 +2,9 @@ import { inject, Injectable } from '@angular/core';
 import {
     AbstractControl,
     AsyncValidatorFn,
-    FormGroup,
     ValidationErrors,
 } from '@angular/forms';
-import { debounceTime, map, Observable, of } from 'rxjs';
+import { debounceTime, map, Observable, of, switchMap } from 'rxjs';
 import { PermissionService } from '../app/permission/permission.service';
 import { RoleService } from '../app/role/role.service';
 import { AreaService } from '../area/area.service';
@@ -24,87 +23,62 @@ export class ExistingValidator {
     private lineService = inject(LineService);
     private areaService = inject(AreaService);
 
-    IsUnique(table: string, method: string) {
-        switch (table) {
-            case 'Permission':
-                return this.ValidateEntity(this.permissionService, method);
-                break;
-            case 'Role':
-                return this.ValidateEntity(this.roleService, method);
-                break;
-                // case 'User':
-                //     return this.ValidateUser(method);
-                break;
+    private getService(table: string): BaseService | null {
+        switch (table.toLowerCase()) {
+            case 'permissions':
+                return this.permissionService;
+            case 'role':
+                return this.roleService;
             case 'line':
-                return this.ValidateEntity(this.lineService, method);
-                break;
+                return this.lineService;
             case 'area':
-                return this.ValidateEntity(this.areaService, method);
-                break;
+                return this.areaService;
             default:
-                return false;
+                throw new Error(`Table ${table} is not supported.`);
         }
     }
 
-    ValidateEntity<T extends BaseService>(
-        service: T,
-        method: string
+    IsUnique(
+        table: string,
+        method: 'Add' | 'Update',
+        id?: number
     ): AsyncValidatorFn {
         return (
             control: AbstractControl
         ): Observable<ValidationErrors | null> => {
-            const oldValue: string[] = [];
-            const inputValue: string = control.value?.toString();
-            const key: string = this.getName(control);
+            if (!control.dirty || !control.value) return of(null);
 
-            oldValue.push(inputValue);
-            if (!control.dirty || !control.value || control.value.length === 0)
-                return of(null);
+            const key = this.getName(control);
+            if (!key) return of(null);
 
-            return service.findOne({ [key]: control.value }).pipe(
-                debounceTime(500),
-                map((res) => {
-                    if (res && method === 'Update') {
-                        console.log(res[key].trim().toLowerCase());
-                        console.log(oldValue[0].trim().toLowerCase());
-                        console.log(
-                            res[key].trim().toLowerCase() !==
-                                oldValue[0].trim().toLowerCase()
-                        );
+            const service = this.getService(table);
+            if (!service) return of(null);
 
-                        console.log(res[key] !== oldValue[0]);
+            return of(control.value).pipe(
+                debounceTime(500), // Mencegah request berulang dalam waktu singkat
+                switchMap((value) =>
+                    service.findOne({ [key]: value }).pipe(
+                        map((res) => {
+                            if (!res) return null; // Jika tidak ditemukan, berarti valid
 
-                        return res[key] !== oldValue[0]
-                            ? { alreadyExists: true }
-                            : null;
-                    }
-                    return res && method === 'Add'
-                        ? { alreadyExists: true }
-                        : null;
-                })
+                            // Jika mode update dan ID sama dengan yang sedang diedit, validasi tetap lolos
+                            if (method === 'Update' && res.id === id)
+                                return null;
+
+                            return { alreadyExists: true }; // Data sudah ada di database
+                        })
+                    )
+                )
             );
         };
     }
 
     private getName(control: AbstractControl): string | null {
-        let group = <FormGroup>control.parent;
-
-        if (!group) {
-            return null;
-        }
-
-        let name: string = '';
-
-        Object.keys(group.controls).forEach((key) => {
-            let childControl = group.get(key);
-
-            if (childControl !== control) {
-                return;
-            }
-
-            name = key;
-        });
-
-        return name;
+        if (!control.parent) return null;
+        return (
+            Object.keys(control.parent.controls).find(
+                (key) => control.parent?.get(key) === control
+            ) || null
+        );
     }
 }

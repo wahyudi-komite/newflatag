@@ -16,6 +16,14 @@ export default [
         loadChildren: () =>
             import('./machine/machine.module').then((m) => m.MachineModule),
     },
+    {
+        path: 'part',
+        loadChildren: () => import('./part/part.routes'),
+    },
+    {
+        path: 'part-posting',
+        loadChildren: () => import('./part-posting/part-posting.routes'),
+    },
     // admin routes
     {
         path: 'role',

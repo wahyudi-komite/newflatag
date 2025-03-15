@@ -83,9 +83,18 @@ export class LineController {
   }
 
   @Get()
-  @HasPermission('line')
   async findAll(@Request() request) {
     return this.getData(request);
+  }
+
+  @Get('all')
+  async all(@Request() request) {
+    return this._service.findAll([], {
+      sort: request.query.sort,
+      direction: request.query.direction,
+      field: request.query.field,
+      keyword: request.query.keyword,
+    });
   }
 
   @Put(':id')
