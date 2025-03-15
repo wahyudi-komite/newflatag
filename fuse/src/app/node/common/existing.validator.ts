@@ -9,6 +9,9 @@ import { PermissionService } from '../app/permission/permission.service';
 import { RoleService } from '../app/role/role.service';
 import { AreaService } from '../area/area.service';
 import { LineService } from '../line/line.service';
+import { MachineService } from '../machine/machine.service';
+import { PartService } from '../part/part.service';
+import { PartPostingService } from '../partPosting/part-posting.service';
 
 interface BaseService {
     findOne(query: any): Observable<any>;
@@ -22,6 +25,9 @@ export class ExistingValidator {
     private permissionService = inject(PermissionService);
     private lineService = inject(LineService);
     private areaService = inject(AreaService);
+    private machineService = inject(MachineService);
+    private partService = inject(PartService);
+    private partPostingService = inject(PartPostingService);
 
     private getService(table: string): BaseService | null {
         switch (table.toLowerCase()) {
@@ -33,6 +39,12 @@ export class ExistingValidator {
                 return this.lineService;
             case 'area':
                 return this.areaService;
+            case 'machine':
+                return this.machineService;
+            case 'part':
+                return this.partService;
+            case 'part-posting':
+                return this.partPostingService;
             default:
                 throw new Error(`Table ${table} is not supported.`);
         }

@@ -14,15 +14,21 @@ export class PermissionsGuard implements CanActivate {
     private userService: UsersService,
     private roleService: RolesService,
   ) {}
+
   async canActivate(context: ExecutionContext) {
-    const access = this.reflector.get<string>('access', context.getHandler());
+    // Coba ambil metadata dari handler (method) terlebih dahulu
+    let access = this.reflector.get<string[]>('access', context.getHandler());
+
+    // Jika tidak ditemukan di handler, coba ambil dari class (controller)
+    if (!access) {
+      access = this.reflector.get<string[]>('access', context.getClass());
+    }
 
     if (!access) {
-      return true;
+      return true; // Tidak ada permission yang didefinisikan, izinkan akses
     }
 
     const request = context.switchToHttp().getRequest();
-
     const id = await this.authService.userId(request);
 
     if (!id) {
@@ -38,19 +44,23 @@ export class PermissionsGuard implements CanActivate {
     const role: Role = await this.roleService.findOne({ id: user.role.id }, [
       'permissions',
     ]);
+
     if (!role || !role.permissions) {
       return false; // Role tidak memiliki permission.
     }
 
-    if (request.method === 'GET') {
-      if (!role.permissions || role.permissions.length === 0) {
-        return false; // Tidak ada izin, tolak akses
-      }
+    // Karena access adalah array, kita perlu loop melalui array tersebut.
+    const requiredPermissions = access
+      .map((permission) => {
+        if (request.method === 'GET') {
+          return [`${permission} read`, `${permission} update`];
+        }
+        return [`${permission} update`];
+      })
+      .flat(); // flat() untuk menggabungkan array permissions
 
-      return role.permissions.some(
-        (p) => p.name === `${access} read` || p.name === `${access} update`,
-      );
-    }
-    return role.permissions.some((p) => p.name === `${access} update`);
+    return requiredPermissions.some((requiredPermission) =>
+      role.permissions.some((p) => p.name === requiredPermission),
+    );
   }
 }

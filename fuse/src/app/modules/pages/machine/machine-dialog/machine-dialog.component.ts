@@ -71,20 +71,19 @@ export class MachineDialogComponent implements OnInit {
                 '',
                 {
                     validators: [Validators.required, Validators.minLength(4)],
-                    asyncValidators: asyncValidator ? asyncValidator : [],
                 },
             ],
-            area_id: ['', [Validators.required]],
-            line_id: ['', [Validators.required]],
+            area: ['', [Validators.required]],
+            line: ['', [Validators.required]],
             status: ['', [Validators.required]],
         });
 
         if (this.action != 'Add') {
             this.form.patchValue({
-                machine_no: this.local_data.machine_no,
+                machine_no: Number(this.local_data.machine_no),
                 machine_name: this.local_data.machine_name,
-                area_id: this.local_data.area.id,
-                line_id: this.local_data.line.id,
+                area: this.local_data.area.id,
+                line: this.local_data.line.id,
                 status: this.local_data.status,
             });
         }
@@ -109,6 +108,7 @@ export class MachineDialogComponent implements OnInit {
             return;
         }
 
+        console.log(this.form.value);
         this.dialogRef.close({
             event: this.action,
             data: this.local_data,

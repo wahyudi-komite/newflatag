@@ -51,7 +51,15 @@
                             f['machine_no'].errors['pattern']
                         "
                     >
-                        The name already exist
+                        Only numbers are allowed
+                    </mat-error>
+                    <mat-error
+                        *ngIf="
+                            f['machine_no'].errors &&
+                            f['machine_no'].errors['alreadyExists']
+                        "
+                    >
+                        The number machine already exist
                     </mat-error>
                 </mat-form-field>
             </div>
@@ -83,14 +91,6 @@
                     >
                         Minimum 4 character
                     </mat-error>
-                    <mat-error
-                        *ngIf="
-                            f['machine_name'].errors &&
-                            f['machine_name'].errors['pattern']
-                        "
-                    >
-                        Only numbers are allowed
-                    </mat-error>
                 </mat-form-field>
             </div>
 
@@ -98,12 +98,15 @@
                 <mat-form-field class="w-full" floatLabel="always">
                     <mat-label>Area</mat-label>
                     <mat-select
-                        name="area_id"
-                        formControlName="area_id"
+                        name="area"
+                        formControlName="area"
                         [placeholder]="'--Please Choice--'"
                     >
                         <mat-option>--Please Choice--</mat-option>
-                        <mat-option *ngFor="let dataArea of area" [value]="1">
+                        <mat-option
+                            *ngFor="let dataArea of area"
+                            [value]="dataArea.id"
+                        >
                             {{ dataArea.name }}
                         </mat-option>
                     </mat-select>
@@ -121,8 +124,8 @@
                 <mat-form-field class="w-full" floatLabel="always">
                     <mat-label>Line</mat-label>
                     <mat-select
-                        name="line_id"
-                        formControlName="line_id"
+                        name="line"
+                        formControlName="line"
                         [placeholder]="'--Please Choice--'"
                     >
                         <mat-option>--Please Choice--</mat-option>
@@ -181,7 +184,7 @@
                     <h3
                         class="rounded-xl bg-black px-4 py-1 text-2xl font-extrabold text-indigo-50"
                     >
-                        {{ local_data.name }} ?
+                        {{ local_data.machine_name }} ?
                     </h3>
                 </div>
             </div>

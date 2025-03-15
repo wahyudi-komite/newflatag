@@ -4,7 +4,7 @@ import { Line } from '../line/line';
 
 export interface Machine {
     id: number;
-    machine_no: string;
+    machine_no: number;
     machine_name: string;
     line: Line;
     area: Area;

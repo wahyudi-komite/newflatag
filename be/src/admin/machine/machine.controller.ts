@@ -74,15 +74,6 @@ export class MachineController {
       );
     }
 
-    const existingAlias = await this._service.findOne({
-      machine_name: createDto.machine_name,
-    });
-    if (existingAlias) {
-      throw new ConflictException(
-        `Alias "${createDto.machine_name}" already exists.`,
-      );
-    }
-
     createDto.machine_name = capitalize(createDto.machine_name);
     return this._service.create(createDto);
   }
@@ -106,22 +97,17 @@ export class MachineController {
 
     // Cek apakah `name` sudah ada dengan ID berbeda
     const duplicateName = await this._service.findOne({
-      name: updateDto.name,
+      machine_no: updateDto.machine_no,
     });
 
     if (duplicateName && duplicateName.id !== +id) {
-      throw new ConflictException(`Name "${updateDto.name}" already exists.`);
+      throw new ConflictException(
+        `Name "${updateDto.machine_no}" already exists.`,
+      );
     }
+    console.log(updateDto);
 
-    // Cek apakah `alias` sudah ada dengan ID berbeda
-    const duplicateAlias = await this._service.findOne({
-      alias: updateDto.alias,
-    });
-
-    if (duplicateAlias && duplicateAlias.id !== +id) {
-      throw new ConflictException(`Alias "${updateDto.alias}" already exists.`);
-    }
-    // updateDto.name = capitalize(updateDto.name);
+    updateDto.machine_name = capitalize(updateDto.machine_name);
     return this._service.update(+id, updateDto);
   }
 
