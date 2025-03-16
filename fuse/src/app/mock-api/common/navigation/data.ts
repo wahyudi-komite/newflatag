@@ -51,6 +51,20 @@ export const defaultNavigation: FuseNavigationItem[] = [
         icon: 'heroicons_outline:table-cells',
         link: '/part-posting',
     },
+    {
+        id: 'query-production',
+        title: 'Query Production',
+        type: 'basic',
+        icon: 'heroicons_outline:squares-2x2',
+        link: '/query-production',
+    },
+    {
+        id: 'part-consume',
+        title: 'Query Part Consume',
+        type: 'basic',
+        icon: 'heroicons_outline:squares-2x2',
+        link: '/part-consume',
+    },
 ];
 export const compactNavigation: FuseNavigationItem[] = [
     {

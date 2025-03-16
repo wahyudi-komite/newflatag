@@ -24,6 +24,16 @@ export default [
         path: 'part-posting',
         loadChildren: () => import('./part-posting/part-posting.routes'),
     },
+    {
+        path: 'query-production',
+        loadChildren: () =>
+            import('./query-production/query-production.routes'),
+    },
+    {
+        path: 'part-consume',
+        loadChildren: () =>
+            import('./query-part-consume/query-part-consume.routes'),
+    },
     // admin routes
     {
         path: 'role',

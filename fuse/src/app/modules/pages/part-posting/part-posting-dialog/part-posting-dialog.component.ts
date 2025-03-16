@@ -49,7 +49,7 @@ export class PartPostingDialogComponent implements OnInit {
         });
 
         const asyncValidator = this.existingValidator.IsUnique(
-            'part-posting',
+            'part_posting',
             this.local_data.action,
             this.local_data.id
         );
@@ -72,7 +72,8 @@ export class PartPostingDialogComponent implements OnInit {
                 {
                     validators: [
                         Validators.required,
-                        Validators.min(1),
+                        Validators.min(100),
+                        Validators.max(999),
                         Validators.pattern('^[0-9]*$'),
                     ],
                 },
@@ -91,10 +92,10 @@ export class PartPostingDialogComponent implements OnInit {
 
         if (this.action != 'Add') {
             this.form.patchValue({
-                part: this.local_data.part.part_no,
-                // machine: Number(this.local_data.machine_no),
-                // uniq: this.local_data.uniq,
-                // qty: this.local_data.qty,
+                part: this.local_data.part.id,
+                machine: Number(this.local_data.machine.id),
+                uniq: this.local_data.uniq,
+                qty: this.local_data.qty,
             });
         }
 
@@ -118,7 +119,6 @@ export class PartPostingDialogComponent implements OnInit {
             return;
         }
 
-        console.log(this.form.value);
         this.dialogRef.close({
             event: this.action,
             data: this.local_data,

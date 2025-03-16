@@ -39,7 +39,7 @@ const allColumns = [
 
 @UseInterceptors(ClassSerializerInterceptor)
 @UseGuards(AuthGuard)
-@HasPermission('part-posting')
+@HasPermission('part_posting')
 @Controller('part-posting')
 export class PartPostingController {
   constructor(private readonly _service: PartPostingService) {}
@@ -116,24 +116,6 @@ export class PartPostingController {
       throw new NotFoundException(`Data dengan ID ${id} tidak ditemukan`);
     }
 
-    // Cek apakah `name` sudah ada dengan ID berbeda
-    const duplicateName = await this._service.findOne({
-      name: updateDto.name,
-    });
-
-    if (duplicateName && duplicateName.id !== +id) {
-      throw new ConflictException(`Name "${updateDto.name}" already exists.`);
-    }
-
-    // Cek apakah `alias` sudah ada dengan ID berbeda
-    const duplicateAlias = await this._service.findOne({
-      alias: updateDto.alias,
-    });
-
-    if (duplicateAlias && duplicateAlias.id !== +id) {
-      throw new ConflictException(`Alias "${updateDto.alias}" already exists.`);
-    }
-    // updateDto.name = capitalize(updateDto.name);
     return this._service.update(+id, updateDto);
   }
 

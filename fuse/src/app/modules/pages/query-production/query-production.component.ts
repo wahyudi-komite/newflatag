@@ -6,50 +6,46 @@ import {
     ViewEncapsulation,
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
 import { MatSort, Sort } from '@angular/material/sort';
-import { ToastrModule, ToastrService } from 'ngx-toastr';
-import { first, Subject, takeUntil } from 'rxjs';
+import { ToastrModule } from 'ngx-toastr';
+import { Subject, takeUntil } from 'rxjs';
 import { UserService } from '../../../core/user/user.service';
 import { User } from '../../../core/user/user.types';
 import { GlobalVariable } from '../../../node/common/global-variable';
 import { Paginate } from '../../../node/common/paginate';
 import { SharedModule } from '../../../node/common/shared.module';
 import { StatusEnumService } from '../../../node/common/status-enum.service';
-import { PartPosting } from '../../../node/partPosting/part-posting';
-import { PartPostingService } from '../../../node/partPosting/part-posting.service';
+import { QueryProduction } from '../../../node/query-production/query-production';
+import { QueryProductionService } from '../../../node/query-production/query-production.service';
 import { SearchInputComponent } from '../../comp/tabel/search-input/search-input.component';
-import { PartPostingDialogComponent } from './part-posting-dialog/part-posting-dialog.component';
 
 @Component({
-    selector: 'app-part-posting',
+    selector: 'app-query-production',
     imports: [SharedModule, SearchInputComponent, ToastrModule],
-    templateUrl: './part-posting.component.html',
-    styleUrl: './part-posting.component.scss',
+    templateUrl: './query-production.component.html',
+    styleUrl: './query-production.component.scss',
     encapsulation: ViewEncapsulation.None,
 })
-export class PartPostingComponent implements OnInit {
+export class QueryProductionComponent implements OnInit {
     user: User;
 
-    datas: PartPosting[] = [];
+    datas: QueryProduction[] = [];
     total!: number;
     page!: number;
     pageSize!: number;
     last_page!: number;
     find: string = '';
     limit: number = GlobalVariable.pageTake;
-    tblName: string = 'part_posting';
+    tblName: string = 'eg_out';
     form: FormGroup;
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     @ViewChild(MatSort, { static: true }) sort!: MatSort;
 
-    _service = inject(PartPostingService);
+    _service = inject(QueryProductionService);
     _userService = inject(UserService);
     statusService = inject(StatusEnumService);
     fb = inject(FormBuilder);
-    private toastr = inject(ToastrService);
-    readonly dialog = inject(MatDialog);
 
     ngOnInit(): void {
         this._userService.user$
@@ -71,7 +67,7 @@ export class PartPostingComponent implements OnInit {
         page: number = 1,
         limit: number = 10,
         sort: { active: string; direction: 'asc' | 'desc' } = {
-            active: 'created_at',
+            active: 'create',
             direction: 'asc',
         },
         find?: string
@@ -127,83 +123,5 @@ export class PartPostingComponent implements OnInit {
 
     getStatus(status: number): { text: string; color: string } {
         return this.statusService.getStatus(status);
-    }
-    openDialog(action: string, obj: any) {
-        obj.action = action;
-        let dialogBoxSettings = {
-            position: { top: '10px' },
-            width: '400px',
-            margin: '0 auto',
-            disableClose: true,
-            hasBackdrop: true,
-            data: obj,
-        };
-
-        const dialogRef = this.dialog.open(
-            PartPostingDialogComponent,
-            dialogBoxSettings
-        );
-
-        dialogRef.afterClosed().subscribe((result) => {
-            if (result.event == 'Add') {
-                this.redirectToAdd(result.formValue);
-            } else if (result.event == 'Update') {
-                this.redirectToUpdate(result.data, result.formValue);
-            } else if (result.event == 'Delete') {
-                this.redirectToDelete(result.data.id);
-            }
-        });
-    }
-
-    redirectToAdd(row_obj: any) {
-        this._service
-            .create(row_obj)
-            .pipe(first())
-            .subscribe(
-                (res) => {
-                    GlobalVariable.audioSuccess.play();
-                    this.toastr.success('Updated', 'Store data success');
-                    this.load();
-                },
-                (error) => {
-                    this.errorNotif(error);
-                }
-            );
-    }
-
-    redirectToUpdate(data: any, formValue: any): void {
-        this._service.update(data.id, formValue).subscribe(
-            (res) => {
-                GlobalVariable.audioSuccess.play();
-                this.toastr.success('Success', 'Update data success');
-                this.load();
-            },
-            (error) => {
-                this.errorNotif(error);
-            }
-        );
-    }
-
-    redirectToDelete(row_obj: number) {
-        this._service
-            .delete(row_obj)
-            .pipe(first())
-            .subscribe(
-                (res) => {
-                    GlobalVariable.audioSuccess.play();
-                    this.toastr.success('Deleted', 'Success remove data');
-                    this.load();
-                },
-                (error) => {
-                    this.errorNotif(error);
-                }
-            );
-    }
-
-    errorNotif(error: any) {
-        GlobalVariable.audioFailed.play();
-        this.toastr.error('Failed', error.error.message, {
-            timeOut: 3000,
-        });
     }
 }

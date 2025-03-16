@@ -15,6 +15,7 @@
                     <mat-select
                         name="part"
                         formControlName="part"
+                        cdkFocusInitial
                         [placeholder]="'--Please Choice--'"
                     >
                         <mat-option>--Please Choice--</mat-option>
@@ -33,7 +34,7 @@
                 </mat-form-field>
             </div>
 
-            <!-- <div class="flex gt-xs:flex-row">
+            <div class="gt-xs:flex-row flex">
                 <mat-form-field class="w-full" floatLabel="always">
                     <mat-label>Machine</mat-label>
                     <mat-select
@@ -58,61 +59,70 @@
                         You must choice one
                     </mat-error>
                 </mat-form-field>
-            </div> -->
-            <!-- <div class="flex gt-xs:flex-row">
+            </div>
+            <div class="gt-xs:flex-row flex">
                 <mat-form-field [ngClass]="" class="w-full" floatLabel="always">
-                    <mat-label>Machine No</mat-label>
+                    <mat-label>UNIQ</mat-label>
                     <input
                         type="number"
                         matInput
-                        formControlName="machine"
-                        [placeholder]="'Machine Number..'"
+                        formControlName="uniq"
+                        [placeholder]="'Uniq Number..'"
                         trim="blur"
-                        value="{{ this.local_data.machine_no }}"
+                        value="{{ this.local_data.uniq }}"
                         cdkFocusInitial
                     />
                     <mat-error
-                        *ngIf="
-                            f['machine_no'].errors &&
-                            f['machine_no'].errors['required']
-                        "
+                        *ngIf="f['uniq'].errors && f['uniq'].errors['required']"
                     >
                         You must enter a value
                     </mat-error>
                     <mat-error
-                        *ngIf="
-                            f['machine_no'].errors &&
-                            f['machine_no'].errors['min']
-                        "
+                        *ngIf="f['uniq'].errors && f['uniq'].errors['min']"
                     >
-                        Minimum value is 1
+                        Minimum value is 100
                     </mat-error>
                     <mat-error
-                        *ngIf="
-                            f['machine_no'].errors &&
-                            f['machine_no'].errors['max']
-                        "
+                        *ngIf="f['uniq'].errors && f['uniq'].errors['max']"
                     >
-                        Minimum value is 1000
+                        Minimum value is 999
                     </mat-error>
                     <mat-error
-                        *ngIf="
-                            f['machine_no'].errors &&
-                            f['machine_no'].errors['pattern']
-                        "
+                        *ngIf="f['uniq'].errors && f['uniq'].errors['pattern']"
                     >
                         Only numbers are allowed
                     </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="gt-xs:flex-row flex">
+                <mat-form-field [ngClass]="" class="w-full" floatLabel="always">
+                    <mat-label>Qty</mat-label>
+                    <input
+                        type="number"
+                        matInput
+                        formControlName="qty"
+                        [placeholder]="'Qty per Unit..'"
+                        trim="blur"
+                        value="{{ this.local_data.qty }}"
+                        cdkFocusInitial
+                    />
                     <mat-error
-                        *ngIf="
-                            f['machine_no'].errors &&
-                            f['machine_no'].errors['alreadyExists']
-                        "
+                        *ngIf="f['qty'].errors && f['qty'].errors['required']"
                     >
-                        The number machine already exist
+                        You must enter a value
                     </mat-error>
-                </mat-form-field> 
-            </div>-->
+                    <mat-error
+                        *ngIf="f['qty'].errors && f['qty'].errors['min']"
+                    >
+                        Minimum value is 100
+                    </mat-error>
+                    <mat-error
+                        *ngIf="f['qty'].errors && f['qty'].errors['pattern']"
+                    >
+                        Only numbers are allowed
+                    </mat-error>
+                </mat-form-field>
+            </div>
         </div>
         <ng-template #elseTemplate>
             <div class="-mt-2 mb-2 flex w-full flex-col">

@@ -13,6 +13,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { PermissionsGuard } from './permissions/permissions.guard';
 import { PartModule } from './part/part.module';
 import { PartPostingModule } from './part-posting/part-posting.module';
+import { EgOutModule } from './eg_out/eg_out.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { PartPostingModule } from './part-posting/part-posting.module';
     MachineModule,
     PartModule,
     PartPostingModule,
+    EgOutModule,
   ],
   controllers: [],
   providers: [

@@ -75,6 +75,8 @@ export class MachineController {
     }
 
     createDto.machine_name = capitalize(createDto.machine_name);
+    const machineNoFormatted = createDto.machine_no.padStart(3, '0');
+    createDto.id = parseInt(`${createDto.line}${machineNoFormatted}`);
     return this._service.create(createDto);
   }
 
