@@ -11,11 +11,11 @@ export default [
         loadChildren: () =>
             import('./area/area.module').then((m) => m.AreaModule),
     },
-    {
-        path: 'machine',
-        loadChildren: () =>
-            import('./machine/machine.module').then((m) => m.MachineModule),
-    },
+    // {
+    //     path: 'machine',
+    //     loadChildren: () =>
+    //         import('./machine/machine.module').then((m) => m.MachineModule),
+    // },
     {
         path: 'part',
         loadChildren: () => import('./part/part.routes'),

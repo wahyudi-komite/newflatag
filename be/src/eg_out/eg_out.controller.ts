@@ -17,26 +17,12 @@ import { HasPermission } from '../permissions/has-permission.decorator';
 import { AuthGuard } from '../auth/auth.guard';
 
 const tabel = 'eg_out';
-const columns = [
-  `areamc`,
-  `shift`,
-  `id`,
-  `create`,
-  `uniq`,
-  `eg`,
-  `working`,
-].map((col) => `${tabel}.${col}`);
+const columns = [`shift`, `id`, `create`, `mc`, `uniq`, `eg`, `working`].map(
+  (col) => `${tabel}.${col}`,
+);
 const lineColumns = ['name'].map((col) => `line.${col}`);
-const machineColumns = [
-  `id`,
-  `machine_no`,
-  `machine_name`,
-  `status`,
-  `line_id`,
-  `area_id`,
-].map((col) => `machine.${col}`);
-
-const allColumns = [...columns, ...lineColumns, ...machineColumns];
+const areaColumns = ['name', 'alias'].map((col) => `area.${col}`);
+const allColumns = [...columns, ...lineColumns, ...areaColumns];
 
 @UseInterceptors(ClassSerializerInterceptor)
 @UseGuards(AuthGuard)
@@ -50,8 +36,7 @@ export class EgOutController {
       tabel,
       [
         [tabel + '.line', 'line'],
-        [tabel + '.machine', 'machine'],
-        ['machine.area', 'area'],
+        [tabel + '.area', 'area'],
       ],
       {
         limit: isExport ? 1000000 : request.query.limit,

@@ -27,7 +27,7 @@
                     ></app-paginate-take>
                 </div>
                 <div class="group relative space-x-2">
-                    <button
+                    <!-- <button
                         mat-mini-fab
                         color="primary"
                         matTooltip="Add Data"
@@ -35,7 +35,7 @@
                         (click)="openDialog('Add', {})"
                     >
                         <mat-icon>add</mat-icon>
-                    </button>
+                    </button> -->
                     <button
                         mat-mini-fab
                         color="accent"
@@ -72,17 +72,20 @@
                             >
                                 ALIAS
                             </th>
+                            <th class="text-left" mat-sort-header="line.name">
+                                LINE
+                            </th>
                             <th
                                 class="text-left"
                                 mat-sort-header="{{ tblName }}.status"
                             >
                                 STATUS
                             </th>
-                            <th class="w-12">
+                            <!-- <th class="w-12">
                                 <mat-icon
                                     svgIcon="heroicons_outline:cursor-arrow-ripple"
                                 ></mat-icon>
-                            </th>
+                            </th> -->
                         </tr>
                     </thead>
                     <tbody>
@@ -100,7 +103,10 @@
                                     {{ data.name }}
                                 </td>
                                 <td class="text-left">{{ data.alias }}</td>
-                                <td class="text-left">
+                                <td class="text-left capitalize">
+                                    {{ data.line.name }}
+                                </td>
+                                <td class="w-20 text-left">
                                     <button
                                         [class]="
                                             getStatus(data.status).color +
@@ -110,7 +116,7 @@
                                         {{ getStatus(data.status).text }}
                                     </button>
                                 </td>
-                                <td>
+                                <!-- <td>
                                     <a
                                         href="javascript:void(0)"
                                         (click)="openDialog('Update', data)"
@@ -130,7 +136,7 @@
                                             >delete_outline</mat-icon
                                         >
                                     </a>
-                                </td>
+                                </td> -->
                             </tr>
                         }
                     </tbody>

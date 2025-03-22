@@ -20,6 +20,7 @@ import { CreateLineDto } from './dto/create-line.dto';
 import { UpdateLineDto } from './dto/update-line.dto';
 import { AuthGuard } from '../../auth/auth.guard';
 import { HasPermission } from '../../permissions/has-permission.decorator';
+import { Response } from 'express';
 
 const tabel = 'line';
 

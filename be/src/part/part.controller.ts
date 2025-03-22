@@ -21,6 +21,7 @@ import { UpdatePartDto } from './dto/update-part.dto';
 import { HasPermission } from '../permissions/has-permission.decorator';
 import { AuthGuard } from '../auth/auth.guard';
 import { capitalize } from '../common/utils/string.util';
+import { Response } from 'express';
 
 const tabel = 'part';
 const columns = ['id', 'part_no', 'part_name', 'supplier', 'status'].map(

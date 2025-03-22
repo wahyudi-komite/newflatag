@@ -30,13 +30,13 @@ export const defaultNavigation: FuseNavigationItem[] = [
         icon: 'feather:align-justify',
         link: '/area',
     },
-    {
-        id: 'machine',
-        title: 'Machine',
-        type: 'basic',
-        icon: 'feather:speaker',
-        link: '/machine',
-    },
+    // {
+    //     id: 'machine',
+    //     title: 'Machine',
+    //     type: 'basic',
+    //     icon: 'feather:speaker',
+    //     link: '/machine',
+    // },
     {
         id: 'part',
         title: 'Part',

@@ -1,10 +1,10 @@
-import { Machine } from '../machine/machine';
+import { Area } from '../area/area';
 import { Part } from '../part/part';
 
 export interface PartPosting {
     id: number;
     part: Part;
-    machine: Machine;
+    area: Area;
     uniq: number;
     qty: number;
 }

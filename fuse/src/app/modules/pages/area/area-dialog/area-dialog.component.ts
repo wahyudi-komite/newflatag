@@ -5,6 +5,7 @@ import { Area } from '../../../../node/area/area';
 import { ExistingValidator } from '../../../../node/common/existing.validator';
 import { ShareDialogModule } from '../../../../node/common/share-dialog.module';
 import { StatusEnumService } from '../../../../node/common/status-enum.service';
+import { LineService } from '../../../../node/line/line.service';
 
 @Component({
     selector: 'app-area-dialog',
@@ -18,18 +19,29 @@ export class AreaDialogComponent implements OnInit {
     local_data: any;
     datas: Area[] = [];
     selectStatus = [];
+    selectLine = [];
+    selectArea = [
+        { id: 1, name: 'Sub-Assy' },
+        { id: 2, name: 'Partial Line' },
+        { id: 3, name: 'Main Line' },
+    ];
 
     readonly dialogRef = inject(MatDialogRef<AreaDialogComponent>);
     readonly data = inject<Area>(MAT_DIALOG_DATA);
     private fb = inject(FormBuilder);
     private existingValidator = inject(ExistingValidator);
     statusEnumService = inject(StatusEnumService);
+    private lineService = inject(LineService);
 
     ngOnInit(): void {
         this.selectStatus = this.statusEnumService.getselectStatus();
 
         this.local_data = { ...this.data };
         this.action = this.local_data.action;
+
+        this.lineService.getAll('name', 'ASC').subscribe((res) => {
+            this.selectLine = res;
+        });
 
         const asyncValidator = this.existingValidator.IsUnique(
             'area',
@@ -38,13 +50,8 @@ export class AreaDialogComponent implements OnInit {
         );
 
         this.form = this.fb.group({
-            name: [
-                '',
-                {
-                    validators: [Validators.required, Validators.minLength(4)],
-                    asyncValidators: asyncValidator ? asyncValidator : [],
-                },
-            ],
+            name: ['', { validators: [Validators.required] }],
+            line: ['', { validators: [Validators.required] }],
             alias: [
                 '',
                 {

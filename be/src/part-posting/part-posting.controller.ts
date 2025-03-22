@@ -19,23 +19,15 @@ import { CreatePartPostingDto } from './dto/create-part-posting.dto';
 import { UpdatePartPostingDto } from './dto/update-part-posting.dto';
 import { HasPermission } from '../permissions/has-permission.decorator';
 import { AuthGuard } from '../auth/auth.guard';
+import { Response } from 'express';
 
 const tabel = 'part_posting';
 const columns = ['id', 'uniq', 'qty'].map((col) => `${tabel}.${col}`);
 const lineColumns = ['name'].map((col) => `line.${col}`);
 const areaColumns = ['name'].map((col) => `area.${col}`);
 const partColumns = ['part_no', 'part_name'].map((col) => `part.${col}`);
-const machineColumns = ['machine_no', 'machine_name'].map(
-  (col) => `machine.${col}`,
-);
 
-const allColumns = [
-  ...columns,
-  ...partColumns,
-  ...machineColumns,
-  ...lineColumns,
-  ...areaColumns,
-];
+const allColumns = [...columns, ...partColumns, ...lineColumns, ...areaColumns];
 
 @UseInterceptors(ClassSerializerInterceptor)
 @UseGuards(AuthGuard)
@@ -49,9 +41,8 @@ export class PartPostingController {
       tabel,
       [
         [tabel + '.part', 'part'],
-        [tabel + '.machine', 'machine'],
-        ['machine.area', 'area'],
-        ['machine.line', 'line'],
+        [tabel + '.area', 'area'],
+        ['area.line', 'line'],
       ],
       {
         limit: isExport ? 1000000 : request.query.limit,

@@ -20,6 +20,7 @@ import { UpdateMachineDto } from './dto/update-machine.dto';
 import { AuthGuard } from '../../auth/auth.guard';
 import { HasPermission } from '../../permissions/has-permission.decorator';
 import { capitalize } from '../../common/utils/string.util';
+import { Response } from 'express';
 
 const tabel = 'machine';
 const columns = ['id', 'machine_no', 'machine_name', 'status'].map(
@@ -75,8 +76,8 @@ export class MachineController {
     }
 
     createDto.machine_name = capitalize(createDto.machine_name);
-    const machineNoFormatted = createDto.machine_no.padStart(3, '0');
-    createDto.id = parseInt(`${createDto.line}${machineNoFormatted}`);
+    // const machineNoFormatted = createDto.machine_no.padStart(3, '0');
+    // createDto.id = parseInt(`${createDto.line}${machineNoFormatted}`);
     return this._service.create(createDto);
   }
 

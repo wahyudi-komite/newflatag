@@ -36,25 +36,22 @@
 
             <div class="gt-xs:flex-row flex">
                 <mat-form-field class="w-full" floatLabel="always">
-                    <mat-label>Machine</mat-label>
+                    <mat-label>Area</mat-label>
                     <mat-select
-                        name="machine"
-                        formControlName="machine"
+                        name="area"
+                        formControlName="area"
                         [placeholder]="'--Please Choice--'"
                     >
                         <mat-option>--Please Choice--</mat-option>
                         <mat-option
-                            *ngFor="let dataMachine of machine"
-                            [value]="dataMachine.id"
+                            *ngFor="let dataArea of area"
+                            [value]="dataArea.id"
                         >
-                            {{ dataMachine.machine_no }}
+                            {{ dataArea.alias }}
                         </mat-option>
                     </mat-select>
                     <mat-error
-                        *ngIf="
-                            f['machine'].errors &&
-                            f['machine'].errors['required']
-                        "
+                        *ngIf="f['area'].errors && f['area'].errors['required']"
                     >
                         You must choice one
                     </mat-error>

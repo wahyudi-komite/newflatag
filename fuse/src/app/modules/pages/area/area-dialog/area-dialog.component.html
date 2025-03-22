@@ -10,36 +10,48 @@
     <mat-dialog-content class="px-0">
         <div *ngIf="action != 'Delete'; else elseTemplate" class="space-y-0">
             <div class="gt-xs:flex-row flex">
-                <mat-form-field [ngClass]="" class="w-full" floatLabel="always">
-                    <mat-label>Area Name</mat-label>
-                    <input
-                        class="capitalize"
-                        matInput
-                        formControlName="name"
-                        [placeholder]="'Area..'"
-                        trim="blur"
-                        value="{{ this.local_data.name }}"
-                        cdkFocusInitial
-                    />
+                <mat-form-field class="w-full" floatLabel="always">
+                    <mat-label>Line</mat-label>
+                    <mat-select
+                        formControlName="line"
+                        [placeholder]="'--Please Choice--'"
+                    >
+                        <mat-option>--Please Choice--</mat-option>
+                        <mat-option
+                            *ngFor="let dataLine of selectLine"
+                            [value]="dataLine.id"
+                        >
+                            {{ dataLine.name }}
+                        </mat-option>
+                    </mat-select>
                     <mat-error
                         *ngIf="f['name'].errors && f['name'].errors['required']"
                     >
-                        You must enter a value
+                        You must choice one
                     </mat-error>
-                    <mat-error
-                        *ngIf="
-                            f['name'].errors && f['name'].errors['minlength']
-                        "
+                </mat-form-field>
+            </div>
+
+            <div class="gt-xs:flex-row flex">
+                <mat-form-field class="w-full" floatLabel="always">
+                    <mat-label>Area</mat-label>
+                    <mat-select
+                        name="name"
+                        formControlName="name"
+                        [placeholder]="'--Please Choice--'"
                     >
-                        Min 5 Character
-                    </mat-error>
+                        <mat-option>--Please Choice--</mat-option>
+                        <mat-option
+                            *ngFor="let dataArea of selectArea"
+                            [value]="dataArea.id"
+                        >
+                            {{ dataArea.name }}
+                        </mat-option>
+                    </mat-select>
                     <mat-error
-                        *ngIf="
-                            f['name'].errors &&
-                            f['name'].errors['alreadyExists']
-                        "
+                        *ngIf="f['name'].errors && f['name'].errors['required']"
                     >
-                        The name already exist
+                        You must choice one
                     </mat-error>
                 </mat-form-field>
             </div>

@@ -84,7 +84,6 @@ export class AuthSignInComponent implements OnInit {
         if (this.signInForm.invalid) {
             return;
         }
-
         // Disable the form
         this.signInForm.disable();
 

@@ -100,20 +100,14 @@
                             <th class="text-left" mat-sort-header="area.name">
                                 Area
                             </th>
+                            <th class="text-left" mat-sort-header="area.alias">
+                                MC Area
+                            </th>
                             <th
                                 class="text-left"
-                                mat-sort-header="machine.machine_no"
+                                mat-sort-header="{{ tblName }}.mc"
                             >
                                 No. MC
-                            </th>
-                            <th
-                                class="text-left"
-                                mat-sort-header="machine.machine_name"
-                            >
-                                MC Name
-                            </th>
-                            <th class="text-left" mat-sort-header="machine.id">
-                                id MC
                             </th>
                             <th
                                 class="text-left"
@@ -147,15 +141,11 @@
                                 <td class="text-left">{{ data.shift }}</td>
                                 <td class="text-left">{{ data.line.name }}</td>
                                 <td class="text-left">
-                                    {{ data.machine.area.name }}
+                                    {{ data.area.name }}
                                 </td>
-                                <td class="text-left">
-                                    {{ data.machine.machine_no }}
-                                </td>
-                                <td class="text-left">
-                                    {{ data.machine.machine_name }}
-                                </td>
-                                <td class="text-left">{{ data.machine.id }}</td>
+
+                                <td class="text-left">{{ data.area.alias }}</td>
+                                <td class="text-left">{{ data.mc }}</td>
                                 <td class="text-left">{{ data.uniq }}</td>
                                 <td class="text-left">{{ data.eg }}</td>
                             </tr>

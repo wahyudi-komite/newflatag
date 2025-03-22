@@ -20,8 +20,14 @@ import { UpdateAreaDto } from './dto/update-area.dto';
 import { HasPermission } from '../../permissions/has-permission.decorator';
 import { AuthGuard } from '../../auth/auth.guard';
 import { capitalize } from '../../common/utils/string.util';
+import { Response } from 'express';
 
 const tabel = 'area';
+
+const columns = [`id`, `name`, `alias`, `status`].map((col) => `area.${col}`);
+const lineColumns = ['name'].map((col) => `line.${col}`);
+
+const allColumns = [...columns, ...lineColumns];
 
 @UseInterceptors(ClassSerializerInterceptor)
 @UseGuards(AuthGuard)
@@ -31,19 +37,18 @@ export class AreaController {
   constructor(private readonly _service: AreaService) {}
 
   private async getData(request, isExport = false): Promise<any> {
-    const returnData = await this._service.paginate(tabel, [], {
-      limit: isExport ? 1000000 : request.query.limit,
-      page: request.query.page,
-      sort: request.query.sort,
-      direction: request.query.direction,
-      keyword: request.query.keyword,
-      column: [
-        tabel + '.id',
-        tabel + '.name',
-        tabel + '.alias',
-        tabel + '.status',
-      ],
-    });
+    const returnData = await this._service.paginate(
+      tabel,
+      [[tabel + '.line', 'line']],
+      {
+        limit: isExport ? 1000000 : request.query.limit,
+        page: request.query.page,
+        sort: request.query.sort,
+        direction: request.query.direction,
+        keyword: request.query.keyword,
+        column: allColumns,
+      },
+    );
 
     returnData.data = returnData.data.map((item) => ({
       ...item,

@@ -2,11 +2,10 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Area } from '../../../../node/area/area';
+import { AreaService } from '../../../../node/area/area.service';
 import { ExistingValidator } from '../../../../node/common/existing.validator';
 import { ShareDialogModule } from '../../../../node/common/share-dialog.module';
 import { Line } from '../../../../node/line/line';
-import { Machine } from '../../../../node/machine/machine';
-import { MachineService } from '../../../../node/machine/machine.service';
 import { Part } from '../../../../node/part/part';
 import { PartService } from '../../../../node/part/part.service';
 import { PartPosting } from '../../../../node/partPosting/part-posting';
@@ -26,14 +25,13 @@ export class PartPostingDialogComponent implements OnInit {
 
     area: Area[] = [];
     line: Line[] = [];
-    machine: Machine[] = [];
     part: Part[] = [];
 
     readonly dialogRef = inject(MatDialogRef<PartPostingDialogComponent>);
     readonly data = inject<PartPosting>(MAT_DIALOG_DATA);
     private fb = inject(FormBuilder);
     private existingValidator = inject(ExistingValidator);
-    machineService = inject(MachineService);
+    areaService = inject(AreaService);
     partService = inject(PartService);
 
     ngOnInit(): void {
@@ -44,8 +42,8 @@ export class PartPostingDialogComponent implements OnInit {
             this.part = res;
         });
 
-        this.machineService.getAll('machine_no', 'ASC').subscribe((res) => {
-            this.machine = res;
+        this.areaService.getAll('alias', 'ASC').subscribe((res) => {
+            this.area = res;
         });
 
         const asyncValidator = this.existingValidator.IsUnique(
@@ -61,7 +59,7 @@ export class PartPostingDialogComponent implements OnInit {
                     validators: [Validators.required],
                 },
             ],
-            machine: [
+            area: [
                 '',
                 {
                     validators: [Validators.required],
@@ -93,7 +91,7 @@ export class PartPostingDialogComponent implements OnInit {
         if (this.action != 'Add') {
             this.form.patchValue({
                 part: this.local_data.part.id,
-                machine: Number(this.local_data.machine.id),
+                area: this.local_data.area.id,
                 uniq: this.local_data.uniq,
                 qty: this.local_data.qty,
             });

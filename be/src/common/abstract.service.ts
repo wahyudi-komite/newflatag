@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Brackets, Repository } from 'typeorm';
 import { PaginatedResult } from './paginated-result.interface';
 import * as ExcelJS from 'exceljs';
+import { Response } from 'express';
 
 @Injectable()
 export class AbstractService {

@@ -18,8 +18,9 @@ export class PartPosting {
   @PrimaryGeneratedColumn() id: number;
   @ManyToOne(() => Part) @JoinColumn({ name: 'part_id' }) part: Part;
   @ManyToOne(() => Machine)
-  @JoinColumn({ name: 'machine_id' })
-  machine: Machine;
+  @ManyToOne(() => Area)
+  @JoinColumn({ name: 'area_id' })
+  area: Area;
   @Column({ name: 'uniq', unique: true }) uniq: number;
   @Column({ name: 'qty' }) qty: number;
   @CreateDateColumn() @Exclude() created_at: Date;
