@@ -1,8 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Brackets, Repository } from 'typeorm';
 import { PaginatedResult } from './paginated-result.interface';
 import * as ExcelJS from 'exceljs';
+import * as fs from 'fs';
 import { Response } from 'express';
+import { Part } from '../part/entities/part.entity';
+import { StatusEnum } from './status.enum';
 
 @Injectable()
 export class AbstractService {
@@ -142,5 +145,28 @@ export class AbstractService {
     // Write and Send Excel File
     await workbook.xlsx.write(res);
     res.end();
+  }
+
+  async processExcel(file: Express.Multer.File): Promise<number> {
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.readFile(file.path);
+
+    const worksheet = workbook.worksheets[0]; // Ambil sheet pertama
+    const parts: Part[] = [];
+
+    worksheet.eachRow((row, rowNumber) => {
+      if (rowNumber === 1) return; // Lewati header
+
+      const part = new Part();
+      part.part_no = row.getCell(1).text;
+      part.part_name = row.getCell(2).text;
+      part.supplier = row.getCell(3).text;
+      part.status = StatusEnum[row.getCell(4).text as keyof typeof StatusEnum];
+      parts.push(part);
+    });
+
+    const insertResult = await this.repository.save(parts);
+    fs.unlinkSync(file.path); // Hapus file setelah diproses
+    return insertResult.length; // Kembalikan jumlah baris yang berhasil di-insert
   }
 }

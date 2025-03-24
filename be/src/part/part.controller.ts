@@ -14,6 +14,7 @@ import {
   Res,
   NotFoundException,
   Put,
+  UploadedFile,
 } from '@nestjs/common';
 import { PartService } from './part.service';
 import { CreatePartDto } from './dto/create-part.dto';
@@ -22,6 +23,9 @@ import { HasPermission } from '../permissions/has-permission.decorator';
 import { AuthGuard } from '../auth/auth.guard';
 import { capitalize } from '../common/utils/string.util';
 import { Response } from 'express';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
 
 const tabel = 'part';
 const columns = ['id', 'part_no', 'part_name', 'supplier', 'status'].map(
@@ -76,6 +80,29 @@ export class PartController {
   @Post('findName')
   get(@Body() data: any) {
     return this._service.findOne(data);
+  }
+
+  @Post('upload')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './uploads',
+        filename: (req, file, callback) => {
+          const fileExt = extname(file.originalname);
+          callback(null, `upload-${Date.now()}${fileExt}`);
+        },
+      }),
+      fileFilter: (req, file, callback) => {
+        if (!file.originalname.match(/\.(xlsx|xls)$/)) {
+          return callback(new Error('Only Excel files are allowed'), false);
+        }
+        callback(null, true);
+      },
+    }),
+  )
+  async uploadFile(@UploadedFile() file: Express.Multer.File) {
+    const insertedCount = await this._service.processExcel(file);
+    return { message: 'Upload successful!', insertedCount };
   }
 
   @Get()

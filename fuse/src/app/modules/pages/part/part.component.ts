@@ -19,6 +19,7 @@ import { StatusEnumService } from '../../../node/common/status-enum.service';
 import { Part } from '../../../node/part/part';
 import { PartService } from '../../../node/part/part.service';
 import { SearchInputComponent } from '../../comp/tabel/search-input/search-input.component';
+import { PartDialogUploadComponent } from './part-dialog-upload/part-dialog-upload.component';
 import { PartDialogComponent } from './part-dialog/part-dialog.component';
 
 @Component({
@@ -205,6 +206,27 @@ export class PartComponent implements OnInit {
         GlobalVariable.audioFailed.play();
         this.toastr.error('Failed', error.error.message, {
             timeOut: 3000,
+        });
+    }
+
+    openDialogUpload(action: string, obj: any) {
+        obj.action = action;
+        let dialogBoxSettings = {
+            position: { top: '10px' },
+            width: '400px',
+            margin: '0 auto',
+            disableClose: true,
+            hasBackdrop: true,
+            data: obj,
+        };
+
+        const dialogRef = this.dialog.open(
+            PartDialogUploadComponent,
+            dialogBoxSettings
+        );
+
+        dialogRef.afterClosed().subscribe((result) => {
+            console.log('upload');
         });
     }
 }

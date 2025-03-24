@@ -36,6 +36,15 @@
                     </button>
                     <button
                         mat-mini-fab
+                        color="warn"
+                        matTooltip="Upload Excel"
+                        matTooltipPosition="above"
+                        (click)="openDialogUpload('Upload', {})"
+                    >
+                        <mat-icon>upload</mat-icon>
+                    </button>
+                    <button
+                        mat-mini-fab
                         color="accent"
                         matTooltip="Export Excel"
                         matTooltipPosition="above"

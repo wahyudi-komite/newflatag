@@ -1,7 +1,12 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import {
+    HttpClient,
+    HttpEvent,
+    HttpEventType,
+    HttpParams,
+} from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { saveAs } from 'file-saver';
-import { Observable } from 'rxjs';
+import { catchError, map, Observable } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
@@ -125,6 +130,32 @@ export abstract class AbstractService {
                 (error) => {
                     console.error('Gagal mengunduh file:', error);
                 }
+            );
+    }
+
+    uploadExcel(
+        formData: FormData
+    ): Observable<{ progress?: number; insertedCount?: number }> {
+        return this.http
+            .post<{ insertedCount: number }>(`${this.url}/upload`, formData, {
+                reportProgress: true,
+                observe: 'events',
+            })
+            .pipe(
+                map((event: HttpEvent<any>) => {
+                    if (event.type === HttpEventType.UploadProgress) {
+                        const progress = Math.round(
+                            (event.loaded / (event.total || 1)) * 100
+                        );
+                        return { progress }; // Update progress
+                    } else if (event.type === HttpEventType.Response) {
+                        return { insertedCount: event.body.insertedCount }; // Response dari server
+                    }
+                    return {};
+                }),
+                catchError(() => {
+                    return [{ progress: 0, insertedCount: 0 }];
+                })
             );
     }
 }
