@@ -20,7 +20,11 @@
     </div>
 
     <div *ngIf="insertedCount !== null">
-        <p>Upload completed! ✅ {{ insertedCount }} records inserted.</p>
+        <p>Upload completed! {{ insertedCount }} records inserted.</p>
+    </div>
+
+    <div *ngIf="errorMessage !== null" class="error-message">
+        <p>Error: {{ errorMessage }}</p>
     </div>
 </mat-dialog-content>
 <mat-dialog-actions align="end" class="-mt-4">
@@ -33,7 +37,6 @@
         mat-raised-button
         color="primary"
         type="submit"
-        cdkFocusInitial
         (click)="uploadFile()"
         [disabled]="!selectedFile"
     >

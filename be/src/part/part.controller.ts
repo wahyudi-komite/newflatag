@@ -15,6 +15,7 @@ import {
   NotFoundException,
   Put,
   UploadedFile,
+  BadRequestException,
 } from '@nestjs/common';
 import { PartService } from './part.service';
 import { CreatePartDto } from './dto/create-part.dto';
@@ -26,6 +27,7 @@ import { Response } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import * as path from 'path';
 
 const tabel = 'part';
 const columns = ['id', 'part_no', 'part_name', 'supplier', 'status'].map(
@@ -94,15 +96,22 @@ export class PartController {
       }),
       fileFilter: (req, file, callback) => {
         if (!file.originalname.match(/\.(xlsx|xls)$/)) {
-          return callback(new Error('Only Excel files are allowed'), false);
+          return callback(
+            new BadRequestException('Only Excel files are allowed'),
+            false,
+          );
         }
         callback(null, true);
       },
     }),
   )
   async uploadFile(@UploadedFile() file: Express.Multer.File) {
-    const insertedCount = await this._service.processExcel(file);
-    return { message: 'Upload successful!', insertedCount };
+    try {
+      const insertedCount = await this._service.processExcel(file);
+      return { message: 'Upload successful!', insertedCount };
+    } catch (error) {
+      return { message: 'Upload failed!', error: error.message };
+    }
   }
 
   @Get()
@@ -118,6 +127,15 @@ export class PartController {
       field: request.query.field,
       keyword: request.query.keyword,
     });
+  }
+
+  @Get('files/download-template')
+  downloadTemplate(@Res() res: Response) {
+    const filePath = path.join(
+      __dirname,
+      '../../public/templates/part/format_upload.xlsx',
+    );
+    res.download(filePath);
   }
 
   @Put(':id')

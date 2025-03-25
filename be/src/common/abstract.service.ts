@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { Brackets, Repository } from 'typeorm';
 import { PaginatedResult } from './paginated-result.interface';
 import * as ExcelJS from 'exceljs';
@@ -147,26 +147,53 @@ export class AbstractService {
     res.end();
   }
 
-  async processExcel(file: Express.Multer.File): Promise<number> {
+  async processExcel(
+    file: Express.Multer.File,
+  ): Promise<{ insertedCount: number; error?: string }> {
     const workbook = new ExcelJS.Workbook();
     await workbook.xlsx.readFile(file.path);
 
     const worksheet = workbook.worksheets[0]; // Ambil sheet pertama
     const parts: Part[] = [];
+    const errors: string[] = [];
 
-    worksheet.eachRow((row, rowNumber) => {
-      if (rowNumber === 1) return; // Lewati header
+    // const status = StatusEnum[row.getCell(4).text as keyof typeof StatusEnum];
+
+    for (const row of worksheet.getRows(2, worksheet.rowCount - 1) || []) {
+      // Mulai dari baris ke-2 (lewati header)
+      const part_no = row.getCell(1).text;
+      const part_name = row.getCell(2).text;
+      const supplier = row.getCell(3).text;
+      const status = StatusEnum[row.getCell(4).text as keyof typeof StatusEnum];
+
+      // Cek apakah part_no sudah ada
+      const existingPart = await this.repository.findOne({
+        where: { part_no },
+      });
+      if (existingPart) {
+        errors.push(`Part No ${part_no} sudah ada di database.`);
+        continue; // Lewati insert untuk part yang duplikat
+      }
 
       const part = new Part();
-      part.part_no = row.getCell(1).text;
-      part.part_name = row.getCell(2).text;
-      part.supplier = row.getCell(3).text;
-      part.status = StatusEnum[row.getCell(4).text as keyof typeof StatusEnum];
+      part.part_no = part_no;
+      part.part_name = part_name;
+      part.supplier = supplier;
+      part.status = status;
       parts.push(part);
-    });
+    }
 
-    const insertResult = await this.repository.save(parts);
+    if (parts.length > 0) {
+      await this.repository.save(parts);
+    }
+
     fs.unlinkSync(file.path); // Hapus file setelah diproses
-    return insertResult.length; // Kembalikan jumlah baris yang berhasil di-insert
+
+    if (errors.length > 0) {
+      throw new BadRequestException({ message: 'Upload failed!', errors });
+    }
+    console.log({ insertedCount: parts.length });
+
+    return { insertedCount: parts.length };
   }
 }

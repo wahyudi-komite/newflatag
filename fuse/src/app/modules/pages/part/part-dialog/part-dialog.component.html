@@ -8,7 +8,13 @@
 </div>
 <form [formGroup]="form" (submit)="doAction()" autocomplete="off">
     <mat-dialog-content class="px-0">
-        <div *ngIf="action != 'Delete'; else elseTemplate" class="space-y-0">
+        <div
+            *ngIf="
+                action === 'Add' || action === 'Update' || action === 'Read';
+                else elseTemplate
+            "
+            class="space-y-0"
+        >
             <div class="gt-xs:flex-row flex">
                 <mat-form-field [ngClass]="" class="w-full" floatLabel="always">
                     <mat-label>Line Name</mat-label>
@@ -135,7 +141,10 @@
             </div>
         </div>
         <ng-template #elseTemplate>
-            <div class="-mt-2 mb-2 flex w-full flex-col">
+            <div
+                *ngIf="action === 'Delete'; else uploadTemplate"
+                class="-mt-2 mb-2 flex w-full flex-col"
+            >
                 <span
                     ><strong
                         class="rounded-sm px-2 py-1 font-normal text-gray-800"
@@ -146,8 +155,64 @@
                     <h3
                         class="rounded-xl bg-black px-4 py-1 text-2xl font-extrabold text-indigo-50"
                     >
-                        {{ local_data.name }} ?
+                        Part Nomor : {{ local_data.part_no }} ?
                     </h3>
+                </div>
+            </div>
+        </ng-template>
+        <ng-template #uploadTemplate>
+            <div class="">
+                <input
+                    type="file"
+                    id="fileInput"
+                    (change)="onFileChange($event)"
+                    accept=".xlsx, .xls"
+                    class="w-full cursor-pointer rounded bg-gray-100 text-base font-medium text-slate-500 file:mr-4 file:cursor-pointer file:border-0 file:bg-emerald-800 file:px-4 file:py-2.5 file:text-white file:hover:bg-emerald-700"
+                />
+
+                <div *ngIf="uploadProgress !== null" class="">
+                    <p>Uploading File: {{ uploadProgress }}%</p>
+                    <progress
+                        [value]="uploadProgress"
+                        max="100"
+                        class="w-full"
+                    ></progress>
+                </div>
+                <div *ngIf="isLoading" class="loading-overlay">
+                    <p>Processing data... Please wait</p>
+                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                </div>
+
+                <div *ngIf="insertedCount !== null" class="mt-2">
+                    <p>
+                        Upload completed!
+                        <b class="text-emerald-600">{{ insertedCount }}</b>
+                        records inserted.
+                    </p>
+                </div>
+
+                <div *ngIf="errorMessage !== null" class="error-message">
+                    <p>Error: {{ errorMessage }}</p>
+                </div>
+
+                <div (click)="downloadTemplate()" class="mt-2 cursor-pointer">
+                    <p>Download File Template:</p>
+                    <div class="">
+                        <div class="flex h-full items-start justify-start">
+                            <!-- Icons -->
+                            <div class="relative">
+                                <mat-icon
+                                    class="text-hint opacity-50 icon-size-14"
+                                    [svgIcon]="'heroicons_solid:document'"
+                                ></mat-icon>
+                                <div
+                                    class="absolute bottom-0 left-0 rounded bg-green-600 px-1.5 text-sm font-semibold leading-5 text-white"
+                                >
+                                    XLSX
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </ng-template>
@@ -160,20 +225,34 @@
             (click)="closeDialog()"
         >
             <mat-icon>cancel</mat-icon>
-            CANCEL
+            {{ action === 'Upload' ? 'Closed' : 'CANCEL' }}
         </button>
         <button
             [disabled]="
-                action == 'Delete' ? false : !(form.valid && form.dirty)
+                action === 'Delete'
+                    ? false
+                    : action === 'Upload'
+                      ? !selectedFile
+                      : !(form.valid && form.dirty)
             "
             class="ml-6"
             mat-raised-button
             color="primary"
-            type="submit"
-            cdkFocusInitial
+            [type]="action === 'Upload' ? null : 'submit'"
+            (click)="action === 'Upload' ? uploadFile() : null"
         >
             <mat-icon>save</mat-icon>
-            {{ action != 'Delete' ? 'SAVE' : 'DELETE' }}
+            {{
+                action === 'Add'
+                    ? 'SAVE'
+                    : action === 'Update'
+                      ? 'Update'
+                      : action === 'Upload'
+                        ? 'UPLOAD'
+                        : action === 'Delete'
+                          ? 'DELETE'
+                          : 'SAVE'
+            }}
         </button>
     </mat-dialog-actions>
 </form>

@@ -1,12 +1,13 @@
 import {
     HttpClient,
+    HttpErrorResponse,
     HttpEvent,
     HttpEventType,
     HttpParams,
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { saveAs } from 'file-saver';
-import { catchError, map, Observable } from 'rxjs';
+import { catchError, map, Observable, throwError } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
@@ -133,7 +134,7 @@ export abstract class AbstractService {
             );
     }
 
-    uploadExcel(
+    uploadExcelx(
         formData: FormData
     ): Observable<{ progress?: number; insertedCount?: number }> {
         return this.http
@@ -157,5 +158,52 @@ export abstract class AbstractService {
                     return [{ progress: 0, insertedCount: 0 }];
                 })
             );
+    }
+
+    uploadExcel(formData: FormData): Observable<{
+        progress?: number;
+        insertedCount?: number;
+        error?: string;
+    }> {
+        return this.http
+            .post<{ insertedCount: number }>(`${this.url}/upload`, formData, {
+                reportProgress: true,
+                observe: 'events',
+            })
+            .pipe(
+                map((event: HttpEvent<any>) => {
+                    if (event.type === HttpEventType.UploadProgress) {
+                        const progress = Math.round(
+                            (event.loaded / (event.total || 1)) * 100
+                        );
+                        return { progress }; // Update progress
+                    } else if (event.type === HttpEventType.Response) {
+                        return {
+                            insertedCount:
+                                event.body.insertedCount.insertedCount,
+                        }; // Response dari server
+                    }
+                    return {};
+                }),
+                catchError((error: HttpErrorResponse) => {
+                    let errorMessage = 'Upload failed!';
+
+                    if (error.error) {
+                        if (typeof error.error === 'string') {
+                            errorMessage = error.error;
+                        } else if (error.error.message) {
+                            errorMessage = error.error.message;
+                        }
+                    }
+
+                    console.error('Upload Error:', error.error);
+                    return throwError(() => new Error(errorMessage));
+                })
+            );
+    }
+
+    downloadTemplate() {
+        const downloadUrl = `${this.url}/files/download-template`;
+        window.open(downloadUrl, '_blank');
     }
 }

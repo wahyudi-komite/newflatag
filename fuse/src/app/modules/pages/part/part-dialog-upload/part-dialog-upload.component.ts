@@ -15,8 +15,9 @@ export class PartDialogUploadComponent {
     selectedFile: File | null = null;
     uploadProgress: number | null = null;
     insertedCount: number | null = null;
+    errorMessage: string | null = null;
 
-    _service = inject(PartService);
+    private _service = inject(PartService);
 
     onFileChange(event: any) {
         const file = event.target.files[0];
@@ -33,14 +34,24 @@ export class PartDialogUploadComponent {
 
         this.uploadProgress = 0;
         this.insertedCount = null;
+        this.errorMessage = null;
 
-        this._service.uploadExcel(formData).subscribe((event) => {
-            if (event.progress !== undefined) {
-                this.uploadProgress = event.progress; // Update progress
-            } else if (event.insertedCount !== undefined) {
-                this.insertedCount = event.insertedCount; // Update jumlah insert
-                this.uploadProgress = null; // Sembunyikan progress setelah selesai
-            }
+        this._service.uploadExcel(formData).subscribe({
+            next: (event) => {
+                if (event.progress !== undefined) {
+                    this.uploadProgress = event.progress; // Update progress
+                } else if (event.insertedCount !== undefined) {
+                    this.insertedCount = event.insertedCount; // Update jumlah insert
+                    this.uploadProgress = null; // Sembunyikan progress setelah selesai
+                    alert(
+                        `Upload successful! ${this.insertedCount} records inserted.`
+                    );
+                }
+            },
+            error: (error) => {
+                this.uploadProgress = null;
+                this.errorMessage = error.message;
+            },
         });
     }
 
