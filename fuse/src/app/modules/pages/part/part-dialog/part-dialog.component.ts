@@ -106,6 +106,11 @@ export class PartDialogComponent implements OnInit {
         this.dialogRef.close({ event: 'Cancel' });
     }
 
+    uploadClosedDialog() {
+        this.action = 'Upload';
+        this.dialogRef.close({ event: 'Upload' });
+    }
+
     onFileChange(event: any) {
         const file = event.target.files[0];
         if (file) {
