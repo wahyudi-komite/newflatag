@@ -64,7 +64,7 @@ export class PartDialogComponent implements OnInit {
             supplier: [
                 '',
                 {
-                    validators: [Validators.required, Validators.minLength(4)],
+                    validators: [Validators.required, Validators.minLength(3)],
                 },
             ],
             status: ['', [Validators.required]],

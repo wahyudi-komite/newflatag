@@ -13,24 +13,58 @@
         <div
             class="mx-4 flex flex-auto flex-col overflow-hidden sm:mb-18 sm:overflow-y-auto"
         >
-            <div class="flex w-full items-center justify-between pl-0.5">
-                <!-- <mat-form-field [ngClass]="" class="w-full" floatLabel="always">
-                    <mat-label>Machine No</mat-label>
-                    <input
-                        matInput
-                        [placeholder]="'Machine Number..'"
-                        trim="blur"
-                    />
-                </mat-form-field>
-                <mat-form-field [ngClass]="" class="w-full" floatLabel="always">
-                    <mat-label>Machine No</mat-label>
-                    <input
-                        matInput
-                        [placeholder]="'Machine Number..'"
-                        trim="blur"
-                    />
-                </mat-form-field> -->
-            </div>
+            <form [formGroup]="form" (submit)="submit()" autocomplete="off">
+                <div
+                    class="flex w-full items-center justify-between space-x-4 px-0.5"
+                >
+                    <mat-form-field class="w-full" floatLabel="always">
+                        <mat-label>Shift</mat-label>
+                        <mat-select
+                            formControlName="shift"
+                            [placeholder]="'--Please Choice--'"
+                        >
+                            <mat-option>--Please Choice--</mat-option>
+                            <mat-option value="day">DAY</mat-option>
+                            <mat-option value="night">NIGHT</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field class="w-full" floatLabel="always">
+                        <mat-label>Line</mat-label>
+                        <mat-select
+                            formControlName="line"
+                            [placeholder]="'--Please Choice--'"
+                        >
+                            <mat-option>--Please Choice--</mat-option>
+                            @for (item of line; track $index) {
+                                <mat-option [value]="item.id">
+                                    {{ item.name }}
+                                </mat-option>
+                            }
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field
+                        [ngClass]=""
+                        class="w-full"
+                        floatLabel="always"
+                    >
+                        <mat-label>Machine No</mat-label>
+                        <input
+                            matInput
+                            [placeholder]="'Machine Number..'"
+                            trim="blur"
+                        />
+                    </mat-form-field>
+                    <button
+                        mat-raised-button
+                        type="submit"
+                        color="primary"
+                        class="w-60"
+                    >
+                        <mat-icon>search</mat-icon>
+                        FILTER
+                    </button>
+                </div>
+            </form>
             <div class="flex w-full items-center justify-between pl-0.5">
                 <app-search-input
                     placeholder="Search..."
@@ -63,6 +97,8 @@
                     </button> -->
                 </div>
             </div>
+
+            <!-- form -->
             <div class="relative overflow-x-auto pb-1">
                 <table
                     class="datatable w-full"
@@ -124,6 +160,14 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <tr class="" *ngIf="this.total == 0">
+                            <td
+                                colspan="10"
+                                class="h-12 text-lg font-medium text-rose-700"
+                            >
+                                No Data Avalaible
+                            </td>
+                        </tr>
                         @for (data of datas; track $index) {
                             <tr class="">
                                 <td>

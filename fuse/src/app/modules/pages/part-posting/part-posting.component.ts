@@ -151,6 +151,8 @@ export class PartPostingComponent implements OnInit {
                 this.redirectToUpdate(result.data, result.formValue);
             } else if (result.event == 'Delete') {
                 this.redirectToDelete(result.data.id);
+            } else if (result.event == 'Upload') {
+                this.load();
             }
         });
     }

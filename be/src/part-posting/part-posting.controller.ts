@@ -13,6 +13,8 @@ import {
   ConflictException,
   NotFoundException,
   Request,
+  BadRequestException,
+  UploadedFile,
 } from '@nestjs/common';
 import { PartPostingService } from './part-posting.service';
 import { CreatePartPostingDto } from './dto/create-part-posting.dto';
@@ -20,6 +22,9 @@ import { UpdatePartPostingDto } from './dto/update-part-posting.dto';
 import { HasPermission } from '../permissions/has-permission.decorator';
 import { AuthGuard } from '../auth/auth.guard';
 import { Response } from 'express';
+import * as path from 'path';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
 
 const tabel = 'part_posting';
 const columns = ['id', 'uniq', 'qty'].map((col) => `${tabel}.${col}`);
@@ -92,9 +97,48 @@ export class PartPostingController {
     return this._service.findOne(data);
   }
 
+  @Post('upload')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './uploads',
+        filename: (req, file, callback) => {
+          const fileExt = path.extname(file.originalname);
+          callback(null, `upload-${Date.now()}${fileExt}`);
+        },
+      }),
+      fileFilter: (req, file, callback) => {
+        if (!file.originalname.match(/\.(xlsx|xls)$/)) {
+          return callback(
+            new BadRequestException('Only Excel files are allowed'),
+            false,
+          );
+        }
+        callback(null, true);
+      },
+    }),
+  )
+  async uploadFile(@UploadedFile() file: Express.Multer.File) {
+    try {
+      const insertedCount = await this._service.processExcel(file);
+      return { message: 'Upload successful!', insertedCount };
+    } catch (error) {
+      return { message: 'Upload failed!', error: error.message };
+    }
+  }
+
   @Get()
   async findAll(@Request() request) {
     return this.getData(request);
+  }
+
+  @Get('files/download-template')
+  downloadTemplate(@Res() res: Response) {
+    const filePath = path.join(
+      __dirname,
+      '../../public/templates/part-posting/format_upload.xlsx',
+    );
+    res.download(filePath);
   }
 
   @Put(':id')

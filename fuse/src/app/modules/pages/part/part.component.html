@@ -86,7 +86,7 @@
                                 SUPPLIER
                             </th>
                             <th
-                                class="text-left"
+                                class="w-12 text-left"
                                 mat-sort-header="{{ tblName }}.status"
                             >
                                 STATUS
@@ -99,6 +99,14 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <tr class="" *ngIf="this.total == 0">
+                            <td
+                                colspan="6"
+                                class="h-10 text-lg font-medium text-rose-700"
+                            >
+                                No Data Avalaible
+                            </td>
+                        </tr>
                         @for (data of datas; track $index) {
                             <tr class="">
                                 <td>

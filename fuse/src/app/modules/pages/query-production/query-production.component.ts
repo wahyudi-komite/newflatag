@@ -15,6 +15,8 @@ import { GlobalVariable } from '../../../node/common/global-variable';
 import { Paginate } from '../../../node/common/paginate';
 import { SharedModule } from '../../../node/common/shared.module';
 import { StatusEnumService } from '../../../node/common/status-enum.service';
+import { Line } from '../../../node/line/line';
+import { LineService } from '../../../node/line/line.service';
 import { QueryProduction } from '../../../node/query-production/query-production';
 import { QueryProductionService } from '../../../node/query-production/query-production.service';
 import { SearchInputComponent } from '../../comp/tabel/search-input/search-input.component';
@@ -28,6 +30,7 @@ import { SearchInputComponent } from '../../comp/tabel/search-input/search-input
 })
 export class QueryProductionComponent implements OnInit {
     user: User;
+    line: Line[] = [];
 
     datas: QueryProduction[] = [];
     total!: number;
@@ -39,11 +42,15 @@ export class QueryProductionComponent implements OnInit {
     tblName: string = 'eg_out';
     form: FormGroup;
 
+    shift?: string;
+    filterParams: any = {};
+
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     @ViewChild(MatSort, { static: true }) sort!: MatSort;
 
     _service = inject(QueryProductionService);
     _userService = inject(UserService);
+    _lineService = inject(LineService);
     statusService = inject(StatusEnumService);
     fb = inject(FormBuilder);
 
@@ -54,9 +61,13 @@ export class QueryProductionComponent implements OnInit {
                 this.user = user;
             });
 
+        this._lineService.getAll('name', 'ASC').subscribe((res) => {
+            this.line = res;
+        });
+
         this.form = this.fb.group({
-            // eg: [''],
-            // uniq: [''],
+            shift: [''],
+            line: [''],
             // start: [this.tanggalMulai],
             // end: [this.tanggalEnd],
         });
@@ -78,7 +89,8 @@ export class QueryProductionComponent implements OnInit {
                 this.limit,
                 this.sort.active,
                 this.sort.direction,
-                this.find
+                this.find,
+                this.filterParams
             )
             .subscribe((res: Paginate) => {
                 this.datas = res.data;
@@ -117,7 +129,12 @@ export class QueryProductionComponent implements OnInit {
         // this.start = this.form.value.start;
         // this.end = this.form.value.end;
         // this.eg = this.form.value.eg;
-        // this.uniq = this.form.value.uniq;
+
+        const formValues = {
+            shift: this.form.value.shift,
+            line: this.form.value.line,
+        };
+        this.filterParams = formValues;
         this.load();
     }
 

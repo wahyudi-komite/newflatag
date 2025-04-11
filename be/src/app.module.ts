@@ -13,6 +13,7 @@ import { PartModule } from './part/part.module';
 import { PartPostingModule } from './part-posting/part-posting.module';
 import { EgOutModule } from './eg_out/eg_out.module';
 import { AppService } from './app.service';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
@@ -29,13 +30,20 @@ import { AppService } from './app.service';
         process.env.DATABASE_SYNCHRONIZE == 'true' ? true : false || false,
       logging: process.env.DATABASE_DEBUG == 'true' ? true : false || false,
     }),
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          ttl: 60000,
+          limit: 2000,
+        },
+      ],
+    }),
     UsersModule,
     RolesModule,
     PermissionsModule,
     AuthModule,
     LineModule,
     AreaModule,
-    // MachineModule,
     PartModule,
     PartPostingModule,
     EgOutModule,
@@ -46,6 +54,10 @@ import { AppService } from './app.service';
     {
       provide: APP_GUARD,
       useClass: PermissionsGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
     },
   ],
 })

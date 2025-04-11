@@ -44,6 +44,10 @@ export class EgOutController {
         sort: request.query.sort,
         direction: request.query.direction,
         keyword: request.query.keyword,
+        filterParams: {
+          shift: request.query.shift ? request.query.shift : '',
+          line: request.query.line ? request.query.line : '',
+        },
         column: allColumns,
       },
     );
@@ -58,6 +62,8 @@ export class EgOutController {
 
   @Get()
   async findAll(@Request() request) {
+    console.log(request.query);
+
     return this.getData(request);
   }
 }

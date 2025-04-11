@@ -36,6 +36,15 @@
                     </button>
                     <button
                         mat-mini-fab
+                        color="warn"
+                        matTooltip="Upload Excel"
+                        matTooltipPosition="above"
+                        (click)="openDialog('Upload', {})"
+                    >
+                        <mat-icon>upload</mat-icon>
+                    </button>
+                    <button
+                        mat-mini-fab
                         color="accent"
                         matTooltip="Export Excel"
                         matTooltipPosition="above"
@@ -57,7 +66,7 @@
                 >
                     <thead>
                         <tr>
-                            <th class="w-5">#</th>
+                            <th class="w-8">#</th>
                             <th class="" mat-sort-header="part.part_no">
                                 PART NO
                             </th>
@@ -77,7 +86,7 @@
                                 LINE
                             </th>
                             <th
-                                class="text-left"
+                                class="w-10"
                                 mat-sort-header="{{ tblName }}.uniq"
                             >
                                 UNIQ
@@ -96,6 +105,14 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <tr class="" *ngIf="this.total == 0">
+                            <td
+                                colspan="9"
+                                class="h-10 text-lg font-medium text-rose-700"
+                            >
+                                No Data Avalaible
+                            </td>
+                        </tr>
                         @for (data of datas; track $index) {
                             <tr class="">
                                 <td>

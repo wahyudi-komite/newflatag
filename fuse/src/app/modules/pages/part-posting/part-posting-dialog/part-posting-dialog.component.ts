@@ -9,6 +9,7 @@ import { Line } from '../../../../node/line/line';
 import { Part } from '../../../../node/part/part';
 import { PartService } from '../../../../node/part/part.service';
 import { PartPosting } from '../../../../node/partPosting/part-posting';
+import { PartPostingService } from '../../../../node/partPosting/part-posting.service';
 
 @Component({
     selector: 'app-part-posting-dialog',
@@ -27,6 +28,13 @@ export class PartPostingDialogComponent implements OnInit {
     line: Line[] = [];
     part: Part[] = [];
 
+    selectedFile: File | null = null;
+    uploadProgress: number | null = null;
+    insertedCount: number | null = null;
+    errorMessage: string | null = null;
+    isLoading: boolean = false;
+
+    private _service = inject(PartPostingService);
     readonly dialogRef = inject(MatDialogRef<PartPostingDialogComponent>);
     readonly data = inject<PartPosting>(MAT_DIALOG_DATA);
     private fb = inject(FormBuilder);
@@ -127,5 +135,54 @@ export class PartPostingDialogComponent implements OnInit {
     closeDialog() {
         this.action = 'Cancel';
         this.dialogRef.close({ event: 'Cancel' });
+    }
+
+    uploadClosedDialog() {
+        this.action = 'Upload';
+        this.dialogRef.close({ event: 'Upload' });
+    }
+
+    onFileChange(event: any) {
+        const file = event.target.files[0];
+        if (file) {
+            this.selectedFile = file;
+        }
+    }
+
+    uploadFile(): void {
+        if (!this.selectedFile) return;
+
+        const formData = new FormData();
+        formData.append('file', this.selectedFile);
+
+        this.uploadProgress = 0;
+        this.insertedCount = null;
+        this.errorMessage = null;
+        this.isLoading = true;
+
+        this._service.uploadExcel(formData).subscribe({
+            next: (event) => {
+                if (event.progress !== undefined) {
+                    this.uploadProgress = event.progress; // Update progress
+                } else if (event.insertedCount !== undefined) {
+                    this.insertedCount = event.insertedCount; // Update jumlah insert
+                    this.uploadProgress = null;
+                    this.isLoading = false;
+                    this.selectedFile = null;
+                    (
+                        document.getElementById('fileInput') as HTMLInputElement
+                    ).value = '';
+                }
+            },
+            error: (error) => {
+                this.uploadProgress = null;
+                this.isLoading = false;
+                this.errorMessage = error.message;
+            },
+        });
+    }
+
+    downloadTemplate() {
+        this._service.downloadTemplate();
     }
 }
