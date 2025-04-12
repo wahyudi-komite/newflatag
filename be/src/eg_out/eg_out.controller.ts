@@ -1,20 +1,17 @@
 import {
   Controller,
   Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
   Request,
   UseInterceptors,
   UseGuards,
   ClassSerializerInterceptor,
+  Res,
 } from '@nestjs/common';
 import { EgOutService } from './eg_out.service';
 import { formatDate } from '../common/utils/date.utils';
 import { HasPermission } from '../permissions/has-permission.decorator';
 import { AuthGuard } from '../auth/auth.guard';
+import { Response } from 'express';
 
 const tabel = 'eg_out';
 const columns = [`shift`, `id`, `create`, `mc`, `uniq`, `eg`, `working`].map(
@@ -44,10 +41,12 @@ export class EgOutController {
         sort: request.query.sort,
         direction: request.query.direction,
         keyword: request.query.keyword,
-        filterParams: {
-          shift: request.query.shift ? request.query.shift : '',
-          line: request.query.line ? request.query.line : '',
-        },
+        filterParams: [
+          { shift: request.query.shift ? request.query.shift : '' },
+          { line: request.query.line ? request.query.line : '' },
+          { uniq: request.query.uniq ? request.query.uniq : '' },
+          { eg: request.query.eg ? request.query.eg : '' },
+        ],
         column: allColumns,
       },
     );
@@ -62,8 +61,12 @@ export class EgOutController {
 
   @Get()
   async findAll(@Request() request) {
-    console.log(request.query);
-
     return this.getData(request);
+  }
+
+  @Get('excel')
+  async exportExcel(@Res() res: Response, @Request() request) {
+    const returnData = await this.getData(request, true);
+    await this._service.exportDataToExcel(returnData.data, res);
   }
 }

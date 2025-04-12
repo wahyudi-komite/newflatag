@@ -13,6 +13,76 @@
         <div
             class="mx-4 flex flex-auto flex-col overflow-hidden sm:mb-18 sm:overflow-y-auto"
         >
+            <form [formGroup]="form" (submit)="submit()" autocomplete="off">
+                <div
+                    class="flex w-full items-center justify-between space-x-4 px-0.5"
+                >
+                    <mat-form-field
+                        [ngClass]=""
+                        class="w-full"
+                        floatLabel="always"
+                    >
+                        <mat-label>Part NO</mat-label>
+                        <input
+                            matInput
+                            formControlName="part_no"
+                            [placeholder]="'Part NO..'"
+                            trim="blur"
+                        />
+                    </mat-form-field>
+                    <mat-form-field
+                        [ngClass]=""
+                        class="w-full"
+                        floatLabel="always"
+                    >
+                        <mat-label>Part Name</mat-label>
+                        <input
+                            matInput
+                            formControlName="part_name"
+                            [placeholder]="'Part Name..'"
+                            trim="blur"
+                        />
+                    </mat-form-field>
+                    <mat-form-field class="w-full" floatLabel="always">
+                        <mat-label>Line</mat-label>
+                        <mat-select
+                            formControlName="line"
+                            [placeholder]="'--Please Choice--'"
+                        >
+                            <mat-option>--Please Choice--</mat-option>
+                            @for (item of line; track $index) {
+                                <mat-option [value]="item.id">
+                                    {{ item.name }}
+                                </mat-option>
+                            }
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field
+                        [ngClass]=""
+                        class="w-full"
+                        floatLabel="always"
+                    >
+                        <mat-label>Uniq</mat-label>
+                        <input
+                            matInput
+                            formControlName="uniq"
+                            [placeholder]="'Uniq Number..'"
+                            trim="blur"
+                        />
+                    </mat-form-field>
+
+                    <button
+                        mat-raised-button
+                        type="submit"
+                        color="primary"
+                        class="w-100"
+                    >
+                        <mat-icon>search</mat-icon>
+                        FILTER
+                    </button>
+                </div>
+            </form>
+
             <div class="flex w-full items-center justify-between pl-0.5">
                 <app-search-input
                     placeholder="Search..."

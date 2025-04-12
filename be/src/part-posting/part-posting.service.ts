@@ -68,8 +68,33 @@ export class PartPostingService extends AbstractService {
     if (errors.length > 0) {
       throw new BadRequestException({ message: 'Upload failed!', errors });
     }
-    console.log({ insertedCount: datas.length });
-
     return { insertedCount: datas.length };
+  }
+
+  async consumeData(): Promise<any> {
+    await this._repository
+      .createQueryBuilder()
+      .select('p.part_no', 'part_no')
+      .addSelect('p.part_name', 'part_name')
+      .addSelect('p.supplier', 'supplier')
+      .addSelect('pp.uniq', 'uniq')
+      .addSelect('SUM(pp.qty)', 'qty')
+      .addSelect('a.id', 'areaId')
+      .addSelect('a.name', 'areaName')
+      .addSelect('a.alias', 'areaAlias')
+      .addSelect('a.line_id', 'line')
+      .from('part_posting', 'pp')
+      .innerJoin('part', 'p', 'pp.part_id = p.id')
+      .innerJoin('area', 'a', 'pp.area_id = a.id')
+      // .where('p.part_no = :partNo', { partNo: '9004A-10197-00' })
+      .groupBy('p.part_no')
+      .addGroupBy('p.part_name')
+      .addGroupBy('p.supplier')
+      .addGroupBy('pp.uniq')
+      .addGroupBy('a.id')
+      .addGroupBy('a.name')
+      .addGroupBy('a.alias')
+      .addGroupBy('a.line_id')
+      .getRawMany();
   }
 }

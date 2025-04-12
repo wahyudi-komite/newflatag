@@ -7,6 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { NgxTrimDirectiveModule } from 'ngx-trim-directive';
 import { PaginateTakeComponent } from '../../modules/shared/paginate-take/paginate-take.component';
 import { PaginateComponent } from '../../modules/shared/paginate/paginate.component';
 
@@ -24,6 +25,7 @@ import { PaginateComponent } from '../../modules/shared/paginate/paginate.compon
         PaginateComponent,
         PaginateTakeComponent,
         MatSelectModule,
+        NgxTrimDirectiveModule,
     ],
     exports: [
         CommonModule,
@@ -38,6 +40,7 @@ import { PaginateComponent } from '../../modules/shared/paginate/paginate.compon
         PaginateTakeComponent,
         MatSelectModule,
         DatePipe,
+        NgxTrimDirectiveModule,
     ],
     providers: [DatePipe],
 })

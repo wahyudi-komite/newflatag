@@ -59,10 +59,10 @@ export class PartComponent implements OnInit {
             });
 
         this.form = this.fb.group({
-            // eg: [''],
+            // part_no: [''],
+            // part_name: [''],
             // uniq: [''],
-            // start: [this.tanggalMulai],
-            // end: [this.tanggalEnd],
+            // line: [''],
         });
         this.load();
     }

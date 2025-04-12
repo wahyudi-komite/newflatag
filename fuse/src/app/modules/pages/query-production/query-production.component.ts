@@ -6,6 +6,7 @@ import {
     ViewEncapsulation,
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSort, Sort } from '@angular/material/sort';
 import { ToastrModule } from 'ngx-toastr';
 import { Subject, takeUntil } from 'rxjs';
@@ -23,7 +24,12 @@ import { SearchInputComponent } from '../../comp/tabel/search-input/search-input
 
 @Component({
     selector: 'app-query-production',
-    imports: [SharedModule, SearchInputComponent, ToastrModule],
+    imports: [
+        SharedModule,
+        SearchInputComponent,
+        ToastrModule,
+        MatDatepickerModule,
+    ],
     templateUrl: './query-production.component.html',
     styleUrl: './query-production.component.scss',
     encapsulation: ViewEncapsulation.None,
@@ -68,8 +74,11 @@ export class QueryProductionComponent implements OnInit {
         this.form = this.fb.group({
             shift: [''],
             line: [''],
-            // start: [this.tanggalMulai],
-            // end: [this.tanggalEnd],
+            area: [''],
+            uniq: [''],
+            eg: [''],
+            start: [''],
+            end: [''],
         });
         this.load();
     }
@@ -126,13 +135,16 @@ export class QueryProductionComponent implements OnInit {
     }
 
     submit() {
-        // this.start = this.form.value.start;
-        // this.end = this.form.value.end;
-        // this.eg = this.form.value.eg;
-
         const formValues = {
-            shift: this.form.value.shift,
+            eg: this.form.value.eg,
+            uniq: this.form.value.uniq,
             line: this.form.value.line,
+            shift: this.form.value.shift,
+
+            start: this.form.value.start,
+            end: this.form.value.end,
+            // start: this.form.value.start,
+            // end: this.form.value.end,
         };
         this.filterParams = formValues;
         this.load();

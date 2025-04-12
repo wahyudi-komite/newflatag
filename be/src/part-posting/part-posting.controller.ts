@@ -10,7 +10,6 @@ import {
   UseGuards,
   ClassSerializerInterceptor,
   Res,
-  ConflictException,
   NotFoundException,
   Request,
   BadRequestException,
@@ -56,6 +55,22 @@ export class PartPostingController {
         direction: request.query.direction,
         keyword: request.query.keyword,
         column: allColumns,
+        filterParams: [
+          {
+            part_no: request.query.part_no ? request.query.part_no : '',
+            tabel: 'part',
+          },
+          {
+            part_name: request.query.part_name ? request.query.part_name : '',
+            tabel: 'part',
+            operator: 'like',
+          },
+          { uniq: request.query.uniq ? request.query.uniq : '' },
+          {
+            line: request.query.line ? request.query.line : '',
+            tabel: 'area',
+          },
+        ],
       },
     );
 
@@ -163,5 +178,11 @@ export class PartPostingController {
   async exportExcel(@Res() res: Response, @Request() request) {
     const returnData = await this.getData(request, true);
     await this._service.exportDataToExcel(returnData.data, res);
+  }
+
+  @Get('consume')
+  async consumeData() {
+    // return 'haloo';
+    return await this._service.consumeData();
   }
 }

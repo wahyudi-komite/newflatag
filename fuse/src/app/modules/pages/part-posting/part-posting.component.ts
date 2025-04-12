@@ -16,6 +16,8 @@ import { GlobalVariable } from '../../../node/common/global-variable';
 import { Paginate } from '../../../node/common/paginate';
 import { SharedModule } from '../../../node/common/shared.module';
 import { StatusEnumService } from '../../../node/common/status-enum.service';
+import { Line } from '../../../node/line/line';
+import { LineService } from '../../../node/line/line.service';
 import { PartPosting } from '../../../node/partPosting/part-posting';
 import { PartPostingService } from '../../../node/partPosting/part-posting.service';
 import { SearchInputComponent } from '../../comp/tabel/search-input/search-input.component';
@@ -32,6 +34,8 @@ export class PartPostingComponent implements OnInit {
     user: User;
 
     datas: PartPosting[] = [];
+    line: Line[] = [];
+
     total!: number;
     page!: number;
     pageSize!: number;
@@ -41,11 +45,14 @@ export class PartPostingComponent implements OnInit {
     tblName: string = 'part_posting';
     form: FormGroup;
 
+    filterParams: any = {};
+
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     @ViewChild(MatSort, { static: true }) sort!: MatSort;
 
     _service = inject(PartPostingService);
     _userService = inject(UserService);
+    _lineService = inject(LineService);
     statusService = inject(StatusEnumService);
     fb = inject(FormBuilder);
     private toastr = inject(ToastrService);
@@ -58,11 +65,15 @@ export class PartPostingComponent implements OnInit {
                 this.user = user;
             });
 
+        this._lineService.getAll('name', 'ASC').subscribe((res) => {
+            this.line = res;
+        });
+
         this.form = this.fb.group({
-            // eg: [''],
-            // uniq: [''],
-            // start: [this.tanggalMulai],
-            // end: [this.tanggalEnd],
+            part_no: [''],
+            part_name: [''],
+            uniq: [''],
+            line: [''],
         });
         this.load();
     }
@@ -82,7 +93,8 @@ export class PartPostingComponent implements OnInit {
                 this.limit,
                 this.sort.active,
                 this.sort.direction,
-                this.find
+                this.find,
+                this.filterParams
             )
             .subscribe((res: Paginate) => {
                 this.datas = res.data;
@@ -118,10 +130,15 @@ export class PartPostingComponent implements OnInit {
     }
 
     submit() {
-        // this.start = this.form.value.start;
-        // this.end = this.form.value.end;
-        // this.eg = this.form.value.eg;
-        // this.uniq = this.form.value.uniq;
+        const formValues = {
+            part_no: this.form.value.part_no,
+            part_name: this.form.value.part_name,
+            line: this.form.value.line,
+            uniq: this.form.value.uniq,
+            start: this.form.value.start,
+            end: this.form.value.end,
+        };
+        this.filterParams = formValues;
         this.load();
     }
 

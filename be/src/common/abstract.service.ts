@@ -4,8 +4,6 @@ import { PaginatedResult } from './paginated-result.interface';
 import * as ExcelJS from 'exceljs';
 import * as fs from 'fs';
 import { Response } from 'express';
-import { Part } from '../part/entities/part.entity';
-import { StatusEnum } from './status.enum';
 
 @Injectable()
 export class AbstractService {
@@ -56,30 +54,48 @@ export class AbstractService {
       });
     }
 
-    if (query.filterParams) {
-      const objectArray = Object.entries(query.filterParams);
-      objectArray.forEach(([key, value]) => {
-        if (value != '') {
-          if (key == 'problem_date') {
-            const start = new Date(value + ' 00:00:00');
-            const end = new Date(value + ' 23:59:59');
-            myQuery
-              .andWhere(tbl + '.problem_date >= :start', { start: start })
-              .andWhere(tbl + '.problem_date <= :end', { end: end });
+    // if (query.filterParams) {
+    //   const objectArray = Object.entries(query.filterParams);
+    //   objectArray.forEach(([key, value]) => {
+    //     if (value != '') {
+    //       if (key == 'problem_date') {
+    //         const start = new Date(value + ' 00:00:00');
+    //         const end = new Date(value + ' 23:59:59');
+    //         myQuery
+    //           .andWhere(tbl + '.problem_date >= :start', { start: start })
+    //           .andWhere(tbl + '.problem_date <= :end', { end: end });
+    //       } else {
+    //         myQuery.andWhere(tbl + '.' + key + ' =:' + key, { [key]: value });
+    //       }
+    //     }
+    //   });
+    // }
+
+    if (query.filterParams && Array.isArray(query.filterParams)) {
+      query.filterParams.forEach((filterObject) => {
+        const key = Object.keys(filterObject)[0]; // Ambil kunci filter (misalnya, part_no)
+        const value = filterObject[key];
+        const tabel = filterObject.tabel ? filterObject.tabel : tbl; // Ambil alias tabel jika ada
+        const operator = filterObject.operator
+          ? filterObject.operator.toUpperCase()
+          : '=';
+
+        if (value !== '' && key) {
+          let whereClause: string;
+          const params: any = { [key]: value };
+
+          if (operator === 'LIKE') {
+            whereClause = `${tabel}.${key} LIKE :${key}`;
+            params[key] = `%${value}%`;
           } else {
-            myQuery.andWhere(tbl + '.' + key + ' =:' + key, { [key]: value });
+            whereClause = `${tabel}.${key} ${operator} :${key}`;
           }
+
+          myQuery.andWhere(whereClause, params);
         }
       });
     }
 
-    // if (query.column) {
-    //   query.column.map((data) => {
-    //     myQuery.orWhere(data + ' like :keyword', {
-    //       keyword: `%${keyword}%`,
-    //     });
-    //   });
-    // }
     const [data, total] = await myQuery.getManyAndCount();
 
     return {

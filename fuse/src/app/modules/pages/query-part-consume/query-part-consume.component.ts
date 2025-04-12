@@ -32,6 +32,8 @@ export class QueryPartConsumeComponent implements OnInit {
                 this.user = user;
             });
 
-        // this.load();
+        this.load();
     }
+
+    load() {}
 }
