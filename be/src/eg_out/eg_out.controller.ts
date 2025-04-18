@@ -46,6 +46,9 @@ export class EgOutController {
           { line: request.query.line ? request.query.line : '' },
           { uniq: request.query.uniq ? request.query.uniq : '' },
           { eg: request.query.eg ? request.query.eg : '' },
+          {
+            working: '2025-04-13',
+          },
         ],
         column: allColumns,
       },

@@ -66,6 +66,7 @@ export class PartPostingController {
             operator: 'like',
           },
           { uniq: request.query.uniq ? request.query.uniq : '' },
+
           {
             line: request.query.line ? request.query.line : '',
             tabel: 'area',
@@ -182,7 +183,6 @@ export class PartPostingController {
 
   @Get('consume')
   async consumeData() {
-    // return 'haloo';
     return await this._service.consumeData();
   }
 }

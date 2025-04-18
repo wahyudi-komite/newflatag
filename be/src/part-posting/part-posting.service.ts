@@ -72,7 +72,7 @@ export class PartPostingService extends AbstractService {
   }
 
   async consumeData(): Promise<any> {
-    await this._repository
+    return await this._repository
       .createQueryBuilder()
       .select('p.part_no', 'part_no')
       .addSelect('p.part_name', 'part_name')
@@ -86,7 +86,8 @@ export class PartPostingService extends AbstractService {
       .from('part_posting', 'pp')
       .innerJoin('part', 'p', 'pp.part_id = p.id')
       .innerJoin('area', 'a', 'pp.area_id = a.id')
-      // .where('p.part_no = :partNo', { partNo: '9004A-10197-00' })
+      .innerJoin('eg_out', 'eo', 'eo.uniq = pp.uniq')
+      .andWhere('eo.working = :working', { working: '2025-04-14' })
       .groupBy('p.part_no')
       .addGroupBy('p.part_name')
       .addGroupBy('p.supplier')
