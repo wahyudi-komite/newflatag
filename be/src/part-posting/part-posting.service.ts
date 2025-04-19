@@ -73,29 +73,159 @@ export class PartPostingService extends AbstractService {
 
   async consumeData(): Promise<any> {
     return await this._repository
-      .createQueryBuilder()
-      .select('p.part_no', 'part_no')
+      .createQueryBuilder('pp')
+      .select('pp.part_id', 'part_id')
+      .addSelect('pp.uniq_area', 'uniq_area')
+      .addSelect('p.part_no', 'part_no')
       .addSelect('p.part_name', 'part_name')
       .addSelect('p.supplier', 'supplier')
-      .addSelect('pp.uniq', 'uniq')
-      .addSelect('SUM(pp.qty)', 'qty')
-      .addSelect('a.id', 'areaId')
-      .addSelect('a.name', 'areaName')
-      .addSelect('a.alias', 'areaAlias')
-      .addSelect('a.line_id', 'line')
-      .from('part_posting', 'pp')
+
+      // Loop tanggal dan shift
+      .addSelect(
+        `SUM(CASE WHEN d.working = '2025-04-01' AND d.shift = 'DAY' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
+        '2025-04-01_day',
+      )
+      .addSelect(
+        `SUM(CASE WHEN d.working = '2025-04-01' AND d.shift = 'NIGHT' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
+        '2025-04-01_night',
+      )
+      .addSelect(
+        `SUM(CASE WHEN d.working = '2025-04-02' AND d.shift = 'DAY' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
+        '2025-04-02_day',
+      )
+      .addSelect(
+        `SUM(CASE WHEN d.working = '2025-04-02' AND d.shift = 'NIGHT' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
+        '2025-04-02_night',
+      )
+      .addSelect(
+        `SUM(CASE WHEN d.working = '2025-04-03' AND d.shift = 'DAY' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
+        '2025-04-03_day',
+      )
+      .addSelect(
+        `SUM(CASE WHEN d.working = '2025-04-03' AND d.shift = 'NIGHT' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
+        '2025-04-03_night',
+      )
+      .addSelect(
+        `SUM(CASE WHEN d.working = '2025-04-04' AND d.shift = 'DAY' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
+        '2025-04-04_day',
+      )
+      .addSelect(
+        `SUM(CASE WHEN d.working = '2025-04-04' AND d.shift = 'NIGHT' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
+        '2025-04-04_night',
+      )
+      .addSelect(
+        `SUM(CASE WHEN d.working = '2025-04-05' AND d.shift = 'DAY' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
+        '2025-04-05_day',
+      )
+      .addSelect(
+        `SUM(CASE WHEN d.working = '2025-04-05' AND d.shift = 'NIGHT' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
+        '2025-04-05_night',
+      )
+      .addSelect(
+        `SUM(CASE WHEN d.working = '2025-04-06' AND d.shift = 'DAY' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
+        '2025-04-06_day',
+      )
+      .addSelect(
+        `SUM(CASE WHEN d.working = '2025-04-06' AND d.shift = 'NIGHT' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
+        '2025-04-06_night',
+      )
+      .addSelect(
+        `SUM(CASE WHEN d.working = '2025-04-07' AND d.shift = 'DAY' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
+        '2025-04-07_day',
+      )
+      .addSelect(
+        `SUM(CASE WHEN d.working = '2025-04-07' AND d.shift = 'NIGHT' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
+        '2025-04-07_night',
+      )
+      .addSelect(
+        `SUM(CASE WHEN d.working = '2025-04-08' AND d.shift = 'DAY' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
+        '2025-04-08_day',
+      )
+      .addSelect(
+        `SUM(CASE WHEN d.working = '2025-04-08' AND d.shift = 'NIGHT' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
+        '2025-04-08_night',
+      )
+      .addSelect(
+        `SUM(CASE WHEN d.working = '2025-04-09' AND d.shift = 'DAY' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
+        '2025-04-09_day',
+      )
+      .addSelect(
+        `SUM(CASE WHEN d.working = '2025-04-09' AND d.shift = 'NIGHT' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
+        '2025-04-09_night',
+      )
+      .addSelect(
+        `SUM(CASE WHEN d.working = '2025-04-10' AND d.shift = 'DAY' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
+        '2025-04-10_day',
+      )
+      .addSelect(
+        `SUM(CASE WHEN d.working = '2025-04-10' AND d.shift = 'NIGHT' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
+        '2025-04-10_night',
+      )
+      .addSelect(
+        `SUM(CASE WHEN d.working = '2025-04-11' AND d.shift = 'DAY' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
+        '2025-04-11_day',
+      )
+      .addSelect(
+        `SUM(CASE WHEN d.working = '2025-04-11' AND d.shift = 'NIGHT' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
+        '2025-04-11_night',
+      )
+      .addSelect(
+        `SUM(CASE WHEN d.working = '2025-04-12' AND d.shift = 'DAY' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
+        '2025-04-12_day',
+      )
+      .addSelect(
+        `SUM(CASE WHEN d.working = '2025-04-12' AND d.shift = 'NIGHT' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
+        '2025-04-12_night',
+      )
+      .addSelect(
+        `SUM(CASE WHEN d.working = '2025-04-13' AND d.shift = 'DAY' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
+        '2025-04-13_day',
+      )
+      .addSelect(
+        `SUM(CASE WHEN d.working = '2025-04-13' AND d.shift = 'NIGHT' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
+        '2025-04-13_night',
+      )
+      .addSelect(
+        `SUM(CASE WHEN d.working = '2025-04-14' AND d.shift = 'DAY' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
+        '2025-04-14_day',
+      )
+      .addSelect(
+        `SUM(CASE WHEN d.working = '2025-04-14' AND d.shift = 'NIGHT' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
+        '2025-04-14_night',
+      )
+      .addSelect(
+        `SUM(CASE WHEN d.working = '2025-04-15' AND d.shift = 'DAY' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
+        '2025-04-15_day',
+      )
+      .addSelect(
+        `SUM(CASE WHEN d.working = '2025-04-15' AND d.shift = 'NIGHT' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
+        '2025-04-15_night',
+      )
+
       .innerJoin('part', 'p', 'pp.part_id = p.id')
-      .innerJoin('area', 'a', 'pp.area_id = a.id')
-      .innerJoin('eg_out', 'eo', 'eo.uniq = pp.uniq')
-      .andWhere('eo.working = :working', { working: '2025-04-14' })
-      .groupBy('p.part_no')
+      .innerJoin(
+        (subQuery) => {
+          return subQuery
+            .select('area_id')
+            .addSelect('working')
+            .addSelect('shift')
+            .addSelect('uniq_area')
+            .addSelect('uniq')
+            .addSelect('COUNT(*)', 'jumlah_uniq')
+            .from('eg_out', 'eo')
+            .where("eo.working BETWEEN '2025-04-01' AND '2025-04-15'")
+            .groupBy('area_id, working, shift, uniq_area, uniq');
+        },
+        'd',
+        'pp.uniq_area = d.uniq_area AND pp.area_id = d.area_id AND pp.uniq = d.uniq',
+      )
+
+      // .where('pp.part_id = :id', { id: 390 }) // optional filter
+      .groupBy('pp.part_id')
+      .addGroupBy('pp.uniq_area')
+      .addGroupBy('p.part_no')
       .addGroupBy('p.part_name')
       .addGroupBy('p.supplier')
-      .addGroupBy('pp.uniq')
-      .addGroupBy('a.id')
-      .addGroupBy('a.name')
-      .addGroupBy('a.alias')
-      .addGroupBy('a.line_id')
       .getRawMany();
   }
 }

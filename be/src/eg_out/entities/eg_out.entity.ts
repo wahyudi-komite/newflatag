@@ -16,6 +16,7 @@ export class EgOut {
   @ManyToOne(() => Line) @JoinColumn({ name: 'line_id' }) line: Line;
   @Column() mc: number;
   @Column({ length: 4 }) uniq: string;
+  @Column() uniq_area: number;
   @Column({ length: 12 }) eg: string;
   @ManyToOne(() => Area) @JoinColumn({ name: 'area_id' }) area: Area;
   @Column({ type: 'date' }) working: Date;

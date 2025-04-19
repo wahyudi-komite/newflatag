@@ -21,6 +21,7 @@ export class PartPosting {
   @JoinColumn({ name: 'area_id' })
   area: Area;
   @Column({ name: 'uniq' }) uniq: number;
+  @Column() uniq_area: number;
   @Column({ name: 'qty' }) qty: number;
   @CreateDateColumn() @Exclude() created_at: Date;
   @UpdateDateColumn() @Exclude() updated_at: Date;
