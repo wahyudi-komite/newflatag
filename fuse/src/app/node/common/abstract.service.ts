@@ -206,4 +206,23 @@ export abstract class AbstractService {
         const downloadUrl = `${this.url}/files/download-template`;
         window.open(downloadUrl, '_blank');
     }
+
+    consumeQuery(
+        page?: number,
+        limit?: number,
+        direction?: string,
+        sort?: string,
+        find?: string,
+        filterParams?: any
+    ): Observable<any> {
+        const params = this.buildHttpParams(
+            page,
+            limit,
+            direction,
+            sort,
+            find,
+            filterParams
+        );
+        return this.http.get(`${this.url}/consume`, { params });
+    }
 }

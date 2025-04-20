@@ -10,6 +10,7 @@ import * as fs from 'fs';
 
 import { Part } from '../part/entities/part.entity';
 import { Area } from '../admin/area/entities/area.entity';
+import { PaginatedResult } from '../common/paginated-result.interface';
 
 @Injectable()
 export class PartPostingService extends AbstractService {
@@ -71,8 +72,15 @@ export class PartPostingService extends AbstractService {
     return { insertedCount: datas.length };
   }
 
-  async consumeData(): Promise<any> {
-    return await this._repository
+  async consumeData(query): Promise<PaginatedResult> {
+    const take: number = query.limit ? query.limit : 2;
+    const page: number = query.page ? query.page : 1;
+    // const keyword: string = query.keyword ? query.keyword : '';
+    // const direction: string = query.direction ? query.direction : tbl + '.id';
+    // const sortData = query.sort ? query.sort.toUpperCase() : 'DESC';
+
+    const offset = (page - 1) * take;
+    const myQuery = this._repository
       .createQueryBuilder('pp')
       .select('pp.part_id', 'part_id')
       .addSelect('pp.uniq_area', 'uniq_area')
@@ -225,7 +233,21 @@ export class PartPostingService extends AbstractService {
       .addGroupBy('pp.uniq_area')
       .addGroupBy('p.part_no')
       .addGroupBy('p.part_name')
-      .addGroupBy('p.supplier')
-      .getRawMany();
+      .addGroupBy('p.supplier');
+
+    const pagedQuery = myQuery.clone().offset(offset).limit(take);
+    const data = await pagedQuery.getRawMany();
+
+    const totalData = await myQuery.clone().getRawMany();
+    const total = totalData.length;
+    return {
+      data: data,
+      meta: {
+        total,
+        page,
+        last_page: Math.ceil(total / take),
+        pageSize: take,
+      },
+    };
   }
 }

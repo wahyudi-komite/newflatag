@@ -182,7 +182,7 @@ export class PartPostingController {
   }
 
   @Get('consume')
-  async consumeData() {
-    return await this._service.consumeData();
+  async consumeData(@Request() request) {
+    return await this._service.consumeData(request);
   }
 }

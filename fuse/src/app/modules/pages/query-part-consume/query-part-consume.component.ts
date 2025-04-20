@@ -1,5 +1,6 @@
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
-import { MatSort } from '@angular/material/sort';
+import { FormGroup } from '@angular/forms';
+import { MatSort, Sort } from '@angular/material/sort';
 import { Subject, takeUntil } from 'rxjs';
 import { UserService } from '../../../core/user/user.service';
 import { User } from '../../../core/user/user.types';
@@ -7,10 +8,11 @@ import { GlobalVariable } from '../../../node/common/global-variable';
 import { Paginate } from '../../../node/common/paginate';
 import { SharedModule } from '../../../node/common/shared.module';
 import { PartPostingService } from '../../../node/partPosting/part-posting.service';
+import { SearchInputComponent } from '../../comp/tabel/search-input/search-input.component';
 
 @Component({
     selector: 'app-query-part-consume',
-    imports: [SharedModule],
+    imports: [SharedModule, SearchInputComponent],
     templateUrl: './query-part-consume.component.html',
     styleUrl: './query-part-consume.component.scss',
 })
@@ -25,6 +27,8 @@ export class QueryPartConsumeComponent implements OnInit {
     last_page!: number;
     find: string = '';
     limit: number = GlobalVariable.pageTake;
+    tblName: string = 'part_posting';
+    form: FormGroup;
 
     filterParams: any = {};
 
@@ -54,7 +58,7 @@ export class QueryPartConsumeComponent implements OnInit {
         find?: string
     ): void {
         this._service
-            .all(
+            .consumeQuery(
                 page,
                 this.limit,
                 this.sort.active,
@@ -64,10 +68,26 @@ export class QueryPartConsumeComponent implements OnInit {
             )
             .subscribe((res: Paginate) => {
                 this.datas = res.data;
-                this.total = res.meta.total;
-                this.page = res.meta.page;
-                this.pageSize = res.meta.pageSize;
-                this.last_page = res.meta.last_page;
+                console.log(res.data);
+
+                // this.total = res.meta.total;
+                // this.page = res.meta.page;
+                // this.pageSize = res.meta.pageSize;
+                // this.last_page = res.meta.last_page;
             });
+    }
+
+    sortData(sort: Sort) {
+        this.load();
+    }
+
+    applyFilter(value: string) {
+        this.find = value;
+        this.load();
+    }
+
+    changeLimit(limit: number): void {
+        this.limit = limit;
+        this.load();
     }
 }

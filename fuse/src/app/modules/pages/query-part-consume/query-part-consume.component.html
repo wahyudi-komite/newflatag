@@ -13,29 +13,188 @@
         <div
             class="mx-4 flex flex-auto flex-col overflow-hidden sm:mb-18 sm:overflow-y-auto"
         >
-            <div class="flex w-full items-center justify-between pl-0.5"></div>
-            <div class="relative overflow-x-auto pb-1">
-                <table class="datatable w-full" id="excel-table">
-                    <thead>
-                        <tr>
-                            <th rowspan="2" class="w-5">#</th>
-                            <th rowspan="2" class="">Part Number</th>
-                            <th colspan="2" class="">K LINE 1</th>
-                            <th colspan="2" class="">K LINE 2</th>
-                            <th colspan="2" class="">K LINE 3</th>
-                            <th colspan="3" class="">K LINE 4</th>
-                            <th colspan="3" class="">K LINE 5</th>
-                        </tr>
-                        <tr>
-                            <th class="">K LINE 1</th>
-                            <th class="">K LINE 2</th>
-                            <th class="">K LINE 3</th>
-                            <th class="">K LINE 4</th>
-                            <th class="">K LINE 5</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
+            <!-- <form [formGroup]="form" (submit)="submit()" autocomplete="off">
+                <div
+                    class="flex w-full items-center justify-between space-x-4 px-0.5"
+                >
+                    <mat-form-field
+                        [ngClass]=""
+                        class="w-full"
+                        floatLabel="always"
+                    >
+                        <mat-label>Part NO</mat-label>
+                        <input
+                            matInput
+                            formControlName="part_no"
+                            [placeholder]="'Part NO..'"
+                            trim="blur"
+                        />
+                    </mat-form-field>
+                    <mat-form-field
+                        [ngClass]=""
+                        class="w-full"
+                        floatLabel="always"
+                    >
+                        <mat-label>Part Name</mat-label>
+                        <input
+                            matInput
+                            formControlName="part_name"
+                            [placeholder]="'Part Name..'"
+                            trim="blur"
+                        />
+                    </mat-form-field>
+                    <mat-form-field class="w-full" floatLabel="always">
+                        <mat-label>Line</mat-label>
+                        <mat-select
+                            formControlName="line"
+                            [placeholder]="'--Please Choice--'"
+                        >
+                            <mat-option>--Please Choice--</mat-option>
+                            @for (item of line; track $index) {
+                                <mat-option [value]="item.id">
+                                    {{ item.name }}
+                                </mat-option>
+                            }
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field
+                        [ngClass]=""
+                        class="w-full"
+                        floatLabel="always"
+                    >
+                        <mat-label>Uniq</mat-label>
+                        <input
+                            matInput
+                            formControlName="uniq"
+                            [placeholder]="'Uniq Number..'"
+                            trim="blur"
+                        />
+                    </mat-form-field>
+
+                    <button
+                        mat-raised-button
+                        type="submit"
+                        color="primary"
+                        class="w-100"
+                    >
+                        <mat-icon>search</mat-icon>
+                        FILTER
+                    </button>
+                </div>
+            </form> -->
+
+            <div class="flex w-full items-center justify-between pl-0.5">
+                <app-search-input
+                    placeholder="Search..."
+                    (search)="applyFilter($event)"
+                ></app-search-input>
+
+                <div class="flex justify-between py-1">
+                    <app-paginate-take
+                        (limitChanged)="changeLimit($event)"
+                    ></app-paginate-take>
+                </div>
+                <div class="group relative space-x-2">
+                    <!-- <button
+                        mat-mini-fab
+                        color="primary"
+                        matTooltip="Add Data"
+                        matTooltipPosition="above"
+                        (click)="openDialog('Add', {})"
+                    >
+                        <mat-icon>add</mat-icon>
+                    </button>
+                    <button
+                        mat-mini-fab
+                        color="warn"
+                        matTooltip="Upload Excel"
+                        matTooltipPosition="above"
+                        (click)="openDialog('Upload', {})"
+                    >
+                        <mat-icon>upload</mat-icon>
+                    </button>
+                    <button
+                        mat-mini-fab
+                        color="accent"
+                        matTooltip="Export Excel"
+                        matTooltipPosition="above"
+                        (click)="exportToExcel()"
+                    >
+                        <mat-icon>download</mat-icon>
+                    </button>
+                </div> -->
+                </div>
+                <div class="relative overflow-x-auto pb-1">
+                    <table
+                        class="datatable w-full"
+                        id="excel-table"
+                        matSort
+                        (matSortChange)="sortData($event)"
+                        matSortActive="{{ tblName }}.updated_at"
+                        matSortDirection="desc"
+                        matSortDisableClear
+                    >
+                        <thead>
+                            <tr>
+                                <th class="w-8">#</th>
+
+                                <th class="w-12">
+                                    <mat-icon
+                                        svgIcon="heroicons_outline:cursor-arrow-ripple"
+                                    ></mat-icon>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="" *ngIf="this.total == 0">
+                                <td
+                                    colspan="9"
+                                    class="h-10 text-lg font-medium text-rose-700"
+                                >
+                                    No Data Avalaible
+                                </td>
+                            </tr>
+                            @for (data of datas; track $index) {
+                                <tr class="">
+                                    <td>
+                                        {{
+                                            $index +
+                                                1 +
+                                                (this.page - 1) * this.pageSize
+                                                | number: '0.0-0'
+                                        }}
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="flex w-full items-center justify-between">
+                    <app-paginate
+                        [last_page]="this.last_page"
+                        (pageChanged)="load($event)"
+                    ></app-paginate>
+                    <div class="">
+                        <span
+                            >Showing
+                            <span class="font-bold">{{
+                                this.pageSize * (this.page - 1) + 1
+                            }}</span>
+                            to
+                            <span class="font-bold">{{
+                                this.pageSize * this.page > this.total
+                                    ? this.total
+                                    : this.pageSize * this.page
+                            }}</span>
+                            off
+                            <span class="font-bold">{{
+                                this.total | number: '0.0-0'
+                            }}</span>
+                            Entries
+                        </span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
