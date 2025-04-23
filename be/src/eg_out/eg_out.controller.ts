@@ -54,10 +54,23 @@ export class EgOutController {
       },
     );
 
-    returnData.data = returnData.data.map((item) => ({
-      ...item,
-      create: formatDate(new Date(item.create)),
-    }));
+    returnData.data = returnData.data.map(
+      ({ create, working, shift, mc, uniq, line, area, eg }) => {
+        return {
+          create: formatDate(new Date(create)),
+          working,
+          shift,
+          line: line?.name,
+          area_alias: area?.alias,
+          area_name: area?.name,
+          mc,
+          uniq,
+          eg,
+        };
+        // ...item,
+        // create: formatDate(new Date(item.create)),
+      },
+    );
 
     return returnData;
   }

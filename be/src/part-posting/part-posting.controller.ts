@@ -76,6 +76,17 @@ export class PartPostingController {
     );
 
     returnData.data = returnData.data.map((item) => ({
+      // const { part, area, uniq, qty, ...rest } = item;
+
+      // return {
+      //   part_no: part?.part_no,
+      //   part_name: part?.part_name,
+      //   area_alias: area?.alias,
+      //   area_name: area?.name,
+      //   line_name: area?.line?.name,
+      //   uniq,
+      //   qty,
+      // };
       ...item,
       // create: formatDate(new Date(item.create)),
       // timejob: formatDate(new Date(item.timejob)),
@@ -178,11 +189,28 @@ export class PartPostingController {
   @Get('excel')
   async exportExcel(@Res() res: Response, @Request() request) {
     const returnData = await this.getData(request, true);
+    returnData.data = returnData.data.map(({ part, area, uniq, qty }) => {
+      return {
+        part_no: part?.part_no,
+        part_name: part?.part_name,
+        area_alias: area?.alias,
+        area_name: area?.name,
+        line_name: area?.line?.name,
+        uniq,
+        qty,
+      };
+    });
     await this._service.exportDataToExcel(returnData.data, res);
   }
 
   @Get('consume')
   async consumeData(@Request() request) {
-    return await this._service.consumeData(request);
+    return await this._service.consumeData(request.query);
+  }
+
+  @Get('excelConsume')
+  async excelConsume(@Res() res: Response, @Request() request) {
+    const returnData = await this._service.consumeData(request.query, true);
+    await this._service.exportDataToExcel(returnData.data, res);
   }
 }

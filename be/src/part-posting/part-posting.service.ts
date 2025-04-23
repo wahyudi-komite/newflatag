@@ -4,13 +4,15 @@ import { UpdatePartPostingDto } from './dto/update-part-posting.dto';
 import { AbstractService } from '../common/abstract.service';
 import { PartPosting } from './entities/part-posting.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 import * as ExcelJS from 'exceljs';
 import * as fs from 'fs';
 
 import { Part } from '../part/entities/part.entity';
 import { Area } from '../admin/area/entities/area.entity';
 import { PaginatedResult } from '../common/paginated-result.interface';
+import * as moment from 'moment';
+import { log } from 'console';
 
 @Injectable()
 export class PartPostingService extends AbstractService {
@@ -72,144 +74,64 @@ export class PartPostingService extends AbstractService {
     return { insertedCount: datas.length };
   }
 
-  async consumeData(query): Promise<PaginatedResult> {
-    const take: number = query.limit ? query.limit : 2;
+  async consumeData(query, isExport = false): Promise<PaginatedResult> {
+    // const take: number = query.limit ? query.limit : 10;
+    const take: number = isExport ? 100000 : (query.limit ?? 10);
     const page: number = query.page ? query.page : 1;
-    // const keyword: string = query.keyword ? query.keyword : '';
-    // const direction: string = query.direction ? query.direction : tbl + '.id';
-    // const sortData = query.sort ? query.sort.toUpperCase() : 'DESC';
+    const keyword: string = query.keyword ? query.keyword : '';
+    const direction: string = query.direction ? query.direction : 'p.part_name';
+    const sortData = query.sort ? query.sort.toUpperCase() : 'DESC';
+    const createStart: string = query.start;
+    const createEnd: string = query.end;
+
+    const startDate = moment(createStart);
+    const endDate = moment(createEnd);
 
     const offset = (page - 1) * take;
+
+    const columns = ['part_no', 'part_name', 'supplier'];
+
+    const filterParams = [
+      {
+        part_no: query.part_no ? query.part_no : '',
+        tabel: 'p',
+        operator: 'like',
+      },
+      {
+        part_name: query.part_name ? query.part_name : '',
+        tabel: 'p',
+        operator: 'like',
+      },
+      {
+        supplier: query.supplier ? query.supplier : '',
+        tabel: 'p',
+        operator: 'like',
+      },
+    ];
+
     const myQuery = this._repository
       .createQueryBuilder('pp')
       .select('pp.part_id', 'part_id')
-      .addSelect('pp.uniq_area', 'uniq_area')
       .addSelect('p.part_no', 'part_no')
       .addSelect('p.part_name', 'part_name')
-      .addSelect('p.supplier', 'supplier')
+      .addSelect('p.supplier', 'supplier');
+    // Loop tanggal dan shift secara dinamis
+    const current = startDate.clone();
+    while (current.isSameOrBefore(endDate)) {
+      const dateStr = current.format('YYYY-MM-DD');
+      myQuery
+        .addSelect(
+          `CAST(SUM(CASE WHEN d.working = '${dateStr}' AND d.shift = 'DAY' THEN pp.qty * d.jumlah_uniq ELSE 0 END) AS UNSIGNED)`,
+          `${dateStr}_day`,
+        )
+        .addSelect(
+          `CAST(SUM(CASE WHEN d.working = '${dateStr}' AND d.shift = 'NIGHT' THEN pp.qty * d.jumlah_uniq ELSE 0 END) AS UNSIGNED)`,
+          `${dateStr}_night`,
+        );
+      current.add(1, 'day');
+    }
 
-      // Loop tanggal dan shift
-      .addSelect(
-        `SUM(CASE WHEN d.working = '2025-04-01' AND d.shift = 'DAY' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
-        '2025-04-01_day',
-      )
-      .addSelect(
-        `SUM(CASE WHEN d.working = '2025-04-01' AND d.shift = 'NIGHT' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
-        '2025-04-01_night',
-      )
-      .addSelect(
-        `SUM(CASE WHEN d.working = '2025-04-02' AND d.shift = 'DAY' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
-        '2025-04-02_day',
-      )
-      .addSelect(
-        `SUM(CASE WHEN d.working = '2025-04-02' AND d.shift = 'NIGHT' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
-        '2025-04-02_night',
-      )
-      .addSelect(
-        `SUM(CASE WHEN d.working = '2025-04-03' AND d.shift = 'DAY' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
-        '2025-04-03_day',
-      )
-      .addSelect(
-        `SUM(CASE WHEN d.working = '2025-04-03' AND d.shift = 'NIGHT' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
-        '2025-04-03_night',
-      )
-      .addSelect(
-        `SUM(CASE WHEN d.working = '2025-04-04' AND d.shift = 'DAY' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
-        '2025-04-04_day',
-      )
-      .addSelect(
-        `SUM(CASE WHEN d.working = '2025-04-04' AND d.shift = 'NIGHT' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
-        '2025-04-04_night',
-      )
-      .addSelect(
-        `SUM(CASE WHEN d.working = '2025-04-05' AND d.shift = 'DAY' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
-        '2025-04-05_day',
-      )
-      .addSelect(
-        `SUM(CASE WHEN d.working = '2025-04-05' AND d.shift = 'NIGHT' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
-        '2025-04-05_night',
-      )
-      .addSelect(
-        `SUM(CASE WHEN d.working = '2025-04-06' AND d.shift = 'DAY' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
-        '2025-04-06_day',
-      )
-      .addSelect(
-        `SUM(CASE WHEN d.working = '2025-04-06' AND d.shift = 'NIGHT' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
-        '2025-04-06_night',
-      )
-      .addSelect(
-        `SUM(CASE WHEN d.working = '2025-04-07' AND d.shift = 'DAY' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
-        '2025-04-07_day',
-      )
-      .addSelect(
-        `SUM(CASE WHEN d.working = '2025-04-07' AND d.shift = 'NIGHT' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
-        '2025-04-07_night',
-      )
-      .addSelect(
-        `SUM(CASE WHEN d.working = '2025-04-08' AND d.shift = 'DAY' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
-        '2025-04-08_day',
-      )
-      .addSelect(
-        `SUM(CASE WHEN d.working = '2025-04-08' AND d.shift = 'NIGHT' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
-        '2025-04-08_night',
-      )
-      .addSelect(
-        `SUM(CASE WHEN d.working = '2025-04-09' AND d.shift = 'DAY' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
-        '2025-04-09_day',
-      )
-      .addSelect(
-        `SUM(CASE WHEN d.working = '2025-04-09' AND d.shift = 'NIGHT' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
-        '2025-04-09_night',
-      )
-      .addSelect(
-        `SUM(CASE WHEN d.working = '2025-04-10' AND d.shift = 'DAY' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
-        '2025-04-10_day',
-      )
-      .addSelect(
-        `SUM(CASE WHEN d.working = '2025-04-10' AND d.shift = 'NIGHT' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
-        '2025-04-10_night',
-      )
-      .addSelect(
-        `SUM(CASE WHEN d.working = '2025-04-11' AND d.shift = 'DAY' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
-        '2025-04-11_day',
-      )
-      .addSelect(
-        `SUM(CASE WHEN d.working = '2025-04-11' AND d.shift = 'NIGHT' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
-        '2025-04-11_night',
-      )
-      .addSelect(
-        `SUM(CASE WHEN d.working = '2025-04-12' AND d.shift = 'DAY' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
-        '2025-04-12_day',
-      )
-      .addSelect(
-        `SUM(CASE WHEN d.working = '2025-04-12' AND d.shift = 'NIGHT' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
-        '2025-04-12_night',
-      )
-      .addSelect(
-        `SUM(CASE WHEN d.working = '2025-04-13' AND d.shift = 'DAY' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
-        '2025-04-13_day',
-      )
-      .addSelect(
-        `SUM(CASE WHEN d.working = '2025-04-13' AND d.shift = 'NIGHT' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
-        '2025-04-13_night',
-      )
-      .addSelect(
-        `SUM(CASE WHEN d.working = '2025-04-14' AND d.shift = 'DAY' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
-        '2025-04-14_day',
-      )
-      .addSelect(
-        `SUM(CASE WHEN d.working = '2025-04-14' AND d.shift = 'NIGHT' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
-        '2025-04-14_night',
-      )
-      .addSelect(
-        `SUM(CASE WHEN d.working = '2025-04-15' AND d.shift = 'DAY' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
-        '2025-04-15_day',
-      )
-      .addSelect(
-        `SUM(CASE WHEN d.working = '2025-04-15' AND d.shift = 'NIGHT' THEN pp.qty * d.jumlah_uniq ELSE 0 END)`,
-        '2025-04-15_night',
-      )
-
+    myQuery
       .innerJoin('part', 'p', 'pp.part_id = p.id')
       .innerJoin(
         (subQuery) => {
@@ -221,27 +143,77 @@ export class PartPostingService extends AbstractService {
             .addSelect('uniq')
             .addSelect('COUNT(*)', 'jumlah_uniq')
             .from('eg_out', 'eo')
-            .where("eo.working BETWEEN '2025-04-01' AND '2025-04-15'")
+            .where(
+              "eo.working BETWEEN '" +
+                createStart +
+                "' AND '" +
+                createEnd +
+                "'",
+            )
             .groupBy('area_id, working, shift, uniq_area, uniq');
         },
         'd',
         'pp.uniq_area = d.uniq_area AND pp.area_id = d.area_id AND pp.uniq = d.uniq',
       )
 
-      // .where('pp.part_id = :id', { id: 390 }) // optional filter
+      // .where('pp.part_id = :id', { id: 332 })
+      .andWhere(
+        new Brackets((qb) => {
+          columns.map((data) => {
+            qb.orWhere(data + ' like :keyword', {
+              keyword: `%${keyword}%`,
+            });
+          });
+        }),
+      )
+      .orderBy(direction, sortData)
       .groupBy('pp.part_id')
-      .addGroupBy('pp.uniq_area')
       .addGroupBy('p.part_no')
       .addGroupBy('p.part_name')
       .addGroupBy('p.supplier');
 
+    if (filterParams && Array.isArray(filterParams)) {
+      filterParams.forEach((filterObject) => {
+        const key = Object.keys(filterObject)[0];
+        const value = filterObject[key];
+        const tabel = filterObject.tabel ? filterObject.tabel : 'p';
+        const operator = filterObject.operator
+          ? filterObject.operator.toUpperCase()
+          : '=';
+
+        if (value !== '' && key) {
+          let whereClause: string;
+          const params: any = { [key]: value };
+
+          if (operator === 'LIKE') {
+            whereClause = `${tabel}.${key} LIKE :${key}`;
+            params[key] = `%${value}%`;
+          } else {
+            whereClause = `${tabel}.${key} ${operator} :${key}`;
+          }
+
+          myQuery.andWhere(whereClause, params);
+        }
+      });
+    }
+    // log('query', myQuery.getSql());
     const pagedQuery = myQuery.clone().offset(offset).limit(take);
     const data = await pagedQuery.getRawMany();
+
+    const cleanResult = data.map((item) => {
+      const newItem = { ...item };
+      for (const key in newItem) {
+        if (key.endsWith('_day') || key.endsWith('_night')) {
+          newItem[key] = Number(newItem[key]);
+        }
+      }
+      return newItem;
+    });
 
     const totalData = await myQuery.clone().getRawMany();
     const total = totalData.length;
     return {
-      data: data,
+      data: cleanResult,
       meta: {
         total,
         page,

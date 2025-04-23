@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Area } from '../../../../node/area/area';
@@ -12,6 +12,7 @@ import { LineService } from '../../../../node/line/line.service';
     imports: [ShareDialogModule],
     templateUrl: './area-dialog.component.html',
     styleUrl: './area-dialog.component.scss',
+    encapsulation: ViewEncapsulation.None,
 })
 export class AreaDialogComponent implements OnInit {
     form!: FormGroup;
@@ -37,10 +38,12 @@ export class AreaDialogComponent implements OnInit {
         this.selectStatus = this.statusEnumService.getselectStatus();
 
         this.local_data = { ...this.data };
+
         this.action = this.local_data.action;
 
         this.lineService.getAll('name', 'ASC').subscribe((res) => {
             this.selectLine = res;
+            console.log('selectLine', this.selectLine);
         });
 
         const asyncValidator = this.existingValidator.IsUnique(
@@ -50,10 +53,18 @@ export class AreaDialogComponent implements OnInit {
         );
 
         this.form = this.fb.group({
-            name: ['', { validators: [Validators.required] }],
-            line: ['', { validators: [Validators.required] }],
+            name: [
+                { value: '', disabled: true },
+                ,
+                { validators: [Validators.required] },
+            ],
+            line: [
+                { value: '', disabled: true },
+                { validators: [Validators.required] },
+            ],
             alias: [
-                '',
+                { value: '', disabled: true },
+                ,
                 {
                     validators: [Validators.required, Validators.minLength(2)],
                     asyncValidators: asyncValidator ? asyncValidator : [],
@@ -63,7 +74,12 @@ export class AreaDialogComponent implements OnInit {
         });
 
         if (this.action != 'Add') {
-            this.form.patchValue(this.local_data);
+            this.form.patchValue({
+                line: this.local_data.line.id,
+                alias: this.local_data.alias,
+                status: this.local_data.status,
+                name: Number(this.local_data.id.toString().slice(-1)),
+            });
         }
 
         this.dialogRef.keydownEvents().subscribe((event) => {

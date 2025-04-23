@@ -65,6 +65,7 @@
                         [placeholder]="'Alias..'"
                         trim="blur"
                         value="{{ this.local_data.alias }}"
+                        readonly
                     />
                     <mat-error
                         *ngIf="
@@ -153,7 +154,6 @@
             mat-raised-button
             color="primary"
             type="submit"
-            cdkFocusInitial
         >
             <mat-icon>save</mat-icon>
             {{ action != 'Delete' ? 'SAVE' : 'DELETE' }}

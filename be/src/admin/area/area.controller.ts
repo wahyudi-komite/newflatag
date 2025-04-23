@@ -111,23 +111,23 @@ export class AreaController {
     }
 
     // Cek apakah `name` sudah ada dengan ID berbeda
-    const duplicateName = await this._service.findOne({
-      name: updateDto.name,
-    });
+    // const duplicateName = await this._service.findOne({
+    //   name: cekId.name,
+    // });
 
-    if (duplicateName && duplicateName.id !== +id) {
-      throw new ConflictException(`Name "${updateDto.name}" already exists.`);
-    }
+    // if (duplicateName && duplicateName.id !== +id) {
+    //   throw new ConflictException(`Name "${cekId.name}" already exists.`);
+    // }
 
-    // Cek apakah `alias` sudah ada dengan ID berbeda
-    const duplicateAlias = await this._service.findOne({
-      alias: updateDto.alias,
-    });
+    // // Cek apakah `alias` sudah ada dengan ID berbeda
+    // const duplicateAlias = await this._service.findOne({
+    //   alias: cekId.alias,
+    // });
 
-    if (duplicateAlias && duplicateAlias.id !== +id) {
-      throw new ConflictException(`Alias "${updateDto.alias}" already exists.`);
-    }
-    updateDto.name = capitalize(updateDto.name);
+    // if (duplicateAlias && duplicateAlias.id !== +id) {
+    //   throw new ConflictException(`Alias "${cekId.alias}" already exists.`);
+    // }
+    // updateDto.name = capitalize(cekId.name);
     return this._service.update(+id, updateDto);
   }
 
@@ -139,6 +139,14 @@ export class AreaController {
   @Get('excel')
   async exportExcel(@Res() res: Response, @Request() request) {
     const returnData = await this.getData(request, true);
+    returnData.data = returnData.data.map((item) => {
+      const { line, ...rest } = item;
+
+      return {
+        ...rest,
+        line: line ? line.name : null,
+      };
+    });
     await this._service.exportDataToExcel(returnData.data, res);
   }
 }

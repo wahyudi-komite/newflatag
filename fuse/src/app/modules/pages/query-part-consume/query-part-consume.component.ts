@@ -1,5 +1,6 @@
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSort, Sort } from '@angular/material/sort';
 import { Subject, takeUntil } from 'rxjs';
 import { UserService } from '../../../core/user/user.service';
@@ -12,7 +13,7 @@ import { SearchInputComponent } from '../../comp/tabel/search-input/search-input
 
 @Component({
     selector: 'app-query-part-consume',
-    imports: [SharedModule, SearchInputComponent],
+    imports: [SharedModule, SearchInputComponent, MatDatepickerModule],
     templateUrl: './query-part-consume.component.html',
     styleUrl: './query-part-consume.component.scss',
 })
@@ -30,6 +31,9 @@ export class QueryPartConsumeComponent implements OnInit {
     tblName: string = 'part_posting';
     form: FormGroup;
 
+    dateRange: Date[] = []; // untuk menyimpan rentang tanggal yang dipilih
+    tanggal = new Date().toISOString().slice(0, 10);
+
     filterParams: any = {};
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
@@ -37,14 +41,29 @@ export class QueryPartConsumeComponent implements OnInit {
 
     private _userService = inject(UserService);
     _service = inject(PartPostingService);
+    fb = inject(FormBuilder);
 
     ngOnInit(): void {
+        const today = new Date();
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(today.getDate() - 7);
         this._userService.user$
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((user: User) => {
                 this.user = user;
             });
-
+        this.form = this.fb.group({
+            part_no: [''],
+            part_name: [''],
+            supplier: [''],
+            start: [sevenDaysAgo],
+            end: [this.tanggal],
+        });
+        this.dateRange = this.getDateRange(sevenDaysAgo, new Date());
+        this.filterParams = {
+            start: sevenDaysAgo.toISOString(),
+            end: new Date().toISOString(),
+        };
         this.load();
     }
 
@@ -68,12 +87,10 @@ export class QueryPartConsumeComponent implements OnInit {
             )
             .subscribe((res: Paginate) => {
                 this.datas = res.data;
-                console.log(res.data);
-
-                // this.total = res.meta.total;
-                // this.page = res.meta.page;
-                // this.pageSize = res.meta.pageSize;
-                // this.last_page = res.meta.last_page;
+                this.total = res.meta.total;
+                this.page = res.meta.page;
+                this.pageSize = res.meta.pageSize;
+                this.last_page = res.meta.last_page;
             });
     }
 
@@ -89,5 +106,58 @@ export class QueryPartConsumeComponent implements OnInit {
     changeLimit(limit: number): void {
         this.limit = limit;
         this.load();
+    }
+
+    submit() {
+        const startD = new Date(this.form.value.start);
+        const endD = new Date(this.form.value.end);
+
+        if (!isNaN(startD.getTime()) && !isNaN(endD.getTime())) {
+            this.dateRange = this.getDateRange(startD, endD);
+        } else {
+            console.error('Start or end date is invalid');
+            return;
+        }
+
+        const formValues = {
+            part_no: this.form.value.part_no,
+            part_name: this.form.value.part_name,
+            supplier: this.form.value.supplier,
+            start: this.form.value.start,
+            end: this.form.value.end,
+        };
+
+        this.filterParams = formValues;
+        this.load();
+    }
+
+    getDateRange(start: Date, end: Date): Date[] {
+        const dateArray: Date[] = [];
+        const currentDate = new Date(start);
+
+        while (currentDate <= end) {
+            dateArray.push(new Date(currentDate));
+            currentDate.setDate(currentDate.getDate() + 1);
+        }
+
+        return dateArray;
+    }
+
+    getDateKey(date: Date, shift: 'day' | 'night'): string {
+        const yyyy = date.getFullYear();
+        const mm = String(date.getMonth() + 1).padStart(2, '0');
+        const dd = String(date.getDate()).padStart(2, '0');
+        return `${yyyy}-${mm}-${dd}_${shift}`;
+    }
+
+    exportToExcel(): void {
+        this._service.exportExcelConsumeQuery(
+            this.page,
+            this.total,
+            this.sort?.active,
+            this.sort?.direction,
+            this.find,
+            this.filterParams
+        );
     }
 }

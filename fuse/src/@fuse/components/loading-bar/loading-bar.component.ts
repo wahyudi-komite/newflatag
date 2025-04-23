@@ -20,7 +20,7 @@ import { Subject, takeUntil } from 'rxjs';
     styleUrls: ['./loading-bar.component.scss'],
     encapsulation: ViewEncapsulation.None,
     exportAs: 'fuseLoadingBar',
-    imports: [MatProgressBarModule]
+    imports: [MatProgressBarModule],
 })
 export class FuseLoadingBarComponent implements OnChanges, OnInit, OnDestroy {
     private _fuseLoadingService = inject(FuseLoadingService);
@@ -58,19 +58,25 @@ export class FuseLoadingBarComponent implements OnChanges, OnInit, OnDestroy {
         this._fuseLoadingService.mode$
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((value) => {
-                this.mode = value;
+                setTimeout(() => {
+                    this.mode = value;
+                });
             });
 
         this._fuseLoadingService.progress$
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((value) => {
-                this.progress = value;
+                setTimeout(() => {
+                    this.progress = value;
+                });
             });
 
         this._fuseLoadingService.show$
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((value) => {
-                this.show = value;
+                setTimeout(() => {
+                    this.show = value;
+                });
             });
     }
 

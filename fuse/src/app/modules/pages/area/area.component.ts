@@ -139,7 +139,6 @@ export class AreaComponent implements OnInit {
             hasBackdrop: true,
             data: obj,
         };
-
         const dialogRef = this.dialog.open(
             AreaDialogComponent,
             dialogBoxSettings
