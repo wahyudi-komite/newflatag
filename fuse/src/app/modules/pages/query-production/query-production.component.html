@@ -17,6 +17,22 @@
                 <div
                     class="flex w-full items-center justify-between space-x-4 px-0.5"
                 >
+                    <mat-form-field floatLabel="always" class="min-w-[200px]">
+                        <mat-label>Working Date :</mat-label>
+                        <input
+                            matInput
+                            type="date-local"
+                            [matDatepicker]="startDatepicker"
+                            formControlName="working"
+                            [placeholder]="'Working Date..'"
+                        />
+                        <mat-datepicker-toggle
+                            matSuffix
+                            [for]="startDatepicker"
+                        ></mat-datepicker-toggle>
+                        <mat-datepicker #startDatepicker></mat-datepicker>
+                    </mat-form-field>
+
                     <mat-form-field
                         [ngClass]=""
                         class="w-full"

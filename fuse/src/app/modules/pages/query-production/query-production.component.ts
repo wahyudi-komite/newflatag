@@ -51,6 +51,8 @@ export class QueryProductionComponent implements OnInit {
     shift?: string;
     filterParams: any = {};
 
+    tanggal = new Date().toISOString().slice(0, 10);
+
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     @ViewChild(MatSort, { static: true }) sort!: MatSort;
 
@@ -77,7 +79,7 @@ export class QueryProductionComponent implements OnInit {
             area: [''],
             uniq: [''],
             eg: [''],
-            start: [''],
+            working: [''],
             end: [''],
         });
         this.load();
@@ -141,10 +143,7 @@ export class QueryProductionComponent implements OnInit {
             line: this.form.value.line,
             shift: this.form.value.shift,
 
-            start: this.form.value.start,
-            end: this.form.value.end,
-            // start: this.form.value.start,
-            // end: this.form.value.end,
+            working: this.form.value.working,
         };
         this.filterParams = formValues;
         this.load();

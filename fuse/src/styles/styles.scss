@@ -6,11 +6,24 @@
     min-height: 40px;
 }
 
+* {
+    scrollbar-width: auto;
+    scrollbar-color: rgb(14, 131, 92) rgb(211, 208, 201);
+}
+
 table.datatable {
     @apply w-full border-collapse border border-gray-300;
 
     thead {
         @apply border-collapse border border-emerald-700 bg-emerald-700 text-sm font-bold tracking-wider text-white;
+
+        &.with-border {
+            tr {
+                th {
+                    border: 1px solid #ccc7c7;
+                }
+            }
+        }
 
         tr {
             th {

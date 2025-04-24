@@ -14,10 +14,9 @@
             class="mx-4 flex flex-auto flex-col overflow-hidden sm:mb-18 sm:overflow-y-auto"
         >
             <form [formGroup]="form" (submit)="submit()" autocomplete="off">
-                <div class="flex w-full items-center space-x-4 px-0.5">
+                <div class="flex w-full flex-wrap items-center gap-4 px-0.5">
                     <mat-form-field
-                        [ngClass]=""
-                        class="min-w-[300px]"
+                        class="-mb-6 w-full sm:w-auto lg:min-w-[150px]"
                         floatLabel="always"
                     >
                         <mat-label>Part No</mat-label>
@@ -28,9 +27,9 @@
                             trim="blur"
                         />
                     </mat-form-field>
+
                     <mat-form-field
-                        [ngClass]=""
-                        class="min-w-[300px]"
+                        class="-mb-6 w-full min-w-[200px] sm:w-auto"
                         floatLabel="always"
                     >
                         <mat-label>Part Name</mat-label>
@@ -41,9 +40,9 @@
                             trim="blur"
                         />
                     </mat-form-field>
+
                     <mat-form-field
-                        [ngClass]=""
-                        class="min-w-[300px]"
+                        class="-mb-6 w-full min-w-[150px] sm:w-auto"
                         floatLabel="always"
                     >
                         <mat-label>Supplier</mat-label>
@@ -55,7 +54,10 @@
                         />
                     </mat-form-field>
 
-                    <mat-form-field floatLabel="always" class="min-w-[200px]">
+                    <mat-form-field
+                        class="-mb-6 w-full min-w-[170px] sm:w-auto"
+                        floatLabel="always"
+                    >
                         <mat-label>Date From :</mat-label>
                         <input
                             matInput
@@ -71,9 +73,8 @@
                     </mat-form-field>
 
                     <mat-form-field
+                        class="-mb-6 w-full min-w-[170px] sm:w-auto"
                         floatLabel="always"
-                        style="margin-left: 20px"
-                        class="min-w-[200px]"
                     >
                         <mat-label>Date End:</mat-label>
                         <input
@@ -93,14 +94,16 @@
                         mat-raised-button
                         type="submit"
                         color="primary"
-                        class="max-w-100"
+                        class="-mb-6 flex w-full min-w-[100px] items-center justify-center gap-2 sm:w-auto"
                     >
                         <mat-icon>search</mat-icon>
                         FILTER
                     </button>
                 </div>
             </form>
-            <div class="flex w-full items-center justify-between pl-0.5">
+            <div
+                class="flex w-full items-center justify-between pl-0.5 sm:mt-4"
+            >
                 <app-search-input
                     placeholder="Search..."
                     (search)="applyFilter($event)"
@@ -125,7 +128,7 @@
             </div>
             <div class="relative overflow-x-auto pb-1">
                 <table
-                    class="datatable w-full"
+                    class="datatable w-f h-fit"
                     id="excel-table"
                     matSort
                     (matSortChange)="sortData($event)"
@@ -133,7 +136,7 @@
                     matSortDirection="asc"
                     matSortDisableClear
                 >
-                    <thead>
+                    <thead class="with-border sticky top-0 z-10">
                         <tr>
                             <th rowspan="2" class="w-8">#</th>
                             <th
@@ -169,8 +172,8 @@
                             <ng-container
                                 *ngFor="let date of dateRange; let i = index"
                             >
-                                <th class="text-left">Day</th>
-                                <th class="text-left">Night</th>
+                                <th class="text-left">D</th>
+                                <th class="text-left">N</th>
                             </ng-container>
                         </tr>
                     </thead>

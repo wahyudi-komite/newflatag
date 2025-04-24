@@ -56,13 +56,15 @@ export class QueryPartConsumeComponent implements OnInit {
             part_no: [''],
             part_name: [''],
             supplier: [''],
-            start: [sevenDaysAgo],
+            start: [sevenDaysAgo.toISOString().slice(0, 10)],
             end: [this.tanggal],
         });
-        this.dateRange = this.getDateRange(sevenDaysAgo, new Date());
+
+        this.dateRange = this.getDateRange(this.form.value.start, today);
+
         this.filterParams = {
-            start: sevenDaysAgo.toISOString(),
-            end: new Date().toISOString(),
+            start: this.form.value.start,
+            end: this.form.value.end,
         };
         this.load();
     }
