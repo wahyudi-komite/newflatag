@@ -132,7 +132,8 @@ export class QueryProductionComponent implements OnInit {
             this.total,
             this.sort?.active,
             this.sort?.direction,
-            this.find
+            this.find,
+            this.filterParams
         );
     }
 
