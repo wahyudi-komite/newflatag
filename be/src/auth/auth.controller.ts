@@ -53,11 +53,11 @@ export class AuthController {
   @UseInterceptors(ClassSerializerInterceptor)
   @Post('sign-in')
   async login(
-    @Body('email') email: string,
+    @Body('username') username: string,
     @Body('password') password: string,
     @Res({ passthrough: true }) response: Response,
   ) {
-    const user = await this.userService.findOne({ email: email });
+    const user = await this.userService.findOne({ name: username });
     if (!user) {
       throw new NotFoundException('User not found');
     }
