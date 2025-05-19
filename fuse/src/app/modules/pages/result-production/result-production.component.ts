@@ -2,6 +2,7 @@ import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSort, Sort } from '@angular/material/sort';
+import { ToastrModule } from 'ngx-toastr';
 import { Subject, takeUntil } from 'rxjs';
 import { UserService } from '../../../core/user/user.service';
 import { User } from '../../../core/user/user.types';
@@ -10,16 +11,21 @@ import { Paginate } from '../../../node/common/paginate';
 import { SharedModule } from '../../../node/common/shared.module';
 import { Line } from '../../../node/line/line';
 import { LineService } from '../../../node/line/line.service';
-import { PartPostingService } from '../../../node/partPosting/part-posting.service';
+import { QueryProductionService } from '../../../node/query-production/query-production.service';
 import { SearchInputComponent } from '../../comp/tabel/search-input/search-input.component';
 
 @Component({
-    selector: 'app-query-part-consume',
-    imports: [SharedModule, SearchInputComponent, MatDatepickerModule],
-    templateUrl: './query-part-consume.component.html',
-    styleUrl: './query-part-consume.component.scss',
+    selector: 'app-result-production',
+    imports: [
+        SharedModule,
+        SearchInputComponent,
+        ToastrModule,
+        MatDatepickerModule,
+    ],
+    templateUrl: './result-production.component.html',
+    styleUrl: './result-production.component.scss',
 })
-export class QueryPartConsumeComponent implements OnInit {
+export class ResultProductionComponent implements OnInit {
     user: User;
     line: Line[] = [];
 
@@ -31,32 +37,25 @@ export class QueryPartConsumeComponent implements OnInit {
     last_page!: number;
     find: string = '';
     limit: number = GlobalVariable.pageTake;
-    tblName: string = 'part_posting';
+    tblName: string = 'eg_out';
     form: FormGroup;
-
-    dateRange: Date[] = []; // untuk menyimpan rentang tanggal yang dipilih
-    tanggal = new Date().toISOString().slice(0, 10);
-
     filterParams: any = {};
+    dateRange: Date[] = [];
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     @ViewChild(MatSort, { static: true }) sort!: MatSort;
 
     private _userService = inject(UserService);
-    _service = inject(PartPostingService);
+    _service = inject(QueryProductionService);
     _lineService = inject(LineService);
     fb = inject(FormBuilder);
 
     ngOnInit(): void {
-        const today = new Date();
-        const sevenDaysAgo = new Date();
-        sevenDaysAgo.setDate(today.getDate() - 7);
         this._userService.user$
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((user: User) => {
                 this.user = user;
             });
-
         this._lineService.getAll('name', 'ASC').subscribe((res) => {
             this.line = res;
         });
@@ -66,18 +65,9 @@ export class QueryPartConsumeComponent implements OnInit {
             part_no: [''],
             part_name: [''],
             supplier: [''],
-            start: [sevenDaysAgo.toISOString().slice(0, 10)],
-            end: [this.tanggal],
+            start: [],
+            end: [],
         });
-
-        this.dateRange = this.getDateRange(this.form.value.start, today);
-
-        this.filterParams = {
-            line: this.form.value.line,
-            start: this.form.value.start,
-            end: this.form.value.end,
-        };
-        this.load();
     }
 
     load(

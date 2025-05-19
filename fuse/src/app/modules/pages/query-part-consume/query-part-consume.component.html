@@ -14,9 +14,27 @@
             class="mx-4 flex flex-auto flex-col overflow-hidden sm:mb-18 sm:overflow-y-auto"
         >
             <form [formGroup]="form" (submit)="submit()" autocomplete="off">
-                <div class="flex w-full flex-wrap items-center gap-4 px-0.5">
+                <div class="flex w-full flex-wrap items-center gap-2 px-0.5">
                     <mat-form-field
-                        class="-mb-6 w-full sm:w-auto lg:min-w-[150px]"
+                        class="-mb-6 w-full sm:w-auto lg:min-w-[150px] xl:min-w-[180px]"
+                        floatLabel="always"
+                    >
+                        <mat-label>Line</mat-label>
+                        <mat-select
+                            formControlName="line"
+                            [placeholder]="'--Please Choice--'"
+                        >
+                            <mat-option>--Please Choice--</mat-option>
+                            @for (item of line; track $index) {
+                                <mat-option [value]="item.id">
+                                    {{ item.name }}
+                                </mat-option>
+                            }
+                        </mat-select>
+                    </mat-form-field>
+
+                    <mat-form-field
+                        class="-mb-6 w-full sm:w-auto lg:min-w-[150px] xl:min-w-[180px]"
                         floatLabel="always"
                     >
                         <mat-label>Part No</mat-label>
@@ -29,7 +47,7 @@
                     </mat-form-field>
 
                     <mat-form-field
-                        class="-mb-6 w-full min-w-[200px] sm:w-auto"
+                        class="-mb-6 w-full sm:w-auto lg:min-w-[150px] xl:min-w-[180px]"
                         floatLabel="always"
                     >
                         <mat-label>Part Name</mat-label>
@@ -42,7 +60,7 @@
                     </mat-form-field>
 
                     <mat-form-field
-                        class="-mb-6 w-full min-w-[150px] sm:w-auto"
+                        class="-mb-6 w-full sm:w-auto lg:min-w-[120px] xl:min-w-[180px]"
                         floatLabel="always"
                     >
                         <mat-label>Supplier</mat-label>
@@ -55,7 +73,7 @@
                     </mat-form-field>
 
                     <mat-form-field
-                        class="-mb-6 w-full min-w-[170px] sm:w-auto"
+                        class="-mb-6 w-full sm:w-auto lg:min-w-[150px] xl:min-w-[180px]"
                         floatLabel="always"
                     >
                         <mat-label>Date From :</mat-label>
@@ -73,7 +91,7 @@
                     </mat-form-field>
 
                     <mat-form-field
-                        class="-mb-6 w-full min-w-[170px] sm:w-auto"
+                        class="-mb-6 w-full sm:w-auto lg:min-w-[150px] xl:min-w-[180px]"
                         floatLabel="always"
                     >
                         <mat-label>Date End:</mat-label>
@@ -94,7 +112,7 @@
                         mat-raised-button
                         type="submit"
                         color="primary"
-                        class="-mb-6 flex w-full min-w-[100px] items-center justify-center gap-2 sm:w-auto"
+                        class="-mb-6 mt-4 flex w-full min-w-[100px] items-center justify-center gap-2 sm:mt-0 sm:w-auto"
                     >
                         <mat-icon>search</mat-icon>
                         FILTER
@@ -102,7 +120,7 @@
                 </div>
             </form>
             <div
-                class="flex w-full items-center justify-between pl-0.5 sm:mt-4"
+                class="mt-10 flex w-full items-center justify-between pl-0.5 sm:mt-4"
             >
                 <app-search-input
                     placeholder="Search..."
@@ -180,7 +198,7 @@
                     <tbody>
                         <tr class="" *ngIf="this.total == 0">
                             <td
-                                colspan="9"
+                                [attr.colspan]="dateRange.length * 2 + 4"
                                 class="h-10 text-lg font-medium text-rose-700"
                             >
                                 No Data Avalaible
@@ -220,7 +238,9 @@
                 </table>
             </div>
 
-            <div class="flex w-full items-center justify-between">
+            <div
+                class="flex w-full flex-col items-center justify-between gap-2 sm:flex-row sm:gap-0"
+            >
                 <app-paginate
                     [last_page]="this.last_page"
                     (pageChanged)="load($event)"

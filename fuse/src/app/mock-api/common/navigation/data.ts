@@ -2,20 +2,6 @@
 import { FuseNavigationItem } from '@fuse/components/navigation';
 
 export const defaultNavigation: FuseNavigationItem[] = [
-    // {
-    //     id: 'dashboard',
-    //     title: 'Dashboard',
-    //     type: 'basic',
-    //     icon: 'heroicons_outline:home',
-    //     link: '/dashboard',
-    // },
-    // {
-    //     id: 'example',
-    //     title: 'Examples',
-    //     type: 'basic',
-    //     icon: 'heroicons_outline:chart-pie',
-    //     link: '/example',
-    // },
     {
         id: 'line',
         title: 'Line',
@@ -30,13 +16,6 @@ export const defaultNavigation: FuseNavigationItem[] = [
         icon: 'feather:align-justify',
         link: '/area',
     },
-    // {
-    //     id: 'machine',
-    //     title: 'Machine',
-    //     type: 'basic',
-    //     icon: 'feather:speaker',
-    //     link: '/machine',
-    // },
     {
         id: 'part',
         title: 'Part',
@@ -55,17 +34,25 @@ export const defaultNavigation: FuseNavigationItem[] = [
         id: 'query-production',
         title: 'Query Production',
         type: 'basic',
-        icon: 'heroicons_outline:squares-2x2',
+        icon: 'heroicons_outline:list-bullet',
         link: '/query-production',
     },
     {
+        id: 'result-production',
+        title: 'Result Production',
+        type: 'basic',
+        icon: 'heroicons_outline:squares-2x2',
+        link: '/result-production',
+    },
+    {
         id: 'part-consume',
-        title: 'Query Part Consume',
+        title: 'Result Part Consume',
         type: 'basic',
         icon: 'heroicons_outline:squares-2x2',
         link: '/part-consume',
     },
 ];
+
 export const compactNavigation: FuseNavigationItem[] = [
     {
         id: 'example',

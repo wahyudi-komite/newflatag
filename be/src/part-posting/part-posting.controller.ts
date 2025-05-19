@@ -1,29 +1,29 @@
 import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Put,
-  Param,
-  Delete,
-  UseInterceptors,
-  UseGuards,
-  ClassSerializerInterceptor,
-  Res,
-  NotFoundException,
-  Request,
   BadRequestException,
+  Body,
+  ClassSerializerInterceptor,
+  Controller,
+  Delete,
+  Get,
+  NotFoundException,
+  Param,
+  Post,
+  Put,
+  Request,
+  Res,
   UploadedFile,
+  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
-import { PartPostingService } from './part-posting.service';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { Response } from 'express';
+import { diskStorage } from 'multer';
+import * as path from 'path';
+import { AuthGuard } from '../auth/auth.guard';
+import { HasPermission } from '../permissions/has-permission.decorator';
 import { CreatePartPostingDto } from './dto/create-part-posting.dto';
 import { UpdatePartPostingDto } from './dto/update-part-posting.dto';
-import { HasPermission } from '../permissions/has-permission.decorator';
-import { AuthGuard } from '../auth/auth.guard';
-import { Response } from 'express';
-import * as path from 'path';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
+import { PartPostingService } from './part-posting.service';
 
 const tabel = 'part_posting';
 const columns = ['id', 'uniq', 'qty'].map((col) => `${tabel}.${col}`);
@@ -59,6 +59,7 @@ export class PartPostingController {
           {
             part_no: request.query.part_no ? request.query.part_no : '',
             tabel: 'part',
+            operator: 'like',
           },
           {
             part_name: request.query.part_name ? request.query.part_name : '',

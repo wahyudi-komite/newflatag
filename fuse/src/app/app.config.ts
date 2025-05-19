@@ -39,15 +39,26 @@ export const appConfig: ApplicationConfig = {
             provide: MAT_DATE_FORMATS,
             useValue: {
                 parse: {
-                    dateInput: 'D',
+                    dateInput: 'yyyy-MM-dd',
                 },
                 display: {
-                    dateInput: 'DDD',
+                    dateInput: 'yyyy-MM-dd',
                     monthYearLabel: 'LLL yyyy',
-                    dateA11yLabel: 'DD',
+                    dateA11yLabel: 'yyyy-MM-dd',
                     monthYearA11yLabel: 'LLLL yyyy',
                 },
             },
+            // useValue: {
+            //     parse: {
+            //         dateInput: 'D',
+            //     },
+            //     display: {
+            //         dateInput: 'DDD',
+            //         monthYearLabel: 'LLL yyyy',
+            //         dateA11yLabel: 'DD',
+            //         monthYearA11yLabel: 'LLLL yyyy',
+            //     },
+            // },
         },
 
         // Transloco Config

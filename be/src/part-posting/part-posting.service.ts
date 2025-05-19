@@ -78,6 +78,7 @@ export class PartPostingService extends AbstractService {
     // const take: number = query.limit ? query.limit : 10;
     const take: number = isExport ? 100000 : (query.limit ?? 10);
     const page: number = query.page ? query.page : 1;
+    const line: number = query.line ? query.line : 5;
     const keyword: string = query.keyword ? query.keyword : '';
     const direction: string = query.direction ? query.direction : 'p.part_name';
     const sortData = query.sort ? query.sort.toUpperCase() : 'DESC';
@@ -150,6 +151,7 @@ export class PartPostingService extends AbstractService {
                 createEnd +
                 "'",
             )
+            .andWhere('eo.line_id = :line_id', { line_id: line })
             .groupBy('area_id, working, shift, uniq_area, uniq');
         },
         'd',

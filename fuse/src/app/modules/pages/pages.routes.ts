@@ -30,6 +30,11 @@ export default [
             import('./query-production/query-production.routes'),
     },
     {
+        path: 'result-production',
+        loadChildren: () =>
+            import('./result-production/result-production.routes'),
+    },
+    {
         path: 'part-consume',
         loadChildren: () =>
             import('./query-part-consume/query-part-consume.routes'),

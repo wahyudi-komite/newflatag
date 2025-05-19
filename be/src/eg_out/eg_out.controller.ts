@@ -1,17 +1,17 @@
 import {
+  ClassSerializerInterceptor,
   Controller,
   Get,
   Request,
-  UseInterceptors,
-  UseGuards,
-  ClassSerializerInterceptor,
   Res,
+  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
-import { EgOutService } from './eg_out.service';
+import { Response } from 'express';
+import { AuthGuard } from '../auth/auth.guard';
 import { formatDate } from '../common/utils/date.utils';
 import { HasPermission } from '../permissions/has-permission.decorator';
-import { AuthGuard } from '../auth/auth.guard';
-import { Response } from 'express';
+import { EgOutService } from './eg_out.service';
 
 const tabel = 'eg_out';
 const columns = [`shift`, `id`, `create`, `mc`, `uniq`, `eg`, `working`].map(
@@ -42,10 +42,14 @@ export class EgOutController {
         direction: request.query.direction,
         keyword: request.query.keyword,
         filterParams: [
+          {
+            eg: request.query.eg ? request.query.eg : '',
+            tabel: tabel,
+            operator: 'like',
+          },
           { shift: request.query.shift ? request.query.shift : '' },
           { line: request.query.line ? request.query.line : '' },
           { uniq: request.query.uniq ? request.query.uniq : '' },
-          { eg: request.query.eg ? request.query.eg : '' },
           { working: request.query.working ? request.query.working : '' },
         ],
         column: allColumns,

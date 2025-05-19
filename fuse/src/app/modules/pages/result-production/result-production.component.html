@@ -1,3 +1,4 @@
+<p>result-production works!</p>
 <div
     class="bg-card flex min-w-0 flex-auto flex-col dark:bg-transparent sm:absolute sm:inset-0 sm:overflow-hidden"
 >
@@ -5,7 +6,7 @@
         class="relative flex flex-0 flex-col px-4 py-4 sm:flex-row sm:items-center sm:justify-between md:px-4"
     >
         <div class="text-3xl font-extrabold tracking-tight text-emerald-950">
-            PART POSTING
+            RESULT PRODUCTION
         </div>
     </div>
 
@@ -15,18 +16,34 @@
         >
             <form [formGroup]="form" (submit)="submit()" autocomplete="off">
                 <div
-                    class="mb-4 flex w-full flex-col items-center justify-between -space-y-3 px-0.5 md:mb-0 md:flex-row md:space-x-4 md:space-y-0"
+                    class="flex w-full items-center justify-between space-x-4 px-0.5"
                 >
+                    <mat-form-field floatLabel="always" class="min-w-[200px]">
+                        <mat-label>Working Date :</mat-label>
+                        <input
+                            matInput
+                            type="date-local"
+                            [matDatepicker]="startDatepicker"
+                            formControlName="working"
+                            [placeholder]="'Working Date..'"
+                        />
+                        <mat-datepicker-toggle
+                            matSuffix
+                            [for]="startDatepicker"
+                        ></mat-datepicker-toggle>
+                        <mat-datepicker #startDatepicker></mat-datepicker>
+                    </mat-form-field>
+
                     <mat-form-field
                         [ngClass]=""
                         class="w-full"
                         floatLabel="always"
                     >
-                        <mat-label>Part NO</mat-label>
+                        <mat-label>EG Number</mat-label>
                         <input
                             matInput
-                            formControlName="part_no"
-                            [placeholder]="'Part NO..'"
+                            formControlName="eg"
+                            [placeholder]="'Engine Number..'"
                             trim="blur"
                         />
                     </mat-form-field>
@@ -35,11 +52,11 @@
                         class="w-full"
                         floatLabel="always"
                     >
-                        <mat-label>Part Name</mat-label>
+                        <mat-label>Uniq</mat-label>
                         <input
                             matInput
-                            formControlName="part_name"
-                            [placeholder]="'Part Name..'"
+                            formControlName="uniq"
+                            [placeholder]="'Uniq Number..'"
                             trim="blur"
                         />
                     </mat-form-field>
@@ -57,35 +74,66 @@
                             }
                         </mat-select>
                     </mat-form-field>
-                    <mat-form-field
-                        [ngClass]=""
-                        class="w-full"
-                        floatLabel="always"
-                    >
-                        <mat-label>Uniq</mat-label>
-                        <input
-                            matInput
-                            formControlName="uniq"
-                            [placeholder]="'Uniq Number..'"
-                            trim="blur"
-                        />
+                    <mat-form-field class="w-full" floatLabel="always">
+                        <mat-label>Shift</mat-label>
+                        <mat-select
+                            formControlName="shift"
+                            [placeholder]="'--Please Choice--'"
+                        >
+                            <mat-option>--Please Choice--</mat-option>
+                            <mat-option value="day">DAY</mat-option>
+                            <mat-option value="night">NIGHT</mat-option>
+                        </mat-select>
                     </mat-form-field>
+
+                    <!-- <mat-form-field class="w-full" floatLabel="always">
+                        <mat-label>Area</mat-label>
+                        <mat-select
+                            formControlName="area"
+                            [placeholder]="'--Please Choice--'"
+                        >
+                            <mat-option>--Please Choice--</mat-option>
+
+                        </mat-select>
+                    </mat-form-field> -->
+
+                    <!-- <mat-form-field class="min-w-[300px]">
+                        <mat-label>Enter a date range</mat-label>
+                        <mat-date-range-input [rangePicker]="rangePicker">
+                            <input matStartDate placeholder="Start date" />
+                            <input matEndDate placeholder="End date" />
+                        </mat-date-range-input>
+                        <mat-datepicker-toggle
+                            matIconSuffix
+                            [for]="rangePicker"
+                        ></mat-datepicker-toggle>
+                        <mat-date-range-picker #rangePicker>
+                            <mat-date-range-picker-actions>
+                                <button mat-button matDateRangePickerCancel>
+                                    Cancel
+                                </button>
+                                <button
+                                    mat-raised-button
+                                    matDateRangePickerApply
+                                >
+                                    Apply
+                                </button>
+                            </mat-date-range-picker-actions>
+                        </mat-date-range-picker>
+                    </mat-form-field> -->
 
                     <button
                         mat-raised-button
                         type="submit"
                         color="primary"
-                        class="w-full md:w-100"
+                        class="w-100"
                     >
                         <mat-icon>search</mat-icon>
                         FILTER
                     </button>
                 </div>
             </form>
-
-            <div
-                class="mb-2 flex w-full flex-col-reverse items-center justify-between space-y-3 pl-0.5 md:flex-row md:space-y-0"
-            >
+            <div class="flex w-full items-center justify-between px-0.5">
                 <app-search-input
                     placeholder="Search..."
                     (search)="applyFilter($event)"
@@ -99,6 +147,15 @@
                 <div class="group relative space-x-2">
                     <button
                         mat-mini-fab
+                        color="accent"
+                        matTooltip="Export Excel"
+                        matTooltipPosition="above"
+                        (click)="exportToExcel()"
+                    >
+                        <mat-icon>download</mat-icon>
+                    </button>
+                    <!-- <button
+                        mat-mini-fab
                         color="primary"
                         matTooltip="Add Data"
                         matTooltipPosition="above"
@@ -108,79 +165,82 @@
                     </button>
                     <button
                         mat-mini-fab
-                        color="warn"
-                        matTooltip="Upload Excel"
-                        matTooltipPosition="above"
-                        (click)="openDialog('Upload', {})"
-                    >
-                        <mat-icon>upload</mat-icon>
-                    </button>
-                    <button
-                        mat-mini-fab
                         color="accent"
                         matTooltip="Export Excel"
                         matTooltipPosition="above"
                         (click)="exportToExcel()"
                     >
                         <mat-icon>download</mat-icon>
-                    </button>
+                    </button> -->
                 </div>
             </div>
+
+            <!-- form -->
             <div class="relative overflow-x-auto pb-1">
                 <table
                     class="datatable w-full"
                     id="excel-table"
                     matSort
                     (matSortChange)="sortData($event)"
-                    matSortActive="{{ tblName }}.updated_at"
+                    matSortActive="{{ tblName }}.create"
                     matSortDirection="desc"
                     matSortDisableClear
                 >
-                    <thead class="sticky top-0 z-10">
+                    <thead>
                         <tr>
-                            <th class="w-8">#</th>
-                            <th class="" mat-sort-header="part.part_no">
-                                PART NO
+                            <th class="w-5">#</th>
+                            <th
+                                class="text-left"
+                                mat-sort-header="{{ tblName }}.create"
+                            >
+                                Create
                             </th>
                             <th
                                 class="text-left"
-                                mat-sort-header="part.part_name"
+                                mat-sort-header="{{ tblName }}.working"
                             >
-                                PART NAME
+                                Working Day
                             </th>
-                            <th class="text-left" mat-sort-header="area.alias">
-                                MC AREA
+                            <th
+                                class="text-left"
+                                mat-sort-header="{{ tblName }}.shift"
+                            >
+                                Shift
+                            </th>
+                            <th class="text-left" mat-sort-header="line.id">
+                                Line
                             </th>
                             <th class="text-left" mat-sort-header="area.name">
-                                AREA
+                                Area
                             </th>
-                            <th class="text-left" mat-sort-header="line.name">
-                                LINE
-                            </th>
-                            <th
-                                class="w-10"
-                                mat-sort-header="{{ tblName }}.uniq"
-                            >
-                                UNIQ
+                            <th class="text-left" mat-sort-header="area.alias">
+                                MC Area
                             </th>
                             <th
                                 class="text-left"
-                                mat-sort-header="{{ tblName }}.qty"
+                                mat-sort-header="{{ tblName }}.mc"
                             >
-                                QTY
+                                No. MC
                             </th>
-                            <th class="w-12">
-                                <mat-icon
-                                    svgIcon="heroicons_outline:cursor-arrow-ripple"
-                                ></mat-icon>
+                            <th
+                                class="text-left"
+                                mat-sort-header="{{ tblName }}.uniq"
+                            >
+                                Uniq
+                            </th>
+                            <th
+                                class="text-left"
+                                mat-sort-header="{{ tblName }}.eg"
+                            >
+                                Engine Number
                             </th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr class="" *ngIf="this.total == 0">
                             <td
-                                colspan="9"
-                                class="h-10 text-lg font-medium text-rose-700"
+                                colspan="10"
+                                class="h-12 text-lg font-medium text-rose-700"
                             >
                                 No Data Avalaible
                             </td>
@@ -195,57 +255,27 @@
                                             | number: '0.0-0'
                                     }}
                                 </td>
-                                <td class="text-left capitalize">
-                                    {{ data.part.part_no }}
-                                </td>
                                 <td class="text-left">
-                                    {{ data.part.part_name }}
+                                    {{ data.create }}
                                 </td>
+                                <td class="text-left">{{ data.working }}</td>
+                                <td class="text-left">{{ data.shift }}</td>
+                                <td class="text-left">{{ data.line }}</td>
                                 <td class="text-left">
-                                    {{ data.area.alias }}
+                                    {{ data.area_name }}
                                 </td>
-                                <td class="text-left">
-                                    {{ data.area.name }}
-                                </td>
-                                <td class="text-left">
-                                    {{ data.area.line.name }}
-                                </td>
-                                <td class="text-left">
-                                    {{ data.uniq }}
-                                </td>
-                                <td class="text-left">
-                                    {{ data.qty }}
-                                </td>
-                                <td class="flex justify-evenly px-1 py-0">
-                                    <a
-                                        href="javascript:void(0)"
-                                        (click)="openDialog('Update', data)"
-                                        title="Edit"
-                                    >
-                                        <mat-icon color="primary"
-                                            >edit_note</mat-icon
-                                        >
-                                    </a>
-                                    &nbsp;
-                                    <a
-                                        href="javascript:void(0)"
-                                        (click)="openDialog('Delete', data)"
-                                        title="Delete"
-                                    >
-                                        <mat-icon color="warn"
-                                            >delete_outline</mat-icon
-                                        >
-                                    </a>
-                                </td>
+
+                                <td class="text-left">{{ data.area_alias }}</td>
+                                <td class="text-left">{{ data.mc }}</td>
+                                <td class="text-left">{{ data.uniq }}</td>
+                                <td class="text-left">{{ data.eg }}</td>
                             </tr>
                         }
                     </tbody>
                 </table>
             </div>
 
-            <div
-                class="flex w-full flex-col items-center justify-between gap-2 sm:flex-row sm:gap-0"
-            >
+            <div class="flex w-full items-center justify-between">
                 <app-paginate
                     [last_page]="this.last_page"
                     (pageChanged)="load($event)"
