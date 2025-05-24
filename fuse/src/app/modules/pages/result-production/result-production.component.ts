@@ -61,6 +61,7 @@ export class ResultProductionComponent implements OnInit {
         });
 
         this.form = this.fb.group({
+            working: [],
             line: [5],
             part_no: [''],
             part_name: [''],
@@ -80,7 +81,7 @@ export class ResultProductionComponent implements OnInit {
         find?: string
     ): void {
         this._service
-            .consumeQuery(
+            .consumeResultProduction(
                 page,
                 this.limit,
                 this.sort.active,

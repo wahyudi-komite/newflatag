@@ -257,4 +257,25 @@ export abstract class AbstractService {
                 }
             );
     }
+
+    consumeResultProduction(
+        page?: number,
+        limit?: number,
+        direction?: string,
+        sort?: string,
+        find?: string,
+        filterParams?: any
+    ): Observable<any> {
+        const params = this.buildHttpParams(
+            page,
+            limit,
+            direction,
+            sort,
+            find,
+            filterParams
+        );
+        return this.http.get(`${this.url}/consume-result-production`, {
+            params,
+        });
+    }
 }

@@ -89,8 +89,6 @@ export class PartPostingController {
       //   qty,
       // };
       ...item,
-      // create: formatDate(new Date(item.create)),
-      // timejob: formatDate(new Date(item.timejob)),
     }));
 
     return returnData;
@@ -212,6 +210,13 @@ export class PartPostingController {
   @Get('excelConsume')
   async excelConsume(@Res() res: Response, @Request() request) {
     const returnData = await this._service.consumeData(request.query, true);
+    returnData.data = returnData.data.map((item) => {
+      const { part_id, ...data } = item;
+
+      return {
+        ...data,
+      };
+    });
     await this._service.exportDataToExcel(returnData.data, res);
   }
 }

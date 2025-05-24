@@ -86,42 +86,6 @@
                         </mat-select>
                     </mat-form-field>
 
-                    <!-- <mat-form-field class="w-full" floatLabel="always">
-                        <mat-label>Area</mat-label>
-                        <mat-select
-                            formControlName="area"
-                            [placeholder]="'--Please Choice--'"
-                        >
-                            <mat-option>--Please Choice--</mat-option>
-
-                        </mat-select>
-                    </mat-form-field> -->
-
-                    <!-- <mat-form-field class="min-w-[300px]">
-                        <mat-label>Enter a date range</mat-label>
-                        <mat-date-range-input [rangePicker]="rangePicker">
-                            <input matStartDate placeholder="Start date" />
-                            <input matEndDate placeholder="End date" />
-                        </mat-date-range-input>
-                        <mat-datepicker-toggle
-                            matIconSuffix
-                            [for]="rangePicker"
-                        ></mat-datepicker-toggle>
-                        <mat-date-range-picker #rangePicker>
-                            <mat-date-range-picker-actions>
-                                <button mat-button matDateRangePickerCancel>
-                                    Cancel
-                                </button>
-                                <button
-                                    mat-raised-button
-                                    matDateRangePickerApply
-                                >
-                                    Apply
-                                </button>
-                            </mat-date-range-picker-actions>
-                        </mat-date-range-picker>
-                    </mat-form-field> -->
-
                     <button
                         mat-raised-button
                         type="submit"
@@ -193,46 +157,7 @@
                                 class="text-left"
                                 mat-sort-header="{{ tblName }}.create"
                             >
-                                Create
-                            </th>
-                            <th
-                                class="text-left"
-                                mat-sort-header="{{ tblName }}.working"
-                            >
-                                Working Day
-                            </th>
-                            <th
-                                class="text-left"
-                                mat-sort-header="{{ tblName }}.shift"
-                            >
-                                Shift
-                            </th>
-                            <th class="text-left" mat-sort-header="line.id">
-                                Line
-                            </th>
-                            <th class="text-left" mat-sort-header="area.name">
-                                Area
-                            </th>
-                            <th class="text-left" mat-sort-header="area.alias">
-                                MC Area
-                            </th>
-                            <th
-                                class="text-left"
-                                mat-sort-header="{{ tblName }}.mc"
-                            >
-                                No. MC
-                            </th>
-                            <th
-                                class="text-left"
-                                mat-sort-header="{{ tblName }}.uniq"
-                            >
                                 Uniq
-                            </th>
-                            <th
-                                class="text-left"
-                                mat-sort-header="{{ tblName }}.eg"
-                            >
-                                Engine Number
                             </th>
                         </tr>
                     </thead>
@@ -256,19 +181,8 @@
                                     }}
                                 </td>
                                 <td class="text-left">
-                                    {{ data.create }}
+                                    {{ data.uniq }}
                                 </td>
-                                <td class="text-left">{{ data.working }}</td>
-                                <td class="text-left">{{ data.shift }}</td>
-                                <td class="text-left">{{ data.line }}</td>
-                                <td class="text-left">
-                                    {{ data.area_name }}
-                                </td>
-
-                                <td class="text-left">{{ data.area_alias }}</td>
-                                <td class="text-left">{{ data.mc }}</td>
-                                <td class="text-left">{{ data.uniq }}</td>
-                                <td class="text-left">{{ data.eg }}</td>
                             </tr>
                         }
                     </tbody>

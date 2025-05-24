@@ -1,18 +1,15 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { CreatePartPostingDto } from './dto/create-part-posting.dto';
-import { UpdatePartPostingDto } from './dto/update-part-posting.dto';
-import { AbstractService } from '../common/abstract.service';
-import { PartPosting } from './entities/part-posting.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Brackets, Repository } from 'typeorm';
 import * as ExcelJS from 'exceljs';
 import * as fs from 'fs';
+import { Brackets, Repository } from 'typeorm';
+import { AbstractService } from '../common/abstract.service';
+import { PartPosting } from './entities/part-posting.entity';
 
-import { Part } from '../part/entities/part.entity';
+import * as moment from 'moment';
 import { Area } from '../admin/area/entities/area.entity';
 import { PaginatedResult } from '../common/paginated-result.interface';
-import * as moment from 'moment';
-import { log } from 'console';
+import { Part } from '../part/entities/part.entity';
 
 @Injectable()
 export class PartPostingService extends AbstractService {

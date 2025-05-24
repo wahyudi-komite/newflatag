@@ -69,8 +69,6 @@ export class EgOutController {
           uniq,
           eg,
         };
-        // ...item,
-        // create: formatDate(new Date(item.create)),
       },
     );
 
@@ -86,5 +84,10 @@ export class EgOutController {
   async exportExcel(@Res() res: Response, @Request() request) {
     const returnData = await this.getData(request, true);
     await this._service.exportDataToExcel(returnData.data, res);
+  }
+
+  @Get('consume-result-production')
+  async consumeData(@Request() request) {
+    return await this._service.consumeResultProduction(request.query);
   }
 }
