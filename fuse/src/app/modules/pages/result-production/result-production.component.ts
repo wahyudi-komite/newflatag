@@ -69,6 +69,7 @@ export class ResultProductionComponent implements OnInit {
             start: [],
             end: [],
         });
+        this.load();
     }
 
     load(
@@ -90,6 +91,8 @@ export class ResultProductionComponent implements OnInit {
                 this.filterParams
             )
             .subscribe((res: Paginate) => {
+                console.log(res.data);
+
                 this.datas = res.data;
                 this.total = res.meta.total;
                 this.page = res.meta.page;

@@ -14,7 +14,7 @@
         <div
             class="mx-4 flex flex-auto flex-col overflow-hidden sm:mb-18 sm:overflow-y-auto"
         >
-            <form [formGroup]="form" (submit)="submit()" autocomplete="off">
+            <!-- <form [formGroup]="form" (submit)="submit()" autocomplete="off">
                 <div
                     class="flex w-full items-center justify-between space-x-4 px-0.5"
                 >
@@ -96,7 +96,7 @@
                         FILTER
                     </button>
                 </div>
-            </form>
+            </form> -->
             <div class="flex w-full items-center justify-between px-0.5">
                 <app-search-input
                     placeholder="Search..."
@@ -150,15 +150,39 @@
                     matSortDirection="desc"
                     matSortDisableClear
                 >
-                    <thead>
+                    <thead class="with-border sticky top-0 z-10">
                         <tr>
-                            <th class="w-5">#</th>
+                            <th rowspan="3" class="w-5">#</th>
                             <th
+                                rowspan="3"
                                 class="text-left"
                                 mat-sort-header="{{ tblName }}.create"
                             >
                                 Uniq
                             </th>
+                            <th colspan="15" class="w-5">2025-06-21</th>
+                        </tr>
+                        <tr>
+                            <ng-container
+                                *ngFor="
+                                    let a of [].constructor(5);
+                                    let i = index
+                                "
+                            >
+                                <th colspan="3" class="">K LINE {{ i + 1 }}</th>
+                            </ng-container>
+                        </tr>
+                        <tr>
+                            <ng-container
+                                *ngFor="
+                                    let a of [].constructor(5);
+                                    let i = index
+                                "
+                            >
+                                <th class="text-left">SA</th>
+                                <th class="text-left">PA</th>
+                                <th class="text-left">ML</th>
+                            </ng-container>
                         </tr>
                     </thead>
                     <tbody>
@@ -181,8 +205,9 @@
                                     }}
                                 </td>
                                 <td class="text-left">
-                                    {{ data.uniq }}
+                                    {{ data.eg_out_uniq }}
                                 </td>
+                                <td class="text-left">50</td>
                             </tr>
                         }
                     </tbody>
