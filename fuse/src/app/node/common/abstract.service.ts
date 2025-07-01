@@ -274,8 +274,46 @@ export abstract class AbstractService {
             find,
             filterParams
         );
+
+        console.log(params);
+
         return this.http.get(`${this.url}/consume-result-production`, {
             params,
         });
+    }
+
+    exportExcelConsumeResultProduction(
+        page?: number,
+        limit?: number,
+        direction?: string,
+        sort?: string,
+        find?: string,
+        filterParams?: any
+    ): void {
+        const params = this.buildHttpParams(
+            page,
+            limit,
+            direction,
+            sort,
+            find,
+            filterParams
+        );
+
+        this.http
+            .get(`${this.url}/excelConsumeResultProduction`, {
+                params,
+                responseType: 'blob',
+            })
+            .subscribe(
+                (response) => {
+                    const blob = new Blob([response], {
+                        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    });
+                    saveAs(blob, 'Consumo-Export.xlsx');
+                },
+                (error) => {
+                    console.error('Gagal mengunduh file:', error);
+                }
+            );
     }
 }

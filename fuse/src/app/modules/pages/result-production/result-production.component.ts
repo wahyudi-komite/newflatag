@@ -1,5 +1,15 @@
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import {
+    Component,
+    inject,
+    OnInit,
+    ViewChild,
+    ViewEncapsulation,
+} from '@angular/core';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import {
+    MatButtonToggleChange,
+    MatButtonToggleModule,
+} from '@angular/material/button-toggle';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSort, Sort } from '@angular/material/sort';
 import { ToastrModule } from 'ngx-toastr';
@@ -12,18 +22,18 @@ import { SharedModule } from '../../../node/common/shared.module';
 import { Line } from '../../../node/line/line';
 import { LineService } from '../../../node/line/line.service';
 import { QueryProductionService } from '../../../node/query-production/query-production.service';
-import { SearchInputComponent } from '../../comp/tabel/search-input/search-input.component';
 
 @Component({
     selector: 'app-result-production',
     imports: [
         SharedModule,
-        SearchInputComponent,
         ToastrModule,
         MatDatepickerModule,
+        MatButtonToggleModule,
     ],
     templateUrl: './result-production.component.html',
     styleUrl: './result-production.component.scss',
+    encapsulation: ViewEncapsulation.None,
 })
 export class ResultProductionComponent implements OnInit {
     user: User;
@@ -41,6 +51,8 @@ export class ResultProductionComponent implements OnInit {
     form: FormGroup;
     filterParams: any = {};
     dateRange: Date[] = [];
+    tanggal = new Date().toISOString().slice(0, 10);
+    lineId: string[] = ['5', '4', '3', '2', '1'];
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     @ViewChild(MatSort, { static: true }) sort!: MatSort;
@@ -50,25 +62,35 @@ export class ResultProductionComponent implements OnInit {
     _lineService = inject(LineService);
     fb = inject(FormBuilder);
 
+    formFieldHelpers: string[] = [''];
+
     ngOnInit(): void {
+        const today = new Date();
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(today.getDate() - 7);
         this._userService.user$
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((user: User) => {
                 this.user = user;
             });
+
         this._lineService.getAll('name', 'ASC').subscribe((res) => {
             this.line = res;
         });
 
         this.form = this.fb.group({
-            working: [],
-            line: [5],
-            part_no: [''],
-            part_name: [''],
-            supplier: [''],
-            start: [],
-            end: [],
+            formFieldHelpers: new FormControl(this.lineId),
+            uniq: [''],
+            start: [sevenDaysAgo.toISOString().slice(0, 10)],
+            end: [this.tanggal],
         });
+
+        this.dateRange = this.getDateRange(this.form.value.start, today);
+
+        this.filterParams = {
+            start: this.form.value.start,
+            end: this.form.value.end,
+        };
         this.load();
     }
 
@@ -91,7 +113,7 @@ export class ResultProductionComponent implements OnInit {
                 this.filterParams
             )
             .subscribe((res: Paginate) => {
-                console.log(res.data);
+                console.log('Response:', res.data);
 
                 this.datas = res.data;
                 this.total = res.meta.total;
@@ -127,12 +149,10 @@ export class ResultProductionComponent implements OnInit {
         }
 
         const formValues = {
-            line: this.form.value.line,
-            part_no: this.form.value.part_no,
-            part_name: this.form.value.part_name,
-            supplier: this.form.value.supplier,
+            uniq: this.form.value.uniq,
             start: this.form.value.start,
             end: this.form.value.end,
+            line: this.lineId,
         };
 
         this.filterParams = formValues;
@@ -159,7 +179,7 @@ export class ResultProductionComponent implements OnInit {
     }
 
     exportToExcel(): void {
-        this._service.exportExcelConsumeQuery(
+        this._service.exportExcelConsumeResultProduction(
             this.page,
             this.total,
             this.sort?.active,
@@ -167,5 +187,9 @@ export class ResultProductionComponent implements OnInit {
             this.find,
             this.filterParams
         );
+    }
+
+    onFilterChange(change: MatButtonToggleChange): void {
+        this.lineId = change.value;
     }
 }

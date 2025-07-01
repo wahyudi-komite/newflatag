@@ -90,4 +90,13 @@ export class EgOutController {
   async consumeData(@Request() request) {
     return await this._service.consumeResultProduction(request.query);
   }
+
+  @Get('excelConsumeResultProduction')
+  async exportExcelResultProduction(@Res() res: Response, @Request() request) {
+    const returnData = await this._service.consumeResultProduction(
+      request.query,
+      true,
+    );
+    await this._service.exportDataToExcel(returnData.data, res);
+  }
 }
