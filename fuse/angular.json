@@ -17,8 +17,8 @@
                 "build": {
                     "builder": "@angular-devkit/build-angular:application",
                     "options": {
-                        "baseHref": "/consumo/",
-                        "outputPath": "dist/fuse",
+                        "baseHref": "/fd-label-tag/",
+                        "outputPath": "dist/fd-label-tag",
                         "index": "src/index.html",
                         "browser": "src/main.ts",
                         "polyfills": ["zone.js"],

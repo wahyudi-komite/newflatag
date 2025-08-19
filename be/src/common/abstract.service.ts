@@ -1,9 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import * as ExcelJS from 'exceljs';
+import { Response } from 'express';
 import { Brackets, Repository } from 'typeorm';
 import { PaginatedResult } from './paginated-result.interface';
-import * as ExcelJS from 'exceljs';
-import * as fs from 'fs';
-import { Response } from 'express';
 
 @Injectable()
 export class AbstractService {
@@ -26,7 +25,7 @@ export class AbstractService {
   }
 
   async paginate(tbl, relations, query): Promise<PaginatedResult> {
-    const take: number = query.limit ? query.limit : 10;
+    const take: number = query.limit ? query.limit : 100;
     const page: number = query.page ? query.page : 1;
     const keyword: string = query.keyword ? query.keyword : '';
     const direction: string = query.direction ? query.direction : tbl + '.id';

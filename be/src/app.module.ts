@@ -1,19 +1,15 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { RolesModule } from './roles/roles.module';
-import { PermissionsModule } from './permissions/permissions.module';
-import { UsersModule } from './users/users.module';
-import { AuthModule } from './auth/auth.module';
-import { LineModule } from './admin/line/line.module';
-import { AreaModule } from './admin/area/area.module';
 import { APP_GUARD } from '@nestjs/core';
-import { PermissionsGuard } from './permissions/permissions.guard';
-import { PartModule } from './part/part.module';
-import { PartPostingModule } from './part-posting/part-posting.module';
-import { EgOutModule } from './eg_out/eg_out.module';
-import { AppService } from './app.service';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { AppService } from './app.service';
+import { AuthModule } from './auth/auth.module';
+import { PermissionsGuard } from './permissions/permissions.guard';
+import { PermissionsModule } from './permissions/permissions.module';
+import { RolesModule } from './roles/roles.module';
+import { UsersModule } from './users/users.module';
+import { EmployeeKaosModule } from './employee_kaos/employee_kaos.module';
 
 @Module({
   imports: [
@@ -42,11 +38,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
     RolesModule,
     PermissionsModule,
     AuthModule,
-    LineModule,
-    AreaModule,
-    PartModule,
-    PartPostingModule,
-    EgOutModule,
+    EmployeeKaosModule,
   ],
   controllers: [],
   providers: [

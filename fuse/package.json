@@ -25,6 +25,8 @@
     "@angular/platform-browser-dynamic": "19.2.1",
     "@angular/router": "19.2.1",
     "@ngneat/transloco": "6.0.4",
+    "ag-grid-angular": "^34.1.1",
+    "ag-grid-community": "^34.1.1",
     "apexcharts": "3.49.1",
     "crypto-js": "4.2.0",
     "file-saver": "^2.0.5",

@@ -1,0 +1,49 @@
+<div class="flex h-full w-full flex-col p-4">
+    <!-- Toolbar -->
+    <div
+        class="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"
+    >
+        <div class="flex gap-2">
+            <button
+                (click)="exportToCSV()"
+                class="rounded-lg bg-green-600 px-4 py-2 font-semibold text-white shadow transition hover:bg-green-700"
+            >
+                Export to Excel
+            </button>
+            <!-- <button
+                (click)="doAutoSize(false)"
+                class="px-4 py-2 font-semibold text-white transition bg-blue-600 rounded-lg shadow hover:bg-blue-700"
+            >
+                Auto-size Columns
+            </button> -->
+        </div>
+
+        <!-- Search input -->
+        <div>
+            <input
+                type="text"
+                placeholder="Cari data..."
+                (input)="onQuickFilterChanged($event)"
+                class="w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:ring focus:ring-blue-300 sm:w-64"
+            />
+        </div>
+    </div>
+
+    <!-- Grid -->
+    <div class="min-h-[400px] flex-1">
+        <ag-grid-angular
+            class="ag-theme-alpine h-full w-full"
+            [rowData]="rowData"
+            [defaultColDef]="defaultColDef"
+            [columnDefs]="colDefs"
+            [pagination]="true"
+            [paginationPageSize]="20"
+            [animateRows]="true"
+            (gridReady)="onGridReady($event)"
+            [loading]="isLoading"
+            [enableCellTextSelection]="true"
+            [ensureDomOrder]="true"
+        >
+        </ag-grid-angular>
+    </div>
+</div>

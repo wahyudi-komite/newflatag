@@ -1,13 +1,6 @@
-import {
-    HttpClient,
-    HttpErrorResponse,
-    HttpEvent,
-    HttpEventType,
-    HttpParams,
-} from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { saveAs } from 'file-saver';
-import { catchError, map, Observable, throwError } from 'rxjs';
+import { Observable } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
@@ -102,6 +95,21 @@ export abstract class AbstractService {
         return this.http.get(`${this.url}/all`, { params });
     }
 
+    getAllx() // direction: string,
+    // sort: string,
+    // field?: string,
+    // keyword?: string | number
+    : Observable<any> {
+        let params = new HttpParams();
+        // params = params.append('sort', String(sort));
+        // params = params.append('direction', String(direction));
+
+        // field ? (params = params.append('field', String(field))) : params;
+        // keyword ? (params = params.append('keyword', keyword)) : params;
+
+        return this.http.get(`${this.url}`, { params });
+    }
+
     exportExcel(
         page?: number,
         limit?: number,
@@ -119,201 +127,6 @@ export abstract class AbstractService {
             filterParams
         );
 
-        this.http
-            .get(`${this.url}/excel`, { params, responseType: 'blob' })
-            .subscribe(
-                (response) => {
-                    const blob = new Blob([response], {
-                        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                    });
-                    saveAs(blob, 'Consumo-Export.xlsx');
-                },
-                (error) => {
-                    console.error('Gagal mengunduh file:', error);
-                }
-            );
-    }
-
-    uploadExcelx(
-        formData: FormData
-    ): Observable<{ progress?: number; insertedCount?: number }> {
-        return this.http
-            .post<{ insertedCount: number }>(`${this.url}/upload`, formData, {
-                reportProgress: true,
-                observe: 'events',
-            })
-            .pipe(
-                map((event: HttpEvent<any>) => {
-                    if (event.type === HttpEventType.UploadProgress) {
-                        const progress = Math.round(
-                            (event.loaded / (event.total || 1)) * 100
-                        );
-                        return { progress }; // Update progress
-                    } else if (event.type === HttpEventType.Response) {
-                        return { insertedCount: event.body.insertedCount }; // Response dari server
-                    }
-                    return {};
-                }),
-                catchError(() => {
-                    return [{ progress: 0, insertedCount: 0 }];
-                })
-            );
-    }
-
-    uploadExcel(formData: FormData): Observable<{
-        progress?: number;
-        insertedCount?: number;
-        error?: string;
-    }> {
-        return this.http
-            .post<{ insertedCount: number }>(`${this.url}/upload`, formData, {
-                reportProgress: true,
-                observe: 'events',
-            })
-            .pipe(
-                map((event: HttpEvent<any>) => {
-                    if (event.type === HttpEventType.UploadProgress) {
-                        const progress = Math.round(
-                            (event.loaded / (event.total || 1)) * 100
-                        );
-                        return { progress }; // Update progress
-                    } else if (event.type === HttpEventType.Response) {
-                        return {
-                            insertedCount:
-                                event.body.insertedCount.insertedCount,
-                        }; // Response dari server
-                    }
-                    return {};
-                }),
-                catchError((error: HttpErrorResponse) => {
-                    let errorMessage = 'Upload failed!';
-
-                    if (error.error) {
-                        if (typeof error.error === 'string') {
-                            errorMessage = error.error;
-                        } else if (error.error.message) {
-                            errorMessage = error.error.message;
-                        }
-                    }
-
-                    console.error('Upload Error:', error.error);
-                    return throwError(() => new Error(errorMessage));
-                })
-            );
-    }
-
-    downloadTemplate() {
-        const downloadUrl = `${this.url}/files/download-template`;
-        window.open(downloadUrl, '_blank');
-    }
-
-    consumeQuery(
-        page?: number,
-        limit?: number,
-        direction?: string,
-        sort?: string,
-        find?: string,
-        filterParams?: any
-    ): Observable<any> {
-        const params = this.buildHttpParams(
-            page,
-            limit,
-            direction,
-            sort,
-            find,
-            filterParams
-        );
-        return this.http.get(`${this.url}/consume`, { params });
-    }
-
-    exportExcelConsumeQuery(
-        page?: number,
-        limit?: number,
-        direction?: string,
-        sort?: string,
-        find?: string,
-        filterParams?: any
-    ): void {
-        const params = this.buildHttpParams(
-            page,
-            limit,
-            direction,
-            sort,
-            find,
-            filterParams
-        );
-
-        this.http
-            .get(`${this.url}/excelConsume`, { params, responseType: 'blob' })
-            .subscribe(
-                (response) => {
-                    const blob = new Blob([response], {
-                        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                    });
-                    saveAs(blob, 'Consumo-Export.xlsx');
-                },
-                (error) => {
-                    console.error('Gagal mengunduh file:', error);
-                }
-            );
-    }
-
-    consumeResultProduction(
-        page?: number,
-        limit?: number,
-        direction?: string,
-        sort?: string,
-        find?: string,
-        filterParams?: any
-    ): Observable<any> {
-        const params = this.buildHttpParams(
-            page,
-            limit,
-            direction,
-            sort,
-            find,
-            filterParams
-        );
-
-        console.log(params);
-
-        return this.http.get(`${this.url}/consume-result-production`, {
-            params,
-        });
-    }
-
-    exportExcelConsumeResultProduction(
-        page?: number,
-        limit?: number,
-        direction?: string,
-        sort?: string,
-        find?: string,
-        filterParams?: any
-    ): void {
-        const params = this.buildHttpParams(
-            page,
-            limit,
-            direction,
-            sort,
-            find,
-            filterParams
-        );
-
-        this.http
-            .get(`${this.url}/excelConsumeResultProduction`, {
-                params,
-                responseType: 'blob',
-            })
-            .subscribe(
-                (response) => {
-                    const blob = new Blob([response], {
-                        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                    });
-                    saveAs(blob, 'Consumo-Export.xlsx');
-                },
-                (error) => {
-                    console.error('Gagal mengunduh file:', error);
-                }
-            );
+        return;
     }
 }
