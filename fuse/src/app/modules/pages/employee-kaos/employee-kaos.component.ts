@@ -19,6 +19,11 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 export class EmployeeKaosComponent {
     private gridApi!: GridApi;
     isLoading = true;
+    params: any;
+
+    agInit(params: any): void {
+        this.params = params;
+    }
 
     public colDefs: ColDef[] = [
         {
@@ -44,15 +49,13 @@ export class EmployeeKaosComponent {
                 const target = event.target as HTMLElement;
                 const action = target.getAttribute('data-action');
                 if (!action) return;
+
                 switch (action) {
                     case 'print':
-                        this.onPrint(params.data);
+                        console.log('Print:', params.data);
                         break;
                     case 'edit':
-                        this.onEdit(params.data);
-                        break;
-                    case 'delete':
-                        this.onDelete(params.data);
+                        console.log('Edit:', params.data);
                         break;
                 }
             },
