@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { AgGridModule } from 'ag-grid-angular';
 import {
     AllCommunityModule,
@@ -7,6 +8,7 @@ import {
     GridReadyEvent,
     ModuleRegistry,
 } from 'ag-grid-community';
+import { DialogEKComponent } from './dialog-ek/dialog-ek.component';
 import { EmployeeKaosService } from './employee-kaos.service';
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -21,44 +23,29 @@ export class EmployeeKaosComponent {
     isLoading = true;
     params: any;
 
-    agInit(params: any): void {
-        this.params = params;
-    }
-
     public colDefs: ColDef[] = [
         {
-            field: 'print',
-            headerName: 'Action',
+            field: 'actions',
+            headerName: 'Actions',
+            cellClass: 'flex justify-center items-center',
             cellRenderer: (params: any) => {
                 return `
-                    <div style="display: flex; gap: 6px; class="my-auto">
-                        <button class="bg-green-500 hover:bg-green-600 text-white text-sm p-2 rounded-md flex items-center justify-center" title="Print" data-action="print">
+                    <div class="flex items-center justify-center space-x-1 h-auto ">
+                        <button class="bg-green-500 hover:bg-green-600 text-white text-sm px-2 py-1 rounded-md flex items-center justify-center" title="Print" onclick="window.printRow(${params.data.id})">
                             <span class="material-icons" style="font-size:16px;">print</span>
                         </button>
-                        <button class="bg-blue-500 hover:bg-blue-600 text-white text-sm p-2 rounded-md flex items-center justify-center" title="Edit" data-action="edit">
+                        <button class="bg-blue-500 hover:bg-blue-600 text-white text-sm px-2 py-1 rounded-md flex items-center justify-center" title="Edit" onclick="window.editRow(${params.data.id})">
                             <span class="material-icons" style="font-size:16px;">edit</span>
                         </button>
-                        <button class="bg-red-500 hover:bg-red-600 text-white text-sm p-2 rounded-md flex items-center justify-center" title="Delete" data-action="delete">
+                        <button class="bg-red-500 hover:bg-red-600 text-white text-sm px-2 py-1 rounded-md flex items-center justify-center" title="Delete" onclick="window.deleteRow(${params.data.id})">
                             <span class="material-icons" style="font-size:16px;">delete</span>
                         </button>
                     </div>
                 `;
             },
-            onCellClicked: (params: any) => {
-                const event = params.event as MouseEvent;
-                const target = event.target as HTMLElement;
-                const action = target.getAttribute('data-action');
-                if (!action) return;
-
-                switch (action) {
-                    case 'print':
-                        console.log('Print:', params.data);
-                        break;
-                    case 'edit':
-                        console.log('Edit:', params.data);
-                        break;
-                }
-            },
+            sortable: false,
+            filter: false,
+            pinned: 'left',
         },
         { field: 'id' },
         { field: 'name' },
@@ -82,20 +69,6 @@ export class EmployeeKaosComponent {
         { field: 'updated_at' },
     ];
 
-    onPrint(row: any) {
-        // Implement print logic here
-        console.log('Print', row);
-    }
-
-    onEdit(row: any) {
-        // Implement edit logic here
-        console.log('Edit', row);
-    }
-
-    onDelete(row: any) {
-        // Implement delete logic here
-        console.log('Delete', row);
-    }
     public rowData: any[] = [];
     public defaultColDef: ColDef = {
         resizable: true,
@@ -103,12 +76,17 @@ export class EmployeeKaosComponent {
         filter: true,
     };
 
+    readonly dialog = inject(MatDialog);
     constructor(private _services: EmployeeKaosService) {}
 
     ngOnInit() {
         this._services.getAllx().subscribe((data) => {
             this.rowData = data.data;
         });
+
+        (window as any).editRow = (id: number) => this.onEditRow(id);
+        (window as any).deleteRow = (id: number) => this.onDeleteRow(id);
+        (window as any).printRow = (id: number) => this.onPrintRow(id);
     }
 
     onGridReady(params: GridReadyEvent) {
@@ -147,5 +125,87 @@ export class EmployeeKaosComponent {
             // defaultMaxWidth: 150,
             // defaultMinWidth: 80,
         });
+    }
+
+    onEditRow(id: number): void {
+        const data = this.rowData.find((row) => row.id === id);
+        if (!data) return;
+
+        console.log('Edit row:', data);
+
+        // Example: Simple prompt edit
+        const newName = prompt('Enter new name:', data.name);
+        if (newName && newName !== data.name) {
+            const rowIndex = this.rowData.findIndex((row) => row.id === id);
+            if (rowIndex !== -1) {
+                this.rowData[rowIndex].name = newName;
+
+                // Refresh grid data
+                if (this.gridApi) {
+                    this.gridApi.setGridOption('rowData', this.rowData);
+                }
+            }
+        }
+    }
+
+    // Delete row
+    onDeleteRow(id: number): void {
+        const data = this.rowData.find((row) => row.id === id);
+        if (!data) return;
+
+        console.log('Delete row:', data);
+
+        if (confirm(`Are you sure you want to delete ${data.name}?`)) {
+            this.rowData = this.rowData.filter((row) => row.id !== id);
+
+            // Refresh grid
+            if (this.gridApi) {
+                this.gridApi.setGridOption('rowData', this.rowData);
+            }
+
+            console.log('Deleted row:', data);
+        }
+    }
+
+    onPrintRow(id: number): void {
+        const data = this.rowData.find((row) => row.id === id);
+        if (!data) return;
+
+        let dialogBoxSettings = {
+            position: { top: '10px' },
+            // width: '400px',
+            margin: '0 auto',
+            disableClose: true,
+            hasBackdrop: true,
+            data: data,
+        };
+
+        const dialogRef = this.dialog.open(
+            DialogEKComponent,
+            dialogBoxSettings
+        );
+
+        // const printWindow = window.open('', '_blank');
+        // if (printWindow) {
+        //     printWindow.document.write(`
+        //         <html>
+        //             <head>
+        //                 <title>Print Row</title>
+        //                 <style>
+        //                     body { font-family: Arial, sans-serif; }
+        //                     .row-data { margin: 20px; }
+        //                 </style>
+        //             </head>
+        //             <body>
+        //                 <div class="row-data">
+        //                     <h2>Row Data</h2>
+        //                     <pre>${JSON.stringify(data, null, 2)}</pre>
+        //                 </div>
+        //             </body>
+        //         </html>
+        //     `);
+        //     printWindow.document.close();
+        //     printWindow.print();
+        // }
     }
 }

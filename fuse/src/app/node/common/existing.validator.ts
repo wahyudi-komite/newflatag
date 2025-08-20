@@ -7,11 +7,6 @@ import {
 import { debounceTime, map, Observable, of, switchMap } from 'rxjs';
 import { PermissionService } from '../app/permission/permission.service';
 import { RoleService } from '../app/role/role.service';
-import { AreaService } from '../area/area.service';
-import { LineService } from '../line/line.service';
-import { MachineService } from '../machine/machine.service';
-import { PartService } from '../part/part.service';
-import { PartPostingService } from '../partPosting/part-posting.service';
 
 interface BaseService {
     findOne(query: any): Observable<any>;
@@ -23,11 +18,6 @@ interface BaseService {
 export class ExistingValidator {
     private roleService = inject(RoleService);
     private permissionService = inject(PermissionService);
-    private lineService = inject(LineService);
-    private areaService = inject(AreaService);
-    private machineService = inject(MachineService);
-    private partService = inject(PartService);
-    private partPostingService = inject(PartPostingService);
 
     private getService(table: string): BaseService | null {
         switch (table.toLowerCase()) {
@@ -35,16 +25,6 @@ export class ExistingValidator {
                 return this.permissionService;
             case 'role':
                 return this.roleService;
-            case 'line':
-                return this.lineService;
-            case 'area':
-                return this.areaService;
-            case 'machine':
-                return this.machineService;
-            case 'part':
-                return this.partService;
-            case 'part-posting':
-                return this.partPostingService;
             default:
                 throw new Error(`Table ${table} is not supported.`);
         }

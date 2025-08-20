@@ -5,6 +5,12 @@ export default [
         path: 'merchandise',
         loadChildren: () => import('./employee-kaos/employee-kaos.routes'),
     },
+    {
+        path: 'merchandise-print',
+        loadChildren: () =>
+            import('./employee-kaos/dialog-ek/dialog-ek.routes'),
+    },
+
     // admin routes
     {
         path: 'role',

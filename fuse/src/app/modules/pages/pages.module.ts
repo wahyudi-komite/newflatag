@@ -1,10 +1,13 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { DialogEKComponent } from './employee-kaos/dialog-ek/dialog-ek.component';
 
 
 
 @NgModule({
-  declarations: [],
+  declarations: [
+    DialogEKComponent
+  ],
   imports: [
     CommonModule
   ]
