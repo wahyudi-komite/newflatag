@@ -10,12 +10,39 @@
             >
                 Export to Excel
             </button>
-            <!-- <button
-                (click)="doAutoSize(false)"
-                class="px-4 py-2 font-semibold text-white transition bg-blue-600 rounded-lg shadow hover:bg-blue-700"
+
+            <button
+                (click)="getSelectedRows()"
+                [disabled]="!isRowSelected"
+                class="rounded-lg bg-sky-600 px-4 py-2 font-semibold text-white shadow transition hover:bg-sky-700 disabled:cursor-not-allowed disabled:bg-gray-400 disabled:text-gray-200"
             >
-                Auto-size Columns
-            </button> -->
+                Print Selected
+            </button>
+
+            <button
+                (click)="getSelectedRows()"
+                [disabled]="!isRowSelected"
+                class="rounded-lg bg-sky-400 px-4 py-2 font-semibold text-white shadow transition hover:bg-sky-500 disabled:cursor-not-allowed disabled:bg-gray-400 disabled:text-gray-200"
+            >
+                Preview Selected
+            </button>
+
+            <button
+                *ngIf="!isRowSelected"
+                (click)="onSelectAllThisPage()"
+                class="rounded-lg bg-yellow-600 px-4 py-2 font-semibold text-white shadow transition hover:bg-yellow-700"
+            >
+                Select This Page
+            </button>
+
+            <!-- Tombol Unselect muncul kalau ada row yang dipilih -->
+            <button
+                *ngIf="isRowSelected"
+                (click)="onUnselectAllThisPage()"
+                class="rounded-lg bg-red-600 px-4 py-2 font-semibold text-white shadow transition hover:bg-red-700"
+            >
+                Unselect
+            </button>
         </div>
 
         <!-- Search input -->
@@ -37,14 +64,18 @@
             [defaultColDef]="defaultColDef"
             [columnDefs]="colDefs"
             [pagination]="true"
-            [paginationPageSize]="20"
+            [paginationPageSize]="50"
             [rowHeight]="30"
             [animateRows]="true"
             (gridReady)="onGridReady($event)"
             [loading]="isLoading"
             [enableCellTextSelection]="true"
+            [rowSelection]="'multiple'"
+            [suppressRowClickSelection]="true"
             [ensureDomOrder]="true"
+            (selectionChanged)="onSelectionChanged($event)"
         >
         </ag-grid-angular>
     </div>
 </div>
+<app-print-label id="print-section"></app-print-label>

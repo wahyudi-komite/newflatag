@@ -1,7 +1,7 @@
 <div
-    class="label h-[148mm] w-[95mm] border border-gray-50 p-2 font-sans text-[10pt]"
+    id="print-section"
+    class="label w-full border border-gray-50 bg-rose-400 p-2 font-sans text-[10pt]"
 >
-    <table class="w-full"></table>
     <div
         class="flex flex-row items-start justify-between border border-black p-2"
     >
@@ -10,25 +10,7 @@
             <p class="text-[10pt]">PT Astra Daihatsu Motor</p>
         </div>
 
-        <div class="flex flex-col items-center">
-            <!-- <div class="flex mb-1 space-x-2">
-                <div
-                    class="flex h-12 w-12 items-center justify-center border border-black text-[12pt] font-bold"
-                >
-                    P1
-                </div>
-                <div
-                    class="flex h-12 w-12 items-center justify-center border border-black text-[12pt] font-bold"
-                >
-                    K3
-                </div>
-                <div
-                    class="flex h-12 w-12 items-center justify-center border border-black text-[12pt] font-bold"
-                >
-                    K3
-                </div>
-            </div> -->
-        </div>
+        <div class="flex flex-col items-center"></div>
     </div>
     <div class="border border-t-0 border-black text-[9pt]">
         <div class="grid grid-cols-3 text-center">
@@ -36,17 +18,23 @@
                 <div class="mb-1 border-b border-black py-1 text-lg font-bold">
                     PLANT
                 </div>
-                <div class="py-2 text-4xl font-bold">P1</div>
+                <div
+                    class="flex items-center justify-center py-2 text-4xl font-bold"
+                >
+                    {{ this.data.plant }}
+                </div>
             </div>
             <div class="border-r border-black">
                 <div class="mb-1 border-b border-black py-1 text-lg font-bold">
                     STATUS
                 </div>
-                <div class="py-2 text-4xl font-bold">K3</div>
+                <div class="py-2 text-4xl font-bold">
+                    {{ this.data.family_stats }}
+                </div>
             </div>
-            <div class="flex items-center justify-center">
+            <div class="flex items-center justify-center p-1">
                 <qrcode
-                    [qrdata]="'23893'"
+                    [qrdata]="data.id.toString()"
                     [width]="113"
                     [errorCorrectionLevel]="'M'"
                 ></qrcode>
@@ -55,53 +43,30 @@
     </div>
 
     <div class="border border-t-0 border-black p-2 text-[9pt]">
-        <!-- <div class="grid grid-cols-[100px_20px_1fr]">
-            <div>
-                <p class="font-bold">NAMA</p>
-                <p class="font-bold">NPK</p>
-                <p class="font-bold">DEPARTEMEN</p>
-                <p class="font-bold">DIVISI</p>
-                <p class="font-bold">NO. WA</p>
-            </div>
-            <div>
-                <p class="font-bold">:</p>
-                <p class="font-bold">:</p>
-                <p class="font-bold">:</p>
-                <p class="font-bold">:</p>
-                <p class="font-bold">:</p>
-            </div>
-            <div>
-                <p class="text-sm font-normal">{{ this.data.name }}</p>
-                <p class="text-sm font-normal">{{ this.data.id }}</p>
-                <p class="text-sm font-normal">{{ this.data.departement }}</p>
-                <p class="text-sm font-normal">{{ this.data.divisi }}</p>
-                <p class="text-sm font-normal">{{ this.data.no_wa }}</p>
-            </div>
-        </div> -->
-        <table class="table-auto border-collapse">
-            <tbody>
-                <tr class="border-b border-gray-400">
+        <table class="w-full table-auto border-collapse">
+            <tbody class="divide-y divide-gray-400">
+                <tr class="">
                     <td class="w-[100px] font-bold">NAMA</td>
                     <td class="w-[20px] text-center font-bold">:</td>
                     <td class="text-sm font-bold">
                         {{ this.data.name }}
                     </td>
                 </tr>
-                <tr class="border-b border-gray-400">
+                <tr class="">
                     <td class="font-bold">NPK</td>
                     <td class="text-center font-bold">:</td>
                     <td class="text-md font-bold">
                         {{ this.data.id }}
                     </td>
                 </tr>
-                <tr class="border-b border-gray-400">
+                <tr class="">
                     <td class="font-bold">DEPARTEMEN</td>
                     <td class="text-center font-bold">:</td>
                     <td class="text-sm font-normal">
                         {{ this.data.department }}
                     </td>
                 </tr>
-                <tr class="border-b border-gray-400">
+                <tr class="">
                     <td class="font-bold">DIVISI</td>
                     <td class="text-center font-bold">:</td>
                     <td class="text-sm font-normal">
@@ -132,23 +97,23 @@
                     <td class="w-[170px]">DEWASA-PENDEK</td>
                     <td class="w-[20px] text-center font-bold">:</td>
                     <td class="text-sm font-bold">
-                        {{ this.data.kaos_employee1 }}
+                        {{ this.data.dshort }}
                     </td>
                 </tr>
                 <tr class="">
                     <td class="">DEWASA-PANJANG</td>
                     <td class="text-center font-bold">:</td>
-                    <td class="text-md font-bold"></td>
+                    <td class="text-md font-bold">{{ this.data.dlong }}</td>
                 </tr>
                 <tr class="">
                     <td class="">ANAK-PENDEK</td>
                     <td class="text-center font-bold">:</td>
-                    <td class="text-sm font-bold"></td>
+                    <td class="text-sm font-bold">{{ this.data.cshort }}</td>
                 </tr>
                 <tr class="">
                     <td class="">ANAK-PANJANG</td>
                     <td class="text-center font-bold">:</td>
-                    <td class="text-md font-bold"></td>
+                    <td class="text-md font-bold">{{ this.data.clong }}</td>
                 </tr>
                 <tr class="">
                     <td colspan="3" class="text-lg font-bold"></td>
@@ -175,4 +140,18 @@
             <li>Semua wajib dibawa saat acara</li>
         </ul>
     </div>
+</div>
+<div class="mt-2 flex justify-between p-2 print:hidden">
+    <button
+        (click)="onPrint()"
+        class="rounded-lg bg-sky-600 px-4 py-2 font-semibold text-white shadow transition hover:bg-sky-700"
+    >
+        PRINT
+    </button>
+    <button
+        (click)="closeDialog()"
+        class="rounded-lg bg-rose-600 px-4 py-2 font-semibold text-white shadow transition hover:bg-rose-700"
+    >
+        CLOSED
+    </button>
 </div>

@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { AgGridModule } from 'ag-grid-angular';
@@ -10,11 +11,13 @@ import {
 } from 'ag-grid-community';
 import { DialogEKComponent } from './dialog-ek/dialog-ek.component';
 import { EmployeeKaosService } from './employee-kaos.service';
+import { PrintLabelComponent } from './print-label/print-label.component';
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 @Component({
     selector: 'app-employee-kaos',
-    imports: [AgGridModule],
+    standalone: true,
+    imports: [AgGridModule, CommonModule, PrintLabelComponent],
     templateUrl: './employee-kaos.component.html',
     styleUrl: './employee-kaos.component.scss',
 })
@@ -22,6 +25,7 @@ export class EmployeeKaosComponent {
     private gridApi!: GridApi;
     isLoading = true;
     params: any;
+    isRowSelected = false;
 
     public colDefs: ColDef[] = [
         {
@@ -47,11 +51,23 @@ export class EmployeeKaosComponent {
             filter: false,
             pinned: 'left',
         },
+        {
+            headerCheckboxSelection: false, // ✅ Checkbox di header
+            checkboxSelection: true, // ✅ Checkbox per row
+            width: 10,
+            pinned: 'left',
+            sortable: false,
+            filter: false,
+        },
         { field: 'id' },
         { field: 'name' },
         { field: 'divisi' },
         { field: 'department' },
-        { field: 'lokasiKerja' },
+        { field: 'plant' },
+        { field: 'dlong', headerName: 'Dewasa Panjang' },
+        { field: 'dshort', headerName: 'Dewasa Pendek' },
+        { field: 'clong', headerName: 'Anak Panjang' },
+        { field: 'cshort', headerName: 'Anak Pendek' },
         { field: 'status' },
         { field: 'gender' },
         { field: 'family_stats' },
@@ -86,7 +102,7 @@ export class EmployeeKaosComponent {
 
         (window as any).editRow = (id: number) => this.onEditRow(id);
         (window as any).deleteRow = (id: number) => this.onDeleteRow(id);
-        (window as any).printRow = (id: number) => this.onPrintRow(id);
+        (window as any).printRow = (id: number) => this.onPrintRowx(id);
     }
 
     onGridReady(params: GridReadyEvent) {
@@ -102,6 +118,14 @@ export class EmployeeKaosComponent {
                 this.isLoading = false;
             }
         );
+    }
+
+    // ✅ Ambil semua row terpilih
+    getSelectedRows() {
+        const selectedNodes = this.gridApi.getSelectedNodes();
+        const selectedData = selectedNodes.map((node) => node.data);
+        console.log('Selected Rows:', selectedData);
+        return selectedData;
     }
 
     onQuickFilterChanged(event: any) {
@@ -167,6 +191,9 @@ export class EmployeeKaosComponent {
         }
     }
 
+    onPrintRowx(id: number): void {
+        window.print();
+    }
     onPrintRow(id: number): void {
         const data = this.rowData.find((row) => row.id === id);
         if (!data) return;
@@ -184,28 +211,31 @@ export class EmployeeKaosComponent {
             DialogEKComponent,
             dialogBoxSettings
         );
+    }
 
-        // const printWindow = window.open('', '_blank');
-        // if (printWindow) {
-        //     printWindow.document.write(`
-        //         <html>
-        //             <head>
-        //                 <title>Print Row</title>
-        //                 <style>
-        //                     body { font-family: Arial, sans-serif; }
-        //                     .row-data { margin: 20px; }
-        //                 </style>
-        //             </head>
-        //             <body>
-        //                 <div class="row-data">
-        //                     <h2>Row Data</h2>
-        //                     <pre>${JSON.stringify(data, null, 2)}</pre>
-        //                 </div>
-        //             </body>
-        //         </html>
-        //     `);
-        //     printWindow.document.close();
-        //     printWindow.print();
-        // }
+    onSelectAllThisPage() {
+        let count = 0;
+        this.gridApi.forEachNodeAfterFilterAndSort((node) => {
+            if (count < 50) {
+                // batas hanya 50 row (1 halaman)
+                node.setSelected(true);
+                count++;
+            }
+        });
+    }
+
+    onUnselectAllThisPage() {
+        let count = 0;
+        this.gridApi.forEachNodeAfterFilterAndSort((node) => {
+            if (count < 50) {
+                node.setSelected(false);
+                count++;
+            }
+        });
+    }
+
+    onSelectionChanged(event: any) {
+        const selectedRows = this.gridApi.getSelectedRows();
+        this.isRowSelected = selectedRows.length > 0;
     }
 }

@@ -63,6 +63,21 @@ export class EmployeeKao {
   @Column({ type: 'int' })
   souvenir: number;
 
+  @Column({ type: 'varchar', length: 2 })
+  plant: string;
+
+  @Column({ type: 'varchar', length: 20, nullable: true })
+  dlong: string;
+
+  @Column({ type: 'varchar', length: 20, nullable: true })
+  dshort: string;
+
+  @Column({ type: 'varchar', length: 40, nullable: true })
+  clong: string;
+
+  @Column({ type: 'varchar', length: 40, nullable: true })
+  cshort: string;
+
   @CreateDateColumn()
   @Exclude()
   created_at: Date;

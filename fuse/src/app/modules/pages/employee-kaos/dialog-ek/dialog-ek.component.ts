@@ -1,6 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { QRCodeComponent } from 'angularx-qrcode';
+import { EmployeeKaosService } from '../employee-kaos.service';
 
 @Component({
     selector: 'app-dialog-ek',
@@ -10,11 +11,23 @@ import { QRCodeComponent } from 'angularx-qrcode';
     styleUrl: './dialog-ek.component.scss',
 })
 export class DialogEKComponent implements OnInit {
-    local_data: any;
+    data: any;
 
-    readonly data = inject<any>(MAT_DIALOG_DATA);
+    readonly local_data = inject<any>(MAT_DIALOG_DATA);
 
-    ngOnInit(): void {
-        this.local_data = { ...this.data };
+    constructor(
+        public dialogRef: MatDialogRef<DialogEKComponent>,
+        private _services: EmployeeKaosService
+    ) {
+        this.data = { ...this.local_data };
+    }
+    ngOnInit(): void {}
+
+    closeDialog() {
+        this.dialogRef.close({ event: 'Cancel' });
+    }
+
+    onPrint() {
+        window.print();
     }
 }
