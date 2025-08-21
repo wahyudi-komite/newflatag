@@ -39,7 +39,7 @@ export const futuristicNavigation: FuseNavigationItem[] = [
 export const horizontalNavigation: FuseNavigationItem[] = [
     {
         id: 'merchandise',
-        title: 'Home',
+        title: 'Label Tag',
         type: 'basic',
         icon: 'heroicons_outline:chart-pie',
         link: '/example',

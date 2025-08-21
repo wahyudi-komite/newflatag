@@ -1,4 +1,4 @@
-<div class="flex h-full w-full flex-col p-4">
+<div class="flex h-full w-full flex-col p-4 print:hidden">
     <!-- Toolbar -->
     <div
         class="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"
@@ -19,13 +19,13 @@
                 Print Selected
             </button>
 
-            <button
+            <!-- <button
                 (click)="getSelectedRows()"
                 [disabled]="!isRowSelected"
-                class="rounded-lg bg-sky-400 px-4 py-2 font-semibold text-white shadow transition hover:bg-sky-500 disabled:cursor-not-allowed disabled:bg-gray-400 disabled:text-gray-200"
+                class="px-4 py-2 font-semibold text-white transition rounded-lg shadow bg-sky-400 hover:bg-sky-500 disabled:cursor-not-allowed disabled:bg-gray-400 disabled:text-gray-200"
             >
                 Preview Selected
-            </button>
+            </button> -->
 
             <button
                 *ngIf="!isRowSelected"
@@ -78,4 +78,5 @@
         </ag-grid-angular>
     </div>
 </div>
-<app-print-label id="print-section"></app-print-label>
+
+<app-print-label id="print-section" [datas]="this.data"></app-print-label>

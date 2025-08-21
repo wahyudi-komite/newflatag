@@ -33,11 +33,11 @@
                 </div>
             </div>
             <div class="flex items-center justify-center p-1">
-                <qrcode
-                    [qrdata]="data.id.toString()"
-                    [width]="113"
+                <qr-code
+                    value="Hello world!"
+                    size="113"
                     [errorCorrectionLevel]="'M'"
-                ></qrcode>
+                ></qr-code>
             </div>
         </div>
     </div>

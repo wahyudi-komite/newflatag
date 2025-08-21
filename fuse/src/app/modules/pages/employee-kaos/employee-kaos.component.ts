@@ -26,6 +26,8 @@ export class EmployeeKaosComponent {
     isLoading = true;
     params: any;
     isRowSelected = false;
+    data: any;
+    singleData: boolean = true;
 
     public colDefs: ColDef[] = [
         {
@@ -125,7 +127,9 @@ export class EmployeeKaosComponent {
         const selectedNodes = this.gridApi.getSelectedNodes();
         const selectedData = selectedNodes.map((node) => node.data);
         console.log('Selected Rows:', selectedData);
-        return selectedData;
+        this.data = selectedData;
+        this.singleData = false;
+        setTimeout(() => window.print(), 100);
     }
 
     onQuickFilterChanged(event: any) {
@@ -192,7 +196,10 @@ export class EmployeeKaosComponent {
     }
 
     onPrintRowx(id: number): void {
-        window.print();
+        this.data = this.rowData.find((row) => row.id === id);
+        this.singleData = true;
+
+        setTimeout(() => window.print(), 100);
     }
     onPrintRow(id: number): void {
         const data = this.rowData.find((row) => row.id === id);

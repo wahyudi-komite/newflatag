@@ -1,12 +1,13 @@
+import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { QRCodeComponent } from 'angularx-qrcode';
+import { QrCodeComponent } from 'ng-qrcode';
 import { EmployeeKaosService } from '../employee-kaos.service';
 
 @Component({
     selector: 'app-dialog-ek',
     standalone: true,
-    imports: [QRCodeComponent],
+    imports: [QrCodeComponent, CommonModule],
     templateUrl: './dialog-ek.component.html',
     styleUrl: './dialog-ek.component.scss',
 })
