@@ -6,7 +6,7 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const port = parseInt(process.env.DATABASE_PORT, 10) || 3010;
-  app.setGlobalPrefix('api-fdlabeltag/v1/');
+  app.setGlobalPrefix('api-flatag/v1/');
   app.useGlobalPipes(new ValidationPipe());
   app.use(cookieParser());
   app.enableCors({

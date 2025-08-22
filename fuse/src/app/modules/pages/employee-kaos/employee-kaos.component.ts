@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, NgZone } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { AgGridModule } from 'ag-grid-angular';
 import {
@@ -9,7 +9,10 @@ import {
     GridReadyEvent,
     ModuleRegistry,
 } from 'ag-grid-community';
+import { ToastrModule, ToastrService } from 'ngx-toastr';
+import { GlobalVariable } from '../../../node/common/global-variable';
 import { DialogEKComponent } from './dialog-ek/dialog-ek.component';
+import { EditDialogEkComponent } from './edit-dialog-ek/edit-dialog-ek.component';
 import { EmployeeKaosService } from './employee-kaos.service';
 import { PrintLabelComponent } from './print-label/print-label.component';
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -17,7 +20,7 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 @Component({
     selector: 'app-employee-kaos',
     standalone: true,
-    imports: [AgGridModule, CommonModule, PrintLabelComponent],
+    imports: [AgGridModule, CommonModule, ToastrModule, PrintLabelComponent],
     templateUrl: './employee-kaos.component.html',
     styleUrl: './employee-kaos.component.scss',
 })
@@ -40,11 +43,8 @@ export class EmployeeKaosComponent {
                         <button class="bg-green-500 hover:bg-green-600 text-white text-sm px-2 py-1 rounded-md flex items-center justify-center" title="Print" onclick="window.printRow(${params.data.id})">
                             <span class="material-icons" style="font-size:16px;">print</span>
                         </button>
-                        <button class="bg-blue-500 hover:bg-blue-600 text-white text-sm px-2 py-1 rounded-md flex items-center justify-center" title="Edit" onclick="window.editRow(${params.data.id})">
+                        <button class="flex items-center justify-center px-2 py-1 text-sm text-white bg-blue-500 rounded-md hover:bg-blue-600" title="Edit" onclick="window.editRow(${params.data.id})">
                             <span class="material-icons" style="font-size:16px;">edit</span>
-                        </button>
-                        <button class="bg-red-500 hover:bg-red-600 text-white text-sm px-2 py-1 rounded-md flex items-center justify-center" title="Delete" onclick="window.deleteRow(${params.data.id})">
-                            <span class="material-icons" style="font-size:16px;">delete</span>
                         </button>
                     </div>
                 `;
@@ -95,22 +95,44 @@ export class EmployeeKaosComponent {
     };
 
     readonly dialog = inject(MatDialog);
-    constructor(private _services: EmployeeKaosService) {}
+    private toastr = inject(ToastrService);
+
+    constructor(
+        private _service: EmployeeKaosService,
+        private cdr: ChangeDetectorRef,
+        private ngZone: NgZone
+    ) {}
 
     ngOnInit() {
-        this._services.getAllx().subscribe((data) => {
-            this.rowData = data.data;
-        });
-
-        (window as any).editRow = (id: number) => this.onEditRow(id);
+        this.load();
+        // (window as any).editRow = (id: number) => this.onEditRow(id);
         (window as any).deleteRow = (id: number) => this.onDeleteRow(id);
         (window as any).printRow = (id: number) => this.onPrintRowx(id);
+
+        (window as any).editRow = (id: number) => this.openDialog('Update', id);
     }
 
+    load() {
+        this._service.getAllx().subscribe((data) => {
+            this.rowData = data.data;
+        });
+    }
     onGridReady(params: GridReadyEvent) {
         this.gridApi = params.api;
 
-        this._services.getAllx().subscribe(
+        this.gridApi.addEventListener('rowSelected', () => {
+            const selected = this.gridApi.getSelectedNodes();
+
+            if (selected.length > 50) {
+                // batalkan seleksi terbaru
+                const last = selected[selected.length - 1];
+                last.setSelected(false);
+
+                alert('Maksimal hanya bisa memilih 50 data.');
+            }
+        });
+
+        this._service.getAllx().subscribe(
             (data) => {
                 this.rowData = data.data;
                 this.isLoading = false;
@@ -126,7 +148,6 @@ export class EmployeeKaosComponent {
     getSelectedRows() {
         const selectedNodes = this.gridApi.getSelectedNodes();
         const selectedData = selectedNodes.map((node) => node.data);
-        console.log('Selected Rows:', selectedData);
         this.data = selectedData;
         this.singleData = false;
         setTimeout(() => window.print(), 100);
@@ -154,28 +175,6 @@ export class EmployeeKaosComponent {
             // defaultMinWidth: 80,
         });
     }
-
-    onEditRow(id: number): void {
-        const data = this.rowData.find((row) => row.id === id);
-        if (!data) return;
-
-        console.log('Edit row:', data);
-
-        // Example: Simple prompt edit
-        const newName = prompt('Enter new name:', data.name);
-        if (newName && newName !== data.name) {
-            const rowIndex = this.rowData.findIndex((row) => row.id === id);
-            if (rowIndex !== -1) {
-                this.rowData[rowIndex].name = newName;
-
-                // Refresh grid data
-                if (this.gridApi) {
-                    this.gridApi.setGridOption('rowData', this.rowData);
-                }
-            }
-        }
-    }
-
     // Delete row
     onDeleteRow(id: number): void {
         const data = this.rowData.find((row) => row.id === id);
@@ -196,10 +195,18 @@ export class EmployeeKaosComponent {
     }
 
     onPrintRowx(id: number): void {
-        this.data = this.rowData.find((row) => row.id === id);
+        let agGrid = this.rowData.find((row) => row.id === id);
+        this.data = [agGrid];
         this.singleData = true;
 
-        setTimeout(() => window.print(), 100);
+        this.cdr.detectChanges();
+
+        const logo = document.getElementById('printLogo') as HTMLImageElement;
+        if (logo.complete) {
+            window.print();
+        } else {
+            logo.onload = () => window.print();
+        }
     }
     onPrintRow(id: number): void {
         const data = this.rowData.find((row) => row.id === id);
@@ -224,9 +231,10 @@ export class EmployeeKaosComponent {
         let count = 0;
         this.gridApi.forEachNodeAfterFilterAndSort((node) => {
             if (count < 50) {
-                // batas hanya 50 row (1 halaman)
                 node.setSelected(true);
                 count++;
+            } else {
+                node.setSelected(false);
             }
         });
     }
@@ -244,5 +252,55 @@ export class EmployeeKaosComponent {
     onSelectionChanged(event: any) {
         const selectedRows = this.gridApi.getSelectedRows();
         this.isRowSelected = selectedRows.length > 0;
+    }
+
+    openDialog(action: string, obj: any) {
+        obj = this.rowData.find((row) => row.id === obj);
+
+        obj.action = action;
+        let dialogBoxSettings = {
+            position: { top: '10px' },
+            width: '1000px',
+            margin: '0 auto',
+            disableClose: true,
+            hasBackdrop: true,
+            data: obj,
+        };
+
+        const dialogRef = this.dialog.open(
+            EditDialogEkComponent,
+            dialogBoxSettings
+        );
+
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result.event == 'Add') {
+                // this.redirectToAdd(result.formValue);
+            } else if (result.event == 'Update') {
+                this.redirectToUpdate(result.data, result.formValue);
+            } else if (result.event == 'Delete') {
+                // this.redirectToDelete(result.data.id);
+            } else if (result.event == 'Upload') {
+                // this.load();
+            }
+        });
+    }
+
+    redirectToUpdate(data: any, formValue: any): void {
+        this._service.update(data.id, formValue).subscribe(
+            (res) => {
+                GlobalVariable.audioSuccess.play();
+                this.toastr.success('Success', 'Update data success');
+                this.load();
+            },
+            (error) => {
+                this.errorNotif(error);
+            }
+        );
+    }
+    errorNotif(error: any) {
+        GlobalVariable.audioFailed.play();
+        this.toastr.error('Failed', error.error.message, {
+            timeOut: 3000,
+        });
     }
 }

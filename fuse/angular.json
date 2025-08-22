@@ -40,8 +40,8 @@
                 "build": {
                     "builder": "@angular-devkit/build-angular:application",
                     "options": {
-                        "baseHref": "/fd-label-tag/",
-                        "outputPath": "dist/fd-label-tag",
+                        "baseHref": "/flatag/",
+                        "outputPath": "dist/flatag",
                         "index": "src/index.html",
                         "browser": "src/main.ts",
                         "polyfills": ["zone.js"],

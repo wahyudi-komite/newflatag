@@ -39,9 +39,9 @@ export const futuristicNavigation: FuseNavigationItem[] = [
 export const horizontalNavigation: FuseNavigationItem[] = [
     {
         id: 'merchandise',
-        title: 'Label Tag',
+        title: 'Query',
         type: 'basic',
-        icon: 'heroicons_outline:chart-pie',
+        icon: 'heroicons_outline:queue-list',
         link: '/example',
     },
 ];

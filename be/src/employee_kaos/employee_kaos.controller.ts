@@ -1,5 +1,17 @@
-import { Controller, Get, Request } from '@nestjs/common';
+import {
+  Body,
+  ClassSerializerInterceptor,
+  ConflictException,
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  Put,
+  Request,
+  UseInterceptors,
+} from '@nestjs/common';
 import { formatDate } from '../common/utils/date.utils';
+import { UpdateEmployeeKaoDto } from './dto/update-employee_kao.dto';
 import { EmployeeKaosService } from './employee_kaos.service';
 
 const tabel = 'employee_kaos';
@@ -31,6 +43,7 @@ const columns = [
   'updated_at',
 ].map((col) => `${tabel}.${col}`);
 
+@UseInterceptors(ClassSerializerInterceptor)
 @Controller('employee-kaos')
 export class EmployeeKaosController {
   constructor(private readonly _service: EmployeeKaosService) {}
@@ -52,6 +65,29 @@ export class EmployeeKaosController {
     }));
 
     return returnData;
+  }
+
+  @Put(':id')
+  async update(
+    @Param('id') id: string,
+    @Body() updateDto: UpdateEmployeeKaoDto,
+  ) {
+    const cekId = await this._service.findOne({ id: +id });
+    if (!cekId) {
+      throw new NotFoundException(`Data dengan ID ${id} tidak ditemukan`);
+    }
+
+    // Cek apakah `name` sudah ada dengan ID berbeda
+    const duplicateName = await this._service.findOne({
+      id: updateDto.id,
+    });
+
+    if (duplicateName && duplicateName.id !== +id) {
+      throw new ConflictException(`"${updateDto.id}" already exists.`);
+    }
+    // updateDto.part_name = capitalize(updateDto.part_name);
+    // updateDto.supplier = capitalize(updateDto.supplier);
+    return this._service.update(+id, updateDto);
   }
 
   @Get()

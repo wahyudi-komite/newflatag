@@ -40,7 +40,7 @@ export class EmployeeKao {
   kaos_employee1: string;
 
   @Column({ type: 'varchar', length: 50, name: 'kaos_spouse1' })
-  kaos_employee2: string;
+  kaos_spouse1: string;
 
   @Column({ type: 'varchar', length: 50, name: 'kaos_child1' })
   kaos_child1: string;

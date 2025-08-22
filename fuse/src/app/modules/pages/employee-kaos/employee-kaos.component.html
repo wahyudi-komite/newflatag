@@ -65,6 +65,7 @@
             [columnDefs]="colDefs"
             [pagination]="true"
             [paginationPageSize]="50"
+            [paginationPageSizeSelector]="false"
             [rowHeight]="30"
             [animateRows]="true"
             (gridReady)="onGridReady($event)"
@@ -80,3 +81,7 @@
 </div>
 
 <app-print-label id="print-section" [datas]="this.data"></app-print-label>
+<!-- 
+                        <button class="flex items-center justify-center px-2 py-1 text-sm text-white bg-red-500 rounded-md hover:bg-red-600" title="Delete" onclick="window.deleteRow(${params.data.id})">
+                            <span class="material-icons" style="font-size:16px;">delete</span>
+                        </button> -->

@@ -25,7 +25,7 @@ export class AbstractService {
   }
 
   async paginate(tbl, relations, query): Promise<PaginatedResult> {
-    const take: number = query.limit ? query.limit : 100;
+    const take: number = query.limit ? query.limit : 100000;
     const page: number = query.page ? query.page : 1;
     const keyword: string = query.keyword ? query.keyword : '';
     const direction: string = query.direction ? query.direction : tbl + '.id';

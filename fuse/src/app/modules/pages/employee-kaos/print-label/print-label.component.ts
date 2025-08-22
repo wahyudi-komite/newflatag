@@ -18,7 +18,9 @@ export class PrintLabelComponent {
 
     ngOnChanges() {
         if (this.datas) {
-            this.data = { ...this.datas };
+            this.data = this.datas;
+            // this.data = [fromInput];
+            // console.log('Data for print:', this.data);
             this.cdr.detectChanges(); // paksa refresh view
         }
     }
