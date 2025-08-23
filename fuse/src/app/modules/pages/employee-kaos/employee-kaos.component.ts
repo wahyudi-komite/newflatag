@@ -10,6 +10,7 @@ import {
     ModuleRegistry,
 } from 'ag-grid-community';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
+import { first } from 'rxjs';
 import { GlobalVariable } from '../../../node/common/global-variable';
 import { DialogEKComponent } from './dialog-ek/dialog-ek.component';
 import { EditDialogEkComponent } from './edit-dialog-ek/edit-dialog-ek.component';
@@ -38,13 +39,22 @@ export class EmployeeKaosComponent {
             headerName: 'Actions',
             cellClass: 'flex justify-center items-center',
             cellRenderer: (params: any) => {
+                const isScanned = params.data.scan === 1;
                 return `
                     <div class="flex items-center justify-center space-x-1 h-auto ">
-                        <button class="bg-green-500 hover:bg-green-600 text-white text-sm px-2 py-1 rounded-md flex items-center justify-center" title="Print" onclick="window.printRow(${params.data.id})">
-                            <span class="material-icons" style="font-size:16px;">print</span>
-                        </button>
+                        <button
+          class="text-white text-sm px-2 py-1 rounded-md flex items-center justify-center 
+                 ${isScanned ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-500 hover:bg-green-600'}"
+          title="Print"
+          ${isScanned ? 'disabled' : `onclick="window.printRow(${params.data.id})"`}
+        >
+          <span class="material-icons" style="font-size:16px;">print</span>
+        </button>
                         <button class="flex items-center justify-center px-2 py-1 text-sm text-white bg-blue-500 rounded-md hover:bg-blue-600" title="Edit" onclick="window.editRow(${params.data.id})">
                             <span class="material-icons" style="font-size:16px;">edit</span>
+                        </button>
+                        <button class="flex items-center justify-center px-2 py-1 text-sm text-white bg-red-500 rounded-md hover:bg-red-600" title="Delete" onclick="window.deleteRow(${params.data.id})">
+                            <span class="material-icons" style="font-size:16px;">delete</span>
                         </button>
                     </div>
                 `;
@@ -55,7 +65,10 @@ export class EmployeeKaosComponent {
         },
         {
             headerCheckboxSelection: false, // ✅ Checkbox di header
-            checkboxSelection: true, // ✅ Checkbox per row
+            checkboxSelection: (params: any) => {
+                // disable checkbox kalau sudah scan
+                return params.data && params.data.scan !== 1;
+            }, // ✅ Checkbox per row
             width: 10,
             pinned: 'left',
             sortable: false,
@@ -83,6 +96,20 @@ export class EmployeeKaosComponent {
         { field: 'kaos_child5' },
         { field: 'kaos_child6' },
         { field: 'souvenir' },
+        {
+            field: 'scan',
+            cellRenderer: (params: any) => {
+                return params.value === 1 ? 'Yes' : '';
+            },
+        },
+        {
+            field: 'scan_date',
+            cellRenderer: (params: any) => {
+                return params.value === '01-01-1970 07:00:00'
+                    ? ''
+                    : params.value;
+            },
+        },
         { field: 'created_at' },
         { field: 'updated_at' },
     ];
@@ -106,10 +133,12 @@ export class EmployeeKaosComponent {
     ngOnInit() {
         this.load();
         // (window as any).editRow = (id: number) => this.onEditRow(id);
-        (window as any).deleteRow = (id: number) => this.onDeleteRow(id);
+        // (window as any).deleteRow = (id: number) => this.onDeleteRow(id);
         (window as any).printRow = (id: number) => this.onPrintRowx(id);
 
         (window as any).editRow = (id: number) => this.openDialog('Update', id);
+        (window as any).deleteRow = (id: number) =>
+            this.openDialog('Delete', id);
     }
 
     load() {
@@ -278,7 +307,7 @@ export class EmployeeKaosComponent {
             } else if (result.event == 'Update') {
                 this.redirectToUpdate(result.data, result.formValue);
             } else if (result.event == 'Delete') {
-                // this.redirectToDelete(result.data.id);
+                this.redirectToDelete(result.data.id);
             } else if (result.event == 'Upload') {
                 // this.load();
             }
@@ -297,6 +326,23 @@ export class EmployeeKaosComponent {
             }
         );
     }
+
+    redirectToDelete(row_obj: number) {
+        this._service
+            .delete(row_obj)
+            .pipe(first())
+            .subscribe(
+                (res) => {
+                    GlobalVariable.audioSuccess.play();
+                    this.toastr.success('Deleted', 'Success remove data');
+                    this.load();
+                },
+                (error) => {
+                    this.errorNotif(error);
+                }
+            );
+    }
+
     errorNotif(error: any) {
         GlobalVariable.audioFailed.play();
         this.toastr.error('Failed', error.error.message, {

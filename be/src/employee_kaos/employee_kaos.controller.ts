@@ -1,11 +1,14 @@
 import {
+  BadRequestException,
   Body,
   ClassSerializerInterceptor,
   ConflictException,
   Controller,
+  Delete,
   Get,
   NotFoundException,
   Param,
+  Patch,
   Put,
   Request,
   UseInterceptors,
@@ -41,6 +44,8 @@ const columns = [
   'souvenir',
   'created_at',
   'updated_at',
+  'scan',
+  'scan_date',
 ].map((col) => `${tabel}.${col}`);
 
 @UseInterceptors(ClassSerializerInterceptor)
@@ -62,6 +67,7 @@ export class EmployeeKaosController {
       ...item,
       created_at: formatDate(new Date(item.created_at)),
       updated_at: formatDate(new Date(item.updated_at)),
+      scan_date: formatDate(new Date(item.scan_date)),
     }));
 
     return returnData;
@@ -88,6 +94,32 @@ export class EmployeeKaosController {
     // updateDto.part_name = capitalize(updateDto.part_name);
     // updateDto.supplier = capitalize(updateDto.supplier);
     return this._service.update(+id, updateDto);
+  }
+
+  @Patch('updateScan')
+  async updateHampers(@Body() updateUserDto: any) {
+    const inputValue = updateUserDto.scan;
+    const id = await this._service.findOne({ id: inputValue });
+    if (!id) {
+      throw new BadRequestException('Not Found');
+    }
+    if (id.scan_date !== null) {
+      throw new BadRequestException(
+        id.id + ' ' + id.name + ' Already Taken at ' + formatDate(id.scan_date),
+      );
+    }
+    await this._service.update(id.id, {
+      scan: 1,
+      scan_date: new Date(),
+    });
+    // this.eventsGateway.sendUpdateMessageHampers(id.username);
+    // this.eventsGateway.sendUpdateMessage('countHampers');
+    return this._service.findOne({ id: id.id });
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this._service.remove(+id);
   }
 
   @Get()

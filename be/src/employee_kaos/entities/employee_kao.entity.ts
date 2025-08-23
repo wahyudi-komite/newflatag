@@ -78,6 +78,12 @@ export class EmployeeKao {
   @Column({ type: 'varchar', length: 40, nullable: true })
   cshort: string;
 
+  @Column({ type: 'int', default: 0 })
+  scan: number;
+
+  @Column({ nullable: true, default: null })
+  scan_date: Date | null;
+
   @CreateDateColumn()
   @Exclude()
   created_at: Date;

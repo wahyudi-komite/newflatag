@@ -129,4 +129,8 @@ export abstract class AbstractService {
 
         return;
     }
+
+    updateScan(data: any): Observable<any> {
+        return this.http.patch(`${this.url}/updateScan`, data);
+    }
 }

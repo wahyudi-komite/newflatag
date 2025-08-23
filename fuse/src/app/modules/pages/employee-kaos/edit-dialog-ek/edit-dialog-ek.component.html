@@ -24,7 +24,6 @@
                             trim="blur"
                             oninput="this.value = this.value.toUpperCase()"
                             value="{{ this.local_data.id }}"
-                            cdkFocusInitial
                         />
                         <mat-error
                             *ngIf="f['id'].errors && f['id'].errors['required']"
@@ -440,7 +439,6 @@
             mat-raised-button
             color="primary"
             type="submit"
-            cdkFocusInitial
         >
             <mat-icon>save</mat-icon>
             {{ action != 'Delete' ? 'SAVE' : 'DELETE' }}

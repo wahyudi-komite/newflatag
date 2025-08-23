@@ -10,6 +10,10 @@ export default [
         loadChildren: () =>
             import('./employee-kaos/dialog-ek/dialog-ek.routes'),
     },
+    {
+        path: 'scan',
+        loadChildren: () => import('./scan-data/scan-data.routes'),
+    },
 
     // admin routes
     {

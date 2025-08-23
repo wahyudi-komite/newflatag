@@ -42,6 +42,13 @@ export const horizontalNavigation: FuseNavigationItem[] = [
         title: 'Query',
         type: 'basic',
         icon: 'heroicons_outline:queue-list',
-        link: '/example',
+        link: '/merchandise',
+    },
+    {
+        id: 'scan',
+        title: 'Scan Data',
+        type: 'basic',
+        icon: 'heroicons_outline:qr-code',
+        link: '/scan',
     },
 ];

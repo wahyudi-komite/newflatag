@@ -137,7 +137,7 @@ export class EditDialogEkComponent implements OnInit {
                     Validators.pattern(/^[0-9]+$/),
                 ],
             ],
-            kaos_employee1: ['', [Validators.required]],
+            kaos_employee1: ['', []],
             kaos_spouse1: ['', {}],
             kaos_child1: ['', {}],
             kaos_child2: ['', {}],
@@ -168,6 +168,13 @@ export class EditDialogEkComponent implements OnInit {
     }
 
     doAction() {
+        // Object.keys(this.form.controls).forEach((field) => {
+        //     const control = this.form.get(field);
+        //     if (control?.invalid) {
+        //         console.log(`❌ Field invalid: ${field}`, control.errors);
+        //     }
+        // });
+
         if (this.form.invalid) {
             return;
         }
