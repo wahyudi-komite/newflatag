@@ -19,6 +19,8 @@ import { provideToastr } from 'ngx-toastr';
 import { firstValueFrom } from 'rxjs';
 import { TranslocoHttpLoader } from './core/transloco/transloco.http-loader';
 
+// ✅ Register AG Grid modules
+
 export const appConfig: ApplicationConfig = {
     providers: [
         provideAnimations(),

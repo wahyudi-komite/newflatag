@@ -12,4 +12,17 @@ export class EmployeeKaosService extends AbstractService {
   ) {
     super(_repository);
   }
+
+  async getUsers(skip: number, take: number) {
+    const [result, total] = await this._repository.findAndCount({
+      skip,
+      take,
+      order: { id: 'ASC' },
+    });
+
+    return {
+      rows: result,
+      lastRow: total,
+    };
+  }
 }

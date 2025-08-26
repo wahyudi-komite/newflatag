@@ -1,0 +1,14 @@
+<div class="flex h-full w-full flex-col p-4 print:hidden">
+    <!-- Toolbar -->
+    <div
+        class="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"
+    ></div>
+
+    <!-- Grid -->
+    <div class="min-h-[400px] flex-1">
+        <ag-grid-angular
+            [gridOptions]="gridOptions"
+            [serverSideDatasource]="serverSideDatasource"
+        ></ag-grid-angular>
+    </div>
+</div>

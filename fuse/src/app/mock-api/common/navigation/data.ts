@@ -51,4 +51,11 @@ export const horizontalNavigation: FuseNavigationItem[] = [
         icon: 'heroicons_outline:qr-code',
         link: '/scan',
     },
+    {
+        id: 'server-side',
+        title: 'Server Side',
+        type: 'basic',
+        icon: 'heroicons_outline:qr-code',
+        link: '/server-side',
+    },
 ];

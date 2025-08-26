@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { DialogEKComponent } from './employee-kaos/dialog-ek/dialog-ek.component';
 import { PrintLabelComponent } from './employee-kaos/print-label/print-label.component';
 import { ScanDataComponent } from './scan-data/scan-data.component';
+import { ServerSideComponent } from './server-side/server-side.component';
 
 
 
@@ -10,7 +11,8 @@ import { ScanDataComponent } from './scan-data/scan-data.component';
   declarations: [
     DialogEKComponent,
     PrintLabelComponent,
-    ScanDataComponent
+    ScanDataComponent,
+    ServerSideComponent
   ],
   imports: [
     CommonModule

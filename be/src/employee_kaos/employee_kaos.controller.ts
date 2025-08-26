@@ -10,6 +10,7 @@ import {
   Param,
   Patch,
   Put,
+  Query,
   Request,
   UseInterceptors,
 } from '@nestjs/common';
@@ -120,6 +121,37 @@ export class EmployeeKaosController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this._service.remove(+id);
+  }
+
+  @Get('server-side')
+  getDatax(
+    @Query('page') page: number,
+    @Query('pageSize') pageSize: number,
+    // Parameter ag-Grid lainnya seperti sortModel, filterModel dapat ditambahkan di sini
+  ) {
+    const totalItems = 1000; // Contoh total data
+    const startRow = (page - 1) * pageSize;
+    const endRow = Math.min(startRow + pageSize, totalItems);
+
+    const data = this.generateMockData(startRow, endRow);
+
+    return {
+      rows: data,
+      lastRow: totalItems,
+    };
+  }
+
+  // Fungsi contoh untuk menghasilkan data dummy
+  private generateMockData(start: number, end: number) {
+    const data = [];
+    for (let i = start; i < end; i++) {
+      data.push({
+        id: i,
+        name: `Item ${i}`,
+        value: Math.floor(Math.random() * 1000),
+      });
+    }
+    return data;
   }
 
   @Get()
