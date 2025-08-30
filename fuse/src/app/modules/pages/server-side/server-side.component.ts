@@ -64,6 +64,10 @@ export class ServerSideComponent implements OnInit {
         },
         { field: 'created_at' },
         { field: 'updated_at' },
+        { field: 'dlong_old', headerName: 'Dewasa Panjang_Old' },
+        { field: 'dshort_old', headerName: 'Dewasa Pendek_Old' },
+        { field: 'clong_old', headerName: 'Anak Panjang_Old' },
+        { field: 'cshort_old', headerName: 'Anak Pendek_Old' },
     ];
 
     public rowData: any[] = [];

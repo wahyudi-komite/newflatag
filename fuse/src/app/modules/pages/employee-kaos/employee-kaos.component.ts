@@ -64,6 +64,8 @@ export class EmployeeKaosComponent {
             pinned: 'left',
         },
         {
+            field: 'checkbox',
+            headerName: '-',
             headerCheckboxSelection: false, // ✅ Checkbox di header
             checkboxSelection: (params: any) => {
                 // disable checkbox kalau sudah scan
@@ -98,8 +100,14 @@ export class EmployeeKaosComponent {
         { field: 'souvenir' },
         {
             field: 'scan',
+            filter: true,
             cellRenderer: (params: any) => {
-                return params.value === 1 ? 'Yes' : '';
+                if (params.value === 1) {
+                    return 'OK';
+                } else if (params.value === 2) {
+                    return 'Print';
+                }
+                return '';
             },
         },
         {
@@ -112,6 +120,10 @@ export class EmployeeKaosComponent {
         },
         { field: 'created_at' },
         { field: 'updated_at' },
+        { field: 'dlong_old', headerName: 'Dewasa Panjang_Old' },
+        { field: 'dshort_old', headerName: 'Dewasa Pendek_Old' },
+        { field: 'clong_old', headerName: 'Anak Panjang_Old' },
+        { field: 'cshort_old', headerName: 'Anak Pendek_Old' },
     ];
 
     public rowData: any[] = [];
@@ -188,7 +200,20 @@ export class EmployeeKaosComponent {
 
     exportToCSV() {
         if (!this.gridApi) return;
-        this.gridApi.exportDataAsCsv({ fileName: 'oilleak.csv' });
+
+        // ❌ kolom yang tidak ingin diexport
+        const excludedFields = ['actions', 'checkbox'];
+
+        // ✅ ambil semua colId yang aktif, lalu filter
+        const allColumns = this.gridApi.getAllDisplayedColumns();
+        const exportColumns = allColumns
+            .map((col) => col.getColDef().field)
+            .filter((field) => field && !excludedFields.includes(field));
+
+        this.gridApi.exportDataAsCsv({
+            fileName: 'flatag-data-export.csv',
+            columnKeys: exportColumns, // hanya export kolom ini
+        });
     }
 
     doAutoSize(skipHeader: boolean) {
@@ -257,24 +282,34 @@ export class EmployeeKaosComponent {
     }
 
     onSelectAllThisPage() {
+        if (!this.gridApi) return;
+
+        const currentPage = this.gridApi.paginationGetCurrentPage();
+        const pageSize = this.gridApi.paginationGetPageSize();
+
+        const start = currentPage * pageSize;
+        const end = start + pageSize;
+
         let count = 0;
+
         this.gridApi.forEachNodeAfterFilterAndSort((node) => {
-            if (count < 50) {
-                node.setSelected(true);
-                count++;
-            } else {
-                node.setSelected(false);
+            // hanya baris di halaman aktif
+            if (node.rowIndex >= start && node.rowIndex < end) {
+                if (count < 50) {
+                    node.setSelected(true);
+                    count++;
+                } else {
+                    node.setSelected(false); // ✅ sisanya tidak bisa select
+                }
             }
         });
     }
 
     onUnselectAllThisPage() {
-        let count = 0;
-        this.gridApi.forEachNodeAfterFilterAndSort((node) => {
-            if (count < 50) {
-                node.setSelected(false);
-                count++;
-            }
+        if (!this.gridApi) return;
+
+        this.gridApi.forEachNode((node) => {
+            node.setSelected(false);
         });
     }
 
@@ -315,16 +350,17 @@ export class EmployeeKaosComponent {
     }
 
     redirectToUpdate(data: any, formValue: any): void {
-        this._service.update(data.id, formValue).subscribe(
-            (res) => {
-                GlobalVariable.audioSuccess.play();
-                this.toastr.success('Success', 'Update data success');
-                this.load();
-            },
-            (error) => {
-                this.errorNotif(error);
-            }
-        );
+        return;
+        // this._service.update(data.id, formValue).subscribe(
+        //     (res) => {
+        //         GlobalVariable.audioSuccess.play();
+        //         this.toastr.success('Success', 'Update data success');
+        //         this.load();
+        //     },
+        //     (error) => {
+        //         this.errorNotif(error);
+        //     }
+        // );
     }
 
     redirectToDelete(row_obj: number) {

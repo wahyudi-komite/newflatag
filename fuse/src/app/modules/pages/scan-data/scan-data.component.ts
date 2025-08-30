@@ -44,13 +44,21 @@ export class ScanDataComponent implements OnInit {
     }
 
     errorNotif(error: any) {
-        console.log(error.error.message);
+        const message = error?.error?.message || 'Unknown error';
 
-        GlobalVariable.audioFailed.play();
-        this.toastr.error('Failed', error.error.message, {
-            timeOut: 3000,
-            positionClass: 'toast-bottom-center',
-        });
+        if (message.toLowerCase().includes('print')) {
+            GlobalVariable.audioInfo.play();
+            this.toastr.info(message, 'Info', {
+                timeOut: 3000,
+                positionClass: 'toast-bottom-center',
+            });
+        } else {
+            GlobalVariable.audioFailed.play();
+            this.toastr.error(message, 'Failed', {
+                timeOut: 3000,
+                positionClass: 'toast-bottom-center',
+            });
+        }
     }
 
     setFocus() {

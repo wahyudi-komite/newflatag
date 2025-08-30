@@ -47,6 +47,10 @@ const columns = [
   'updated_at',
   'scan',
   'scan_date',
+  'dlong_old',
+  'dshort_old',
+  'clong_old',
+  'cshort_old',
 ].map((col) => `${tabel}.${col}`);
 
 @UseInterceptors(ClassSerializerInterceptor)
@@ -104,11 +108,19 @@ export class EmployeeKaosController {
     if (!id) {
       throw new BadRequestException('Not Found');
     }
+
+    if (id.scan === 2 && id.scan_date !== null) {
+      throw new BadRequestException(
+        id.id + ' ' + id.name + ' Please Print Again',
+      );
+    }
+
     if (id.scan_date !== null) {
       throw new BadRequestException(
         id.id + ' ' + id.name + ' Already Taken at ' + formatDate(id.scan_date),
       );
     }
+
     await this._service.update(id.id, {
       scan: 1,
       scan_date: new Date(),

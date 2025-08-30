@@ -7,4 +7,8 @@ export class GlobalVariable {
     public static audioFailed: HTMLAudioElement = new Audio(
         './sound/windows-xp-error.wav'
     );
+
+    public static audioInfo: HTMLAudioElement = new Audio(
+        './sound/windows-logon.wav'
+    );
 }
