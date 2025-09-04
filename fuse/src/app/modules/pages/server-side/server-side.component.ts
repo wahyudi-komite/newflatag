@@ -1,31 +1,64 @@
-import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { AgGridModule } from 'ag-grid-angular';
-import { ColDef, GridApi, GridOptions, RowModelType } from 'ag-grid-community';
-import { ToastrService } from 'ngx-toastr';
-import { GlobalVariable } from '../../../node/common/global-variable';
-import { ServerSideService } from './server-side.service';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Component } from '@angular/core';
+import { AgGridAngular } from 'ag-grid-angular';
+import {
+    ColDef,
+    GridReadyEvent,
+    IDatasource,
+    IGetRowsParams,
+} from 'ag-grid-community';
 
 @Component({
     selector: 'app-server-side',
     standalone: true,
-    imports: [CommonModule, AgGridModule],
+    imports: [AgGridAngular],
     templateUrl: './server-side.component.html',
     styleUrl: './server-side.component.scss',
 })
-export class ServerSideComponent implements OnInit {
-    private gridApi!: GridApi;
-    isLoading = true;
-    params: any;
-    isRowSelected = false;
-    data: any;
-    singleData: boolean = true;
-
-    gridOptions: GridOptions;
-    serverSideDatasource: ServerSideService;
-
-    public columnDefs: ColDef[] = [
+export class ServerSideComponent {
+    public colDefs: ColDef[] = [
+        // {
+        //     field: 'actions',
+        //     headerName: 'Actions',
+        //     cellClass: 'flex justify-center items-center',
+        //     cellRenderer: (params: any) => {
+        //         const isScanned = params.data && params.data.scan === 1;
+        //         return `
+        //                 <div class="flex items-center justify-center space-x-1 h-auto ">
+        //                     <button
+        //       class="text-white text-sm px-2 py-1 rounded-md flex items-center justify-center
+        //              ${isScanned ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-500 hover:bg-green-600'}"
+        //       title="Print"
+        //       ${isScanned || !params.data ? 'disabled' : `onclick="window.printRow(${params.data.id})"`}
+        //     >
+        //       <span class="material-icons" style="font-size:16px;">print</span>
+        //     </button>
+        //                     <button class="flex items-center justify-center px-2 py-1 text-sm text-white bg-blue-500 rounded-md hover:bg-blue-600" title="Edit" onclick="window.editRow(${params.data.id})">
+        //                         <span class="material-icons" style="font-size:16px;">edit</span>
+        //                     </button>
+        //                     <button class="flex items-center justify-center px-2 py-1 text-sm text-white bg-red-500 rounded-md hover:bg-red-600" title="Delete" onclick="window.deleteRow(${params.data.id})">
+        //                         <span class="material-icons" style="font-size:16px;">delete</span>
+        //                     </button>
+        //                 </div>
+        //             `;
+        //     },
+        //     sortable: false,
+        //     filter: false,
+        //     pinned: 'left',
+        // },
+        // {
+        //     field: 'checkbox',
+        //     headerName: '-',
+        //     headerCheckboxSelection: false, // ✅ Checkbox di header
+        //     checkboxSelection: (params: any) => {
+        //         // disable checkbox kalau sudah scan
+        //         return params.data && params.data.scan !== 1;
+        //     }, // ✅ Checkbox per row
+        //     width: 10,
+        //     pinned: 'left',
+        //     sortable: false,
+        //     filter: false,
+        // },
         { field: 'id' },
         { field: 'name' },
         { field: 'divisi' },
@@ -50,8 +83,14 @@ export class ServerSideComponent implements OnInit {
         { field: 'souvenir' },
         {
             field: 'scan',
+            filter: true,
             cellRenderer: (params: any) => {
-                return params.value === 1 ? 'Yes' : '';
+                if (params.value === 1) {
+                    return 'OK';
+                } else if (params.value === 2) {
+                    return 'Print';
+                }
+                return '';
             },
         },
         {
@@ -75,53 +114,65 @@ export class ServerSideComponent implements OnInit {
         resizable: true,
         sortable: true,
         filter: true,
+        floatingFilter: true,
     };
-    rowModelType: RowModelType = 'serverSide';
-    paginationPageSize = 20;
-    cacheBlockSize = 10;
-    // rowData!: IOlympicDataWithId[];
 
-    readonly dialog = inject(MatDialog);
-    private toastr = inject(ToastrService);
+    constructor(private http: HttpClient) {}
 
-    constructor(private myDataService: ServerSideService) {
-        this.serverSideDatasource = this.myDataService;
-    }
+    onGridReady(params: GridReadyEvent) {
+        const dataSource: IDatasource = {
+            getRows: (request: IGetRowsParams) => {
+                const page = request.startRow / 50 + 1;
 
-    ngOnInit() {
-        this.gridOptions = {
-            rowModelType: 'serverSide',
-            pagination: true,
-            paginationPageSize: 10,
-            cacheBlockSize: 10,
-            // ... other grid options like column definitions
+                let httpParams = new HttpParams()
+                    .set('page', page)
+                    .set('limit', 50);
+
+                // kirim filter ke backend
+                Object.keys(request.filterModel).forEach((col) => {
+                    const filter = request.filterModel[col];
+
+                    if (filter.operator && filter.conditions) {
+                        // advanced filter (AND/OR dengan conditions array)
+                        httpParams = httpParams.set(
+                            `filter_${col}_op`,
+                            filter.operator
+                        );
+
+                        filter.conditions.forEach((cond: any, idx: number) => {
+                            httpParams = httpParams
+                                .set(
+                                    `filter_${col}_${idx + 1}_type`,
+                                    cond.type || ''
+                                )
+                                .set(
+                                    `filter_${col}_${idx + 1}_val`,
+                                    cond.filter || ''
+                                );
+                        });
+                    } else {
+                        // simple filter
+                        httpParams = httpParams
+                            .set(`filter_${col}_type`, filter.type || '')
+                            .set(`filter_${col}_val`, filter.filter || '');
+                    }
+                });
+
+                this.http
+                    .get<any>(
+                        'http://localhost:3010/api-flatag/v1/employee-kaos',
+                        {
+                            params: httpParams,
+                        }
+                    )
+                    .subscribe((res) => {
+                        request.successCallback(res.data, res.total);
+                        console.log(res);
+                    });
+            },
         };
-    }
 
-    // onGridReady(params: GridReadyEvent) {
-    //     const datasource: IServerSideDatasource = {
-    //         getRows: (dsParams: IServerSideGetRowsParams) => {
-    //             const startRow = dsParams.request.startRow;
-    //             const endRow = dsParams.request.endRow;
-
-    //             this.http
-    //                 .get<any>(
-    //                     `http://localhost:3000/employee-kaos/server-side?startRow=${startRow}&endRow=${endRow}`
-    //                 )
-    //                 .subscribe((data) => {
-    //                     dsParams.success({
-    //                         rowData: data.rows,
-    //                         rowCount: data.lastRow,
-    //                     });
-    //                 });
-    //         },
-    //     };
-    // }
-
-    errorNotif(error: any) {
-        GlobalVariable.audioFailed.play();
-        this.toastr.error('Failed', error.error.message, {
-            timeOut: 3000,
-        });
+        // ✅ cara baru di AG Grid v30+
+        params.api.setGridOption('datasource', dataSource);
     }
 }

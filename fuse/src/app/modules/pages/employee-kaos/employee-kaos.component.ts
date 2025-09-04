@@ -2,13 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, NgZone } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { AgGridModule } from 'ag-grid-angular';
-import {
-    AllCommunityModule,
-    ColDef,
-    GridApi,
-    GridReadyEvent,
-    ModuleRegistry,
-} from 'ag-grid-community';
+import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { first } from 'rxjs';
 import { GlobalVariable } from '../../../node/common/global-variable';
@@ -16,7 +10,6 @@ import { DialogEKComponent } from './dialog-ek/dialog-ek.component';
 import { EditDialogEkComponent } from './edit-dialog-ek/edit-dialog-ek.component';
 import { EmployeeKaosService } from './employee-kaos.service';
 import { PrintLabelComponent } from './print-label/print-label.component';
-ModuleRegistry.registerModules([AllCommunityModule]);
 
 @Component({
     selector: 'app-employee-kaos',
