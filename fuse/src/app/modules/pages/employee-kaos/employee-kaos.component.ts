@@ -79,6 +79,8 @@ export class EmployeeKaosComponent {
         { field: 'clong', headerName: 'Anak Panjang' },
         { field: 'cshort', headerName: 'Anak Pendek' },
         { field: 'status' },
+        { field: 'terminated' },
+        { field: 'status' },
         { field: 'gender' },
         { field: 'family_stats' },
         { field: 'no_wa' },
@@ -113,10 +115,6 @@ export class EmployeeKaosComponent {
         },
         { field: 'created_at' },
         { field: 'updated_at' },
-        { field: 'dlong_old', headerName: 'Dewasa Panjang_Old' },
-        { field: 'dshort_old', headerName: 'Dewasa Pendek_Old' },
-        { field: 'clong_old', headerName: 'Anak Panjang_Old' },
-        { field: 'cshort_old', headerName: 'Anak Pendek_Old' },
     ];
 
     public rowData: any[] = [];
@@ -343,17 +341,17 @@ export class EmployeeKaosComponent {
     }
 
     redirectToUpdate(data: any, formValue: any): void {
-        return;
-        // this._service.update(data.id, formValue).subscribe(
-        //     (res) => {
-        //         GlobalVariable.audioSuccess.play();
-        //         this.toastr.success('Success', 'Update data success');
-        //         this.load();
-        //     },
-        //     (error) => {
-        //         this.errorNotif(error);
-        //     }
-        // );
+        // return;
+        this._service.update(data.id, formValue).subscribe(
+            (res) => {
+                GlobalVariable.audioSuccess.play();
+                this.toastr.success('Success', 'Update data success');
+                this.load();
+            },
+            (error) => {
+                this.errorNotif(error);
+            }
+        );
     }
 
     redirectToDelete(row_obj: number) {
@@ -375,7 +373,7 @@ export class EmployeeKaosComponent {
     errorNotif(error: any) {
         GlobalVariable.audioFailed.play();
         this.toastr.error('Failed', error.error.message, {
-            timeOut: 3000,
+            timeOut: 5000,
         });
     }
 }

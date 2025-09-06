@@ -47,10 +47,7 @@ const columns = [
   'updated_at',
   'scan',
   'scan_date',
-  'dlong_old',
-  'dshort_old',
-  'clong_old',
-  'cshort_old',
+  'terminated',
 ].map((col) => `${tabel}.${col}`);
 
 @UseInterceptors(ClassSerializerInterceptor)
@@ -109,7 +106,15 @@ export class EmployeeKaosController {
       throw new BadRequestException('Not Found');
     }
 
-    if (id.scan === 2 && id.scan_date !== null) {
+    console.log(id.terminated);
+
+    if (id && id.terminated === 'YES') {
+      throw new BadRequestException(
+        `${id.id} ${id.name} is already marked as terminated`,
+      );
+    }
+
+    if (id.scan === 2 && id.scan_date === null) {
       throw new BadRequestException(
         id.id + ' ' + id.name + ' Please Print Again',
       );

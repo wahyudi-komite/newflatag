@@ -104,7 +104,7 @@
                     </mat-form-field>
                 </div>
             </div>
-            <div class="grid grid-cols-5 gap-4">
+            <div class="grid grid-cols-6 gap-4">
                 <div class="gt-xs:flex-row flex">
                     <mat-form-field class="w-full" floatLabel="always">
                         <mat-label>Plant</mat-label>
@@ -189,6 +189,29 @@
                         </mat-error>
                         <mat-error *ngIf="f['no_wa'].errors?.['pattern']">
                             Nomor hanya boleh angka
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="gt-xs:flex-row flex">
+                    <mat-form-field class="w-full" floatLabel="always">
+                        <mat-label>Terminated</mat-label>
+                        <mat-select
+                            formControlName="terminated"
+                            [ngClass]="
+                                f['terminated'].value === 'YES'
+                                    ? 'text-rose-500'
+                                    : ''
+                            "
+                        >
+                            <mat-option
+                                *ngFor="let tr of terminatedList"
+                                [value]="tr"
+                            >
+                                {{ tr }}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="f['terminated'].errors?.['required']">
+                            Terminated status wajib dipilih
                         </mat-error>
                     </mat-form-field>
                 </div>
@@ -402,6 +425,69 @@
                     </mat-form-field>
                 </div>
             </div>
+            <div class="grid grid-cols-4 gap-4">
+                <div class="gt-xs:flex-row flex">
+                    <mat-form-field class="w-full" floatLabel="always">
+                        <mat-label>Dewasa Pendek</mat-label>
+                        <input
+                            matInput
+                            formControlName="dshort"
+                            placeholder="Dewasa Pendek"
+                            trim="blur"
+                            oninput="this.value = this.value.toUpperCase()"
+                        />
+                        <mat-error *ngIf="f['dshort'].errors?.['required']">
+                            You must enter a value
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+
+                <div class="gt-xs:flex-row flex">
+                    <mat-form-field class="w-full" floatLabel="always">
+                        <mat-label>Dewasa Panjang</mat-label>
+                        <input
+                            matInput
+                            formControlName="dlong"
+                            placeholder="Dewasa Panjang.."
+                            trim="blur"
+                            oninput="this.value = this.value.toUpperCase()"
+                        />
+                        <mat-error *ngIf="f['dlong'].errors?.['required']">
+                            You must enter a value
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="gt-xs:flex-row flex">
+                    <mat-form-field class="w-full" floatLabel="always">
+                        <mat-label>Anak Pendek</mat-label>
+                        <input
+                            matInput
+                            formControlName="cshort"
+                            placeholder="Anak Pendek.."
+                            trim="blur"
+                            oninput="this.value = this.value.toUpperCase()"
+                        />
+                        <mat-error *ngIf="f['cshort'].errors?.['required']">
+                            You must enter a value
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="gt-xs:flex-row flex">
+                    <mat-form-field class="w-full" floatLabel="always">
+                        <mat-label>Anak Panjang</mat-label>
+                        <input
+                            matInput
+                            formControlName="clong"
+                            placeholder="Anak Panjang.."
+                            trim="blur"
+                            oninput="this.value = this.value.toUpperCase()"
+                        />
+                        <mat-error *ngIf="f['clong'].errors?.['required']">
+                            You must enter a value
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
         </div>
         <ng-template #elseTemplate>
             <div class="-mt-2 mb-2 flex w-full flex-col">
@@ -431,7 +517,7 @@
             <mat-icon>cancel</mat-icon>
             CANCEL
         </button>
-        <!-- <button
+        <button
             [disabled]="
                 action == 'Delete' ? false : !(form.valid && form.dirty)
             "
@@ -442,6 +528,6 @@
         >
             <mat-icon>save</mat-icon>
             {{ action != 'Delete' ? 'SAVE' : 'DELETE' }}
-        </button> -->
+        </button>
     </mat-dialog-actions>
 </form>

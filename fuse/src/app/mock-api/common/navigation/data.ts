@@ -46,7 +46,7 @@ export const horizontalNavigation: FuseNavigationItem[] = [
     },
     {
         id: 'scan',
-        title: 'Scan Data',
+        title: 'Scan Sto',
         type: 'basic',
         icon: 'heroicons_outline:qr-code',
         link: '/scan',

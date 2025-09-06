@@ -92,15 +92,6 @@ export class EmployeeKao {
   @Exclude()
   updated_at: Date;
 
-  @Column({ type: 'varchar', length: 20, nullable: true })
-  dlong_old: string;
-
-  @Column({ type: 'varchar', length: 20, nullable: true })
-  dshort_old: string;
-
-  @Column({ type: 'varchar', length: 40, nullable: true })
-  clong_old: string;
-
-  @Column({ type: 'varchar', length: 40, nullable: true })
-  cshort_old: string;
+  @Column({ type: 'enum', enum: ['YES', 'NO'], default: 'NO' })
+  terminated: 'YES' | 'NO';
 }

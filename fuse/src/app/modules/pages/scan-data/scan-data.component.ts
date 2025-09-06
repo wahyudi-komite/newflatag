@@ -49,13 +49,13 @@ export class ScanDataComponent implements OnInit {
         if (message.toLowerCase().includes('print')) {
             GlobalVariable.audioInfo.play();
             this.toastr.info(message, 'Info', {
-                timeOut: 3000,
+                timeOut: 5000,
                 positionClass: 'toast-bottom-center',
             });
         } else {
             GlobalVariable.audioFailed.play();
             this.toastr.error(message, 'Failed', {
-                timeOut: 3000,
+                timeOut: 5000,
                 positionClass: 'toast-bottom-center',
             });
         }

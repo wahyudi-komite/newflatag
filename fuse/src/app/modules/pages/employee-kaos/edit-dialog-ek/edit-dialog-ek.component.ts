@@ -43,6 +43,7 @@ export class EditDialogEkComponent implements OnInit {
     selectStatus = [];
 
     plantList: string[] = ['HO', 'PC', 'P5', 'P4', 'P3', 'P2', 'P1'];
+    terminatedList: string[] = ['YES', 'NO'];
 
     familyStatsList: string[] = [
         'K1',
@@ -129,6 +130,7 @@ export class EditDialogEkComponent implements OnInit {
             gender: ['', [Validators.required]],
             family_stats: ['', [Validators.required]],
             plant: ['', [Validators.required]],
+            terminated: ['', [Validators.required]],
             no_wa: [
                 '',
                 [
@@ -146,6 +148,10 @@ export class EditDialogEkComponent implements OnInit {
             kaos_child5: ['', {}],
             kaos_child6: ['', {}],
             souvenir: [0, [Validators.required]],
+            dshort: ['', [Validators.required]],
+            dlong: ['', {}],
+            cshort: ['', {}],
+            clong: ['', {}],
         });
 
         if (this.action != 'Add') {
