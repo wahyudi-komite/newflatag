@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import * as ExcelJS from 'exceljs';
 import { Response } from 'express';
 import { Brackets, Repository } from 'typeorm';
+import { applyFilters } from './applyFilters';
 import { PaginatedResult } from './paginated-result.interface';
 
 @Injectable()
@@ -160,5 +161,50 @@ export class AbstractService {
     // Write and Send Excel File
     await workbook.xlsx.write(res);
     res.end();
+  }
+
+  async paginateServerSide(tbl, relations, query): Promise<PaginatedResult> {
+    const take: number = query.limit ? query.limit : 100000;
+    const page: number = query.page ? query.page : 1;
+    const keyword: string = query.keyword ? query.keyword : '';
+    const direction: string = query.sortField ? query.sortField : tbl + '.id';
+    const sortData = query.sortOrder ? query.sortOrder.toUpperCase() : 'DESC';
+
+    const myQuery = this.repository
+      .createQueryBuilder(tbl)
+      .where(tbl + '.id >=:id', { id: 0 })
+      .andWhere(
+        new Brackets((qb) => {
+          query.columns.map((data) => {
+            qb.orWhere(data + ' like :keyword', {
+              keyword: `%${keyword}%`,
+            });
+          });
+        }),
+      )
+      .orderBy(direction, sortData)
+      .take(take)
+      .skip((page - 1) * take);
+
+    if (relations) {
+      relations.map((relation) => {
+        myQuery.leftJoinAndSelect(relation[0], relation[1]);
+      });
+    }
+
+    applyFilters(myQuery, query, tbl);
+    console.log('type : =', myQuery.getSql);
+
+    const [data, total] = await myQuery.getManyAndCount();
+
+    return {
+      data: data,
+      meta: {
+        total,
+        page,
+        last_page: Math.ceil(total / take),
+        pageSize: take,
+      },
+    };
   }
 }

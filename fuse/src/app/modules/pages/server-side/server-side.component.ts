@@ -17,49 +17,7 @@ import {
 })
 export class ServerSideComponent {
     public colDefs: ColDef[] = [
-        // {
-        //     field: 'actions',
-        //     headerName: 'Actions',
-        //     cellClass: 'flex justify-center items-center',
-        //     cellRenderer: (params: any) => {
-        //         const isScanned = params.data && params.data.scan === 1;
-        //         return `
-        //                 <div class="flex items-center justify-center space-x-1 h-auto ">
-        //                     <button
-        //       class="text-white text-sm px-2 py-1 rounded-md flex items-center justify-center
-        //              ${isScanned ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-500 hover:bg-green-600'}"
-        //       title="Print"
-        //       ${isScanned || !params.data ? 'disabled' : `onclick="window.printRow(${params.data.id})"`}
-        //     >
-        //       <span class="material-icons" style="font-size:16px;">print</span>
-        //     </button>
-        //                     <button class="flex items-center justify-center px-2 py-1 text-sm text-white bg-blue-500 rounded-md hover:bg-blue-600" title="Edit" onclick="window.editRow(${params.data.id})">
-        //                         <span class="material-icons" style="font-size:16px;">edit</span>
-        //                     </button>
-        //                     <button class="flex items-center justify-center px-2 py-1 text-sm text-white bg-red-500 rounded-md hover:bg-red-600" title="Delete" onclick="window.deleteRow(${params.data.id})">
-        //                         <span class="material-icons" style="font-size:16px;">delete</span>
-        //                     </button>
-        //                 </div>
-        //             `;
-        //     },
-        //     sortable: false,
-        //     filter: false,
-        //     pinned: 'left',
-        // },
-        // {
-        //     field: 'checkbox',
-        //     headerName: '-',
-        //     headerCheckboxSelection: false, // ✅ Checkbox di header
-        //     checkboxSelection: (params: any) => {
-        //         // disable checkbox kalau sudah scan
-        //         return params.data && params.data.scan !== 1;
-        //     }, // ✅ Checkbox per row
-        //     width: 10,
-        //     pinned: 'left',
-        //     sortable: false,
-        //     filter: false,
-        // },
-        { field: 'id' },
+        { field: 'id', sort: 'desc' },
         { field: 'name' },
         { field: 'divisi' },
         { field: 'department' },
@@ -115,19 +73,33 @@ export class ServerSideComponent {
         sortable: true,
         filter: true,
         floatingFilter: true,
+        filterParams: {
+            suppressAndOrCondition: true, // 🔥 semua kolom hanya punya 1 filter
+        },
     };
 
     constructor(private http: HttpClient) {}
 
     onGridReady(params: GridReadyEvent) {
+        console.log(params);
+
         const dataSource: IDatasource = {
             getRows: (request: IGetRowsParams) => {
+                console.log('🔹 Sort model:', request.sortModel);
+                console.log('🔹 Filter model:', request.filterModel);
+
                 const page = request.startRow / 50 + 1;
 
                 let httpParams = new HttpParams()
                     .set('page', page)
                     .set('limit', 50);
 
+                if (request.sortModel.length > 0) {
+                    const sort = request.sortModel[0];
+                    httpParams = httpParams
+                        .set('sortField', sort.colId)
+                        .set('sortOrder', sort.sort); // asc / desc
+                }
                 // kirim filter ke backend
                 Object.keys(request.filterModel).forEach((col) => {
                     const filter = request.filterModel[col];
@@ -157,17 +129,17 @@ export class ServerSideComponent {
                             .set(`filter_${col}_val`, filter.filter || '');
                     }
                 });
+                console.log(httpParams);
 
                 this.http
                     .get<any>(
-                        'http://localhost:3010/api-flatag/v1/employee-kaos',
+                        'http://localhost:3010/api-flatag/v1/employee-kaos/server-side',
                         {
                             params: httpParams,
                         }
                     )
                     .subscribe((res) => {
                         request.successCallback(res.data, res.total);
-                        console.log(res);
                     });
             },
         };

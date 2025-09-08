@@ -10,7 +10,6 @@ import {
   Param,
   Patch,
   Put,
-  Query,
   Request,
   UseInterceptors,
 } from '@nestjs/common';
@@ -56,14 +55,44 @@ export class EmployeeKaosController {
   constructor(private readonly _service: EmployeeKaosService) {}
 
   private async getData(request, isExport = false): Promise<any> {
+    console.log('query : ', request.query);
     const returnData = await this._service.paginate(tabel, [], {
       limit: isExport ? 1000000 : request.query.limit,
       page: request.query.page,
+
       sort: request.query.sort,
       direction: request.query.direction,
       keyword: request.query.keyword,
       column: columns,
     });
+
+    returnData.data = returnData.data.map((item) => ({
+      ...item,
+      created_at: formatDate(new Date(item.created_at)),
+      updated_at: formatDate(new Date(item.updated_at)),
+      scan_date: formatDate(new Date(item.scan_date)),
+    }));
+
+    return returnData;
+  }
+
+  private async getDataServerSide(query, isExport = false): Promise<any> {
+    const request = {
+      ...query,
+      columns,
+    };
+    const returnData = await this._service.paginateServerSide(
+      tabel,
+      [],
+      request,
+      // limit: isExport ? 1000000 : request.query.limit,
+      // page: request.query.page,
+
+      // sort: request.query.sort,
+      // direction: request.query.direction,
+      // keyword: request.query.keyword,
+      // column: columns,
+    );
 
     returnData.data = returnData.data.map((item) => ({
       ...item,
@@ -106,8 +135,6 @@ export class EmployeeKaosController {
       throw new BadRequestException('Not Found');
     }
 
-    console.log(id.terminated);
-
     if (id && id.terminated === 'YES') {
       throw new BadRequestException(
         `${id.id} ${id.name} is already marked as terminated`,
@@ -130,8 +157,7 @@ export class EmployeeKaosController {
       scan: 1,
       scan_date: new Date(),
     });
-    // this.eventsGateway.sendUpdateMessageHampers(id.username);
-    // this.eventsGateway.sendUpdateMessage('countHampers');
+
     return this._service.findOne({ id: id.id });
   }
 
@@ -141,34 +167,8 @@ export class EmployeeKaosController {
   }
 
   @Get('server-side')
-  getDatax(
-    @Query('page') page: number,
-    @Query('pageSize') pageSize: number,
-    // Parameter ag-Grid lainnya seperti sortModel, filterModel dapat ditambahkan di sini
-  ) {
-    const totalItems = 1000; // Contoh total data
-    const startRow = (page - 1) * pageSize;
-    const endRow = Math.min(startRow + pageSize, totalItems);
-
-    const data = this.generateMockData(startRow, endRow);
-
-    return {
-      rows: data,
-      lastRow: totalItems,
-    };
-  }
-
-  // Fungsi contoh untuk menghasilkan data dummy
-  private generateMockData(start: number, end: number) {
-    const data = [];
-    for (let i = start; i < end; i++) {
-      data.push({
-        id: i,
-        name: `Item ${i}`,
-        value: Math.floor(Math.random() * 1000),
-      });
-    }
-    return data;
+  async findAllData(@Request() request) {
+    return this.getDataServerSide(request.query);
   }
 
   @Get()
