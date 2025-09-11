@@ -55,7 +55,6 @@ export class EmployeeKaosController {
   constructor(private readonly _service: EmployeeKaosService) {}
 
   private async getData(request, isExport = false): Promise<any> {
-    console.log('query : ', request.query);
     const returnData = await this._service.paginate(tabel, [], {
       limit: isExport ? 1000000 : request.query.limit,
       page: request.query.page,
@@ -76,7 +75,7 @@ export class EmployeeKaosController {
     return returnData;
   }
 
-  private async getDataServerSide(query, isExport = false): Promise<any> {
+  private async getDataServerSide(query): Promise<any> {
     const request = {
       ...query,
       columns,
@@ -85,13 +84,6 @@ export class EmployeeKaosController {
       tabel,
       [],
       request,
-      // limit: isExport ? 1000000 : request.query.limit,
-      // page: request.query.page,
-
-      // sort: request.query.sort,
-      // direction: request.query.direction,
-      // keyword: request.query.keyword,
-      // column: columns,
     );
 
     returnData.data = returnData.data.map((item) => ({
@@ -166,12 +158,12 @@ export class EmployeeKaosController {
     return this._service.remove(+id);
   }
 
-  @Get('server-side')
+  @Get()
   async findAllData(@Request() request) {
     return this.getDataServerSide(request.query);
   }
 
-  @Get()
+  @Get('server-side')
   async findAll(@Request() request) {
     return this.getData(request);
   }

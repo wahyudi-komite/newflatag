@@ -1,379 +1,347 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, inject, NgZone } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { AgGridModule } from 'ag-grid-angular';
-import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
-import { ToastrModule, ToastrService } from 'ngx-toastr';
-import { first } from 'rxjs';
-import { GlobalVariable } from '../../../node/common/global-variable';
-import { DialogEKComponent } from './dialog-ek/dialog-ek.component';
-import { EditDialogEkComponent } from './edit-dialog-ek/edit-dialog-ek.component';
+import { HttpClient } from '@angular/common/http';
+import { Component, inject, OnInit } from '@angular/core';
+import { saveAs } from 'file-saver';
+import { ToastrModule } from 'ngx-toastr';
+import { ButtonModule } from 'primeng/button';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
+import { InputTextModule } from 'primeng/inputtext';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { SelectModule } from 'primeng/select';
+import { Table, TableLazyLoadEvent, TableModule } from 'primeng/table';
+import { TagModule } from 'primeng/tag';
+import * as XLSX from 'xlsx';
+import { cleanFilters } from '../../../node/common/cleanFilters';
+import { EmployeeKaos } from './employee-kaos';
 import { EmployeeKaosService } from './employee-kaos.service';
-import { PrintLabelComponent } from './print-label/print-label.component';
+
+interface Column {
+    field: string;
+    header: string;
+    sortable: boolean;
+}
 
 @Component({
     selector: 'app-employee-kaos',
     standalone: true,
-    imports: [AgGridModule, CommonModule, ToastrModule, PrintLabelComponent],
+    imports: [
+        CommonModule,
+        ToastrModule,
+        TableModule,
+        InputTextModule,
+        TagModule,
+        SelectModule,
+        MultiSelectModule,
+        ButtonModule,
+        IconFieldModule,
+        InputIconModule,
+    ],
     templateUrl: './employee-kaos.component.html',
     styleUrl: './employee-kaos.component.scss',
 })
-export class EmployeeKaosComponent {
-    private gridApi!: GridApi;
-    isLoading = true;
-    params: any;
-    isRowSelected = false;
-    data: any;
-    singleData: boolean = true;
-
-    public colDefs: ColDef[] = [
-        {
-            field: 'actions',
-            headerName: 'Actions',
-            cellClass: 'flex justify-center items-center',
-            cellRenderer: (params: any) => {
-                const isScanned = params.data.scan === 1;
-                return `
-                    <div class="flex items-center justify-center space-x-1 h-auto ">
-                        <button
-          class="text-white text-sm px-2 py-1 rounded-md flex items-center justify-center 
-                 ${isScanned ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-500 hover:bg-green-600'}"
-          title="Print"
-          ${isScanned ? 'disabled' : `onclick="window.printRow(${params.data.id})"`}
-        >
-          <span class="material-icons" style="font-size:16px;">print</span>
-        </button>
-                        <button class="flex items-center justify-center px-2 py-1 text-sm text-white bg-blue-500 rounded-md hover:bg-blue-600" title="Edit" onclick="window.editRow(${params.data.id})">
-                            <span class="material-icons" style="font-size:16px;">edit</span>
-                        </button>
-                        <button class="flex items-center justify-center px-2 py-1 text-sm text-white bg-red-500 rounded-md hover:bg-red-600" title="Delete" onclick="window.deleteRow(${params.data.id})">
-                            <span class="material-icons" style="font-size:16px;">delete</span>
-                        </button>
-                    </div>
-                `;
-            },
-            sortable: false,
-            filter: false,
-            pinned: 'left',
-        },
-        {
-            field: 'checkbox',
-            headerName: '-',
-            headerCheckboxSelection: false, // ✅ Checkbox di header
-            checkboxSelection: (params: any) => {
-                // disable checkbox kalau sudah scan
-                return params.data && params.data.scan !== 1;
-            }, // ✅ Checkbox per row
-            width: 10,
-            pinned: 'left',
-            sortable: false,
-            filter: false,
-        },
-        { field: 'id' },
-        { field: 'name' },
-        { field: 'divisi' },
-        { field: 'department' },
-        { field: 'plant' },
-        { field: 'dlong', headerName: 'Dewasa Panjang' },
-        { field: 'dshort', headerName: 'Dewasa Pendek' },
-        { field: 'clong', headerName: 'Anak Panjang' },
-        { field: 'cshort', headerName: 'Anak Pendek' },
-        { field: 'status' },
-        { field: 'terminated' },
-        { field: 'status' },
-        { field: 'gender' },
-        { field: 'family_stats' },
-        { field: 'no_wa' },
-        { field: 'kaos_employee1' },
-        { field: 'kaos_spouse1' },
-        { field: 'kaos_child1' },
-        { field: 'kaos_child2' },
-        { field: 'kaos_child3' },
-        { field: 'kaos_child4' },
-        { field: 'kaos_child5' },
-        { field: 'kaos_child6' },
-        { field: 'souvenir' },
-        {
-            field: 'scan',
-            filter: true,
-            cellRenderer: (params: any) => {
-                if (params.value === 1) {
-                    return 'OK';
-                } else if (params.value === 2) {
-                    return 'Print';
-                }
-                return '';
-            },
-        },
-        {
-            field: 'scan_date',
-            cellRenderer: (params: any) => {
-                return params.value === '01-01-1970 07:00:00'
-                    ? ''
-                    : params.value;
-            },
-        },
-        { field: 'created_at' },
-        { field: 'updated_at' },
+export class EmployeeKaosComponent implements OnInit {
+    datas: EmployeeKaos[] = [];
+    cols!: any[];
+    loading: boolean = true;
+    globalFilter = '';
+    searchValue: string | undefined;
+    total: number = 0;
+    // plantData!: any[];
+    request: any = {};
+    plantData = [
+        { label: 'P1', value: 'P1' },
+        { label: 'P2', value: 'P2' },
+        { label: 'P3', value: 'P3' },
+        { label: 'P4', value: 'P4' },
+        { label: 'P5', value: 'P5' },
+        { label: 'PC', value: 'PC' },
+        { label: 'HO', value: 'HO' },
     ];
 
-    public rowData: any[] = [];
-    public defaultColDef: ColDef = {
-        resizable: true,
-        sortable: true,
-        filter: true,
-    };
+    statusData = [
+        { label: 'P', value: 'P' },
+        { label: 'C', value: 'C' },
+    ];
+    terminatedData = [
+        { label: 'YES', value: 'YES' },
+        { label: 'NO', value: 'NO' },
+    ];
+    genderData = [
+        { label: 'M', value: 'M' },
+        { label: 'F', value: 'F' },
+    ];
+    scanData = [
+        { label: 'Blank', value: '0' },
+        { label: 'OK', value: '1' },
+        { label: 'PRINT', value: '2' },
+    ];
 
-    readonly dialog = inject(MatDialog);
-    private toastr = inject(ToastrService);
-
-    constructor(
-        private _service: EmployeeKaosService,
-        private cdr: ChangeDetectorRef,
-        private ngZone: NgZone
-    ) {}
+    _service = inject(EmployeeKaosService);
+    http = inject(HttpClient);
 
     ngOnInit() {
-        this.load();
-        // (window as any).editRow = (id: number) => this.onEditRow(id);
-        // (window as any).deleteRow = (id: number) => this.onDeleteRow(id);
-        (window as any).printRow = (id: number) => this.onPrintRowx(id);
-
-        (window as any).editRow = (id: number) => this.openDialog('Update', id);
-        (window as any).deleteRow = (id: number) =>
-            this.openDialog('Delete', id);
-    }
-
-    load() {
-        this._service.getAllx().subscribe((data) => {
-            this.rowData = data.data;
-        });
-    }
-    onGridReady(params: GridReadyEvent) {
-        this.gridApi = params.api;
-
-        this.gridApi.addEventListener('rowSelected', () => {
-            const selected = this.gridApi.getSelectedNodes();
-
-            if (selected.length > 50) {
-                // batalkan seleksi terbaru
-                const last = selected[selected.length - 1];
-                last.setSelected(false);
-
-                alert('Maksimal hanya bisa memilih 50 data.');
-            }
-        });
-
-        this._service.getAllx().subscribe(
-            (data) => {
-                this.rowData = data.data;
-                this.isLoading = false;
-                setTimeout(() => this.doAutoSize(false), 50);
+        this.cols = [
+            {
+                field: 'id',
+                header: 'NPK',
+                sortable: true,
+                filter: true,
+                filterType: 'numeric',
             },
-            (err) => {
-                this.isLoading = false;
-            }
-        );
+            {
+                field: 'name',
+                header: 'Name',
+                sortable: true,
+                filter: true,
+                filterType: 'text',
+            },
+            {
+                field: 'divisi',
+                header: 'Division',
+                sortable: true,
+                filter: true,
+                filterType: 'text',
+            },
+            {
+                field: 'department',
+                header: 'Departement',
+                sortable: true,
+                filter: true,
+                filterType: 'text',
+            },
+            {
+                field: 'plant',
+                header: 'plant',
+                sortable: true,
+                filter: true,
+                filterType: 'select',
+            },
+            {
+                field: 'status',
+                header: 'status',
+                sortable: true,
+                filter: true,
+                filterType: 'select',
+            },
+            {
+                field: 'terminated',
+                header: 'terminated',
+                sortable: true,
+                filter: true,
+                filterType: 'select',
+            },
+            {
+                field: 'gender',
+                header: 'gender',
+                sortable: true,
+                filter: true,
+                filterType: 'select',
+            },
+            {
+                field: 'family_stats',
+                header: 'family Status',
+                sortable: true,
+                filter: true,
+                filterType: 'text',
+            },
+            {
+                field: 'no_wa',
+                header: 'whatsapp',
+                sortable: true,
+                filter: true,
+                filterType: 'text',
+            },
+            {
+                field: 'souvenir',
+                header: 'souvenir',
+                sortable: true,
+                filter: true,
+                filterType: 'text',
+            },
+            {
+                field: 'scan',
+                header: 'scan',
+                sortable: true,
+                filter: true,
+                filterType: 'select',
+            },
+            {
+                field: 'scan_date',
+                header: 'scan date',
+                sortable: true,
+                filter: true,
+                filterType: 'text',
+            },
+            {
+                field: 'kaos_employee1',
+                header: 'Kaos Employee',
+                sortable: true,
+                filter: true,
+                filterType: 'text',
+            },
+            {
+                field: 'kaos_spouse1',
+                header: 'Kaos Spouse',
+                sortable: true,
+                filter: true,
+                filterType: 'text',
+            },
+            {
+                field: 'kaos_child1',
+                header: 'Kaos Anak 1',
+                sortable: true,
+                filter: true,
+                filterType: 'text',
+            },
+            {
+                field: 'kaos_child2',
+                header: 'Kaos Anak 2',
+                sortable: true,
+                filter: true,
+                filterType: 'text',
+            },
+            {
+                field: 'kaos_child3',
+                header: 'Kaos Anak 3',
+                sortable: true,
+                filter: true,
+                filterType: 'text',
+            },
+            {
+                field: 'kaos_child4',
+                header: 'Kaos Anak 4',
+                sortable: true,
+                filter: true,
+                filterType: 'text',
+            },
+            {
+                field: 'kaos_child5',
+                header: 'Kaos Anak 5',
+                sortable: true,
+                filter: true,
+                filterType: 'text',
+            },
+            {
+                field: 'kaos_child6',
+                header: 'Kaos Anak 6',
+                sortable: true,
+                filter: true,
+                filterType: 'text',
+            },
+        ];
     }
 
-    // ✅ Ambil semua row terpilih
-    getSelectedRows() {
-        const selectedNodes = this.gridApi.getSelectedNodes();
-        const selectedData = selectedNodes.map((node) => node.data);
-        this.data = selectedData;
-        this.singleData = false;
-        setTimeout(() => window.print(), 100);
-    }
+    loadLazy($event: TableLazyLoadEvent) {
+        this.request.globalFilter = $event.globalFilter || '';
+        this.request.sortField = $event.sortField || '';
+        this.request.sortOrder = $event.sortOrder || 'DESC';
+        this.request.first = $event.first || 0;
+        this.request.rows = $event.rows;
 
-    onQuickFilterChanged(event: any) {
-        this.gridApi.setGridOption('quickFilterText', event.target.value);
-    }
+        this.request.filters = cleanFilters($event.filters);
 
-    exportToCSV() {
-        if (!this.gridApi) return;
-
-        // ❌ kolom yang tidak ingin diexport
-        const excludedFields = ['actions', 'checkbox'];
-
-        // ✅ ambil semua colId yang aktif, lalu filter
-        const allColumns = this.gridApi.getAllDisplayedColumns();
-        const exportColumns = allColumns
-            .map((col) => col.getColDef().field)
-            .filter((field) => field && !excludedFields.includes(field));
-
-        this.gridApi.exportDataAsCsv({
-            fileName: 'flatag-data-export.csv',
-            columnKeys: exportColumns, // hanya export kolom ini
+        this._service.serverside(this.request).subscribe((res) => {
+            this.datas = res.data;
+            this.total = res.meta.total;
+            this.loading = false;
         });
     }
 
-    doAutoSize(skipHeader: boolean) {
-        const colIds: string[] = [];
-        this.gridApi!.getColumns()!.forEach((column) => {
-            colIds.push(column.getId());
-        });
-
-        this.gridApi!.autoSizeColumns({
-            colIds,
-            skipHeader,
-            // defaultMaxWidth: 150,
-            // defaultMinWidth: 80,
-        });
+    clear(table: Table) {
+        table.clear();
+        this.searchValue = '';
     }
-    // Delete row
-    onDeleteRow(id: number): void {
-        const data = this.rowData.find((row) => row.id === id);
-        if (!data) return;
 
-        console.log('Delete row:', data);
+    displayLabel(label: string | number | null | undefined): string {
+        switch (label) {
+            case 'YES':
+                return 'danger';
 
-        if (confirm(`Are you sure you want to delete ${data.name}?`)) {
-            this.rowData = this.rowData.filter((row) => row.id !== id);
+            case 'NO':
+                return 'success';
 
-            // Refresh grid
-            if (this.gridApi) {
-                this.gridApi.setGridOption('rowData', this.rowData);
-            }
+            case 'C':
+                return 'info';
 
-            console.log('Deleted row:', data);
+            case 'P':
+                return 'success';
+
+            case 'M':
+                return 'warn';
+
+            case 'F':
+                return 'info';
+            case 0:
+                return 'success';
+            case 1:
+                return 'success';
+            case 2:
+                return 'info';
+
+            case '':
+                return null;
         }
     }
 
-    onPrintRowx(id: number): void {
-        let agGrid = this.rowData.find((row) => row.id === id);
-        this.data = [agGrid];
-        this.singleData = true;
+    displayText(label: string | number | null | undefined): string {
+        switch (label) {
+            case 0:
+                return '';
+            case 1:
+                return 'OK';
+            case 2:
+                return 'PRINT';
 
-        this.cdr.detectChanges();
-
-        const logo = document.getElementById('printLogo') as HTMLImageElement;
-        if (logo.complete) {
-            window.print();
-        } else {
-            logo.onload = () => window.print();
+            case '':
+                return null;
         }
     }
-    onPrintRow(id: number): void {
-        const data = this.rowData.find((row) => row.id === id);
-        if (!data) return;
 
-        let dialogBoxSettings = {
-            position: { top: '10px' },
-            // width: '400px',
-            margin: '0 auto',
-            disableClose: true,
-            hasBackdrop: true,
-            data: data,
-        };
+    exportExcel() {
+        this.request.exportData = true;
+        this._service.serverside(this.request).subscribe((data) => {
+            // ambil kolom dari PrimeNG
+            const exportColumns = this.cols.map((col) => ({
+                title: col.header,
+                dataKey: col.field,
+            }));
 
-        const dialogRef = this.dialog.open(
-            DialogEKComponent,
-            dialogBoxSettings
-        );
-    }
+            // mapping data sesuai urutan kolom
+            const formatted = data.data.map((emp: any) => {
+                return {
+                    // ID: emp.id,
+                    // Name: emp.name,
+                    Scan: emp.scan === 0 ? '' : emp.scan === 1 ? 'OK' : 'Print',
+                };
+            });
 
-    onSelectAllThisPage() {
-        if (!this.gridApi) return;
+            // atur ulang agar sesuai urutan kolom di tabel
+            const ordered = formatted.map((row: any) => {
+                const newRow: any = {};
+                this.cols.forEach((col) => {
+                    newRow[col.header] = row[col.header] ?? row[col.field];
+                });
+                return newRow;
+            });
 
-        const currentPage = this.gridApi.paginationGetCurrentPage();
-        const pageSize = this.gridApi.paginationGetPageSize();
+            // convert JSON → worksheet
+            const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(ordered);
+            const workbook: XLSX.WorkBook = {
+                Sheets: { data: worksheet },
+                SheetNames: ['data'],
+            };
 
-        const start = currentPage * pageSize;
-        const end = start + pageSize;
+            // export Excel
+            const excelBuffer: any = XLSX.write(workbook, {
+                bookType: 'xlsx',
+                type: 'array',
+            });
 
-        let count = 0;
-
-        this.gridApi.forEachNodeAfterFilterAndSort((node) => {
-            // hanya baris di halaman aktif
-            if (node.rowIndex >= start && node.rowIndex < end) {
-                if (count < 50) {
-                    node.setSelected(true);
-                    count++;
-                } else {
-                    node.setSelected(false); // ✅ sisanya tidak bisa select
-                }
-            }
-        });
-    }
-
-    onUnselectAllThisPage() {
-        if (!this.gridApi) return;
-
-        this.gridApi.forEachNode((node) => {
-            node.setSelected(false);
-        });
-    }
-
-    onSelectionChanged(event: any) {
-        const selectedRows = this.gridApi.getSelectedRows();
-        this.isRowSelected = selectedRows.length > 0;
-    }
-
-    openDialog(action: string, obj: any) {
-        obj = this.rowData.find((row) => row.id === obj);
-
-        obj.action = action;
-        let dialogBoxSettings = {
-            position: { top: '10px' },
-            width: '1000px',
-            margin: '0 auto',
-            disableClose: true,
-            hasBackdrop: true,
-            data: obj,
-        };
-
-        const dialogRef = this.dialog.open(
-            EditDialogEkComponent,
-            dialogBoxSettings
-        );
-
-        dialogRef.afterClosed().subscribe((result) => {
-            if (result.event == 'Add') {
-                // this.redirectToAdd(result.formValue);
-            } else if (result.event == 'Update') {
-                this.redirectToUpdate(result.data, result.formValue);
-            } else if (result.event == 'Delete') {
-                this.redirectToDelete(result.data.id);
-            } else if (result.event == 'Upload') {
-                // this.load();
-            }
-        });
-    }
-
-    redirectToUpdate(data: any, formValue: any): void {
-        // return;
-        this._service.update(data.id, formValue).subscribe(
-            (res) => {
-                GlobalVariable.audioSuccess.play();
-                this.toastr.success('Success', 'Update data success');
-                this.load();
-            },
-            (error) => {
-                this.errorNotif(error);
-            }
-        );
-    }
-
-    redirectToDelete(row_obj: number) {
-        this._service
-            .delete(row_obj)
-            .pipe(first())
-            .subscribe(
-                (res) => {
-                    GlobalVariable.audioSuccess.play();
-                    this.toastr.success('Deleted', 'Success remove data');
-                    this.load();
-                },
-                (error) => {
-                    this.errorNotif(error);
-                }
-            );
-    }
-
-    errorNotif(error: any) {
-        GlobalVariable.audioFailed.play();
-        this.toastr.error('Failed', error.error.message, {
-            timeOut: 5000,
+            const file = new Blob([excelBuffer], {
+                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            });
+            saveAs(file, 'flatag_export.xlsx');
         });
     }
 }

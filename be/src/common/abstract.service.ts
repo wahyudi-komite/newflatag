@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import * as ExcelJS from 'exceljs';
 import { Response } from 'express';
 import { Brackets, Repository } from 'typeorm';
-import { applyFilters } from './applyFilters';
 import { PaginatedResult } from './paginated-result.interface';
+import { applyPrimeNgFilters } from './utils/applyPrimeNgFilters';
 
 @Injectable()
 export class AbstractService {
@@ -164,11 +164,16 @@ export class AbstractService {
   }
 
   async paginateServerSide(tbl, relations, query): Promise<PaginatedResult> {
-    const take: number = query.limit ? query.limit : 100000;
-    const page: number = query.page ? query.page : 1;
-    const keyword: string = query.keyword ? query.keyword : '';
-    const direction: string = query.sortField ? query.sortField : tbl + '.id';
-    const sortData = query.sortOrder ? query.sortOrder.toUpperCase() : 'DESC';
+    const take =
+      query.exportData === 'true'
+        ? 100000
+        : query.rows
+          ? Number(query.rows)
+          : 100000;
+    const page = query.first ? Number(query.first) : 0;
+    const keyword: string = query.globalFilter ? query.globalFilter : '';
+    const direction: string = query.sortField ? query.sortField : 'id';
+    const sortData = query.sortOrder === '1' ? 'ASC' : 'DESC';
 
     const myQuery = this.repository
       .createQueryBuilder(tbl)
@@ -182,9 +187,9 @@ export class AbstractService {
           });
         }),
       )
-      .orderBy(direction, sortData)
+      .orderBy(`${tbl}.${direction}`, sortData)
       .take(take)
-      .skip((page - 1) * take);
+      .skip(page);
 
     if (relations) {
       relations.map((relation) => {
@@ -192,8 +197,7 @@ export class AbstractService {
       });
     }
 
-    applyFilters(myQuery, query, tbl);
-    console.log('type : =', myQuery.getSql);
+    applyPrimeNgFilters(myQuery, query.filters, tbl);
 
     const [data, total] = await myQuery.getManyAndCount();
 

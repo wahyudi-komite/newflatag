@@ -17,3 +17,7 @@
         overflow: hidden;
     }
 }
+
+:host ::ng-deep .p-datatable td {
+    white-space: nowrap;
+}

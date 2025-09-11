@@ -11,15 +11,15 @@ import {
 } from '@angular/router';
 import { provideFuse } from '@fuse';
 import { TranslocoService, provideTransloco } from '@ngneat/transloco';
-import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
+import Aura from '@primeuix/themes/aura';
 import { appRoutes } from 'app/app.routes';
 import { provideAuth } from 'app/core/auth/auth.provider';
 import { provideIcons } from 'app/core/icons/icons.provider';
 import { mockApiServices } from 'app/mock-api';
 import { provideToastr } from 'ngx-toastr';
+import { providePrimeNG } from 'primeng/config';
 import { firstValueFrom } from 'rxjs';
 import { TranslocoHttpLoader } from './core/transloco/transloco.http-loader';
-ModuleRegistry.registerModules([AllCommunityModule]);
 
 export const appConfig: ApplicationConfig = {
     providers: [
@@ -31,6 +31,11 @@ export const appConfig: ApplicationConfig = {
             withPreloading(PreloadAllModules),
             withInMemoryScrolling({ scrollPositionRestoration: 'enabled' })
         ),
+        providePrimeNG({
+            theme: {
+                preset: Aura,
+            },
+        }),
 
         // Material Date Adapter
         {

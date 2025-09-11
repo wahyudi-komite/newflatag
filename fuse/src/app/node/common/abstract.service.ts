@@ -55,6 +55,19 @@ export abstract class AbstractService {
         return this.http.get(this.url, { params });
     }
 
+    serverside(params: any): Observable<any> {
+        let paramsData = new HttpParams()
+            .set('first', params.first)
+            .set('rows', params.rows)
+            .set('sortField', params.sortField)
+            .set('sortOrder', params.sortOrder)
+            .set('globalFilter', params.globalFilter || '')
+            .set('filters', JSON.stringify(params.filters))
+            .set('exportData', params.exportData || false);
+
+        return this.http.get(this.url, { params: paramsData });
+    }
+
     create(data: any): Observable<any> {
         return this.http.post(this.url, data);
     }
