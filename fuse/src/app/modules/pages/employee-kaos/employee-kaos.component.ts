@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
-import { Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { saveAs } from 'file-saver';
-import { ToastrModule } from 'ngx-toastr';
+import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { ButtonModule } from 'primeng/button';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
@@ -11,10 +11,15 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { SelectModule } from 'primeng/select';
 import { Table, TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
+import { TooltipModule } from 'primeng/tooltip';
+import { first } from 'rxjs';
 import * as XLSX from 'xlsx';
 import { cleanFilters } from '../../../node/common/cleanFilters';
+import { GlobalVariable } from '../../../node/common/global-variable';
+import { EditDialogEkComponent } from './edit-dialog-ek/edit-dialog-ek.component';
 import { EmployeeKaos } from './employee-kaos';
 import { EmployeeKaosService } from './employee-kaos.service';
+import { PrintLabelComponent } from './print-label/print-label.component';
 
 interface Column {
     field: string;
@@ -36,6 +41,8 @@ interface Column {
         ButtonModule,
         IconFieldModule,
         InputIconModule,
+        PrintLabelComponent,
+        TooltipModule,
     ],
     templateUrl: './employee-kaos.component.html',
     styleUrl: './employee-kaos.component.scss',
@@ -48,6 +55,8 @@ export class EmployeeKaosComponent implements OnInit {
     searchValue: string | undefined;
     total: number = 0;
     // plantData!: any[];
+    data: any;
+    selectedDatas: any[] = [];
     request: any = {};
     plantData = [
         { label: 'P1', value: 'P1' },
@@ -78,7 +87,9 @@ export class EmployeeKaosComponent implements OnInit {
     ];
 
     _service = inject(EmployeeKaosService);
-    http = inject(HttpClient);
+    private cdr = inject(ChangeDetectorRef);
+    readonly dialog = inject(MatDialog);
+    private toastr = inject(ToastrService);
 
     ngOnInit() {
         this.cols = [
@@ -188,6 +199,20 @@ export class EmployeeKaosComponent implements OnInit {
                 filterType: 'text',
             },
             {
+                field: 'dlong',
+                header: 'dewasa panjang',
+                sortable: true,
+                filter: true,
+                filterType: 'text',
+            },
+            {
+                field: 'dshort',
+                header: 'dewasa pendek',
+                sortable: true,
+                filter: true,
+                filterType: 'text',
+            },
+            {
                 field: 'kaos_child1',
                 header: 'Kaos Anak 1',
                 sortable: true,
@@ -229,6 +254,20 @@ export class EmployeeKaosComponent implements OnInit {
                 filter: true,
                 filterType: 'text',
             },
+            {
+                field: 'clong',
+                header: 'anak panjang',
+                sortable: true,
+                filter: true,
+                filterType: 'text',
+            },
+            {
+                field: 'cshort',
+                header: 'anak pendek',
+                sortable: true,
+                filter: true,
+                filterType: 'text',
+            },
         ];
     }
 
@@ -240,7 +279,6 @@ export class EmployeeKaosComponent implements OnInit {
         this.request.rows = $event.rows;
 
         this.request.filters = cleanFilters($event.filters);
-
         this._service.serverside(this.request).subscribe((res) => {
             this.datas = res.data;
             this.total = res.meta.total;
@@ -248,9 +286,31 @@ export class EmployeeKaosComponent implements OnInit {
         });
     }
 
+    load() {
+        this._service.serverside(this.request).subscribe((res) => {
+            this.datas = res.data;
+            this.total = res.meta.total;
+            this.loading = false;
+        });
+    }
     clear(table: Table) {
         table.clear();
         this.searchValue = '';
+    }
+
+    onRowSelect(event: any) {
+        // console.log('✅ Row selected:', event.data);
+        // console.log('📌 All selected rows:', this.selectedDatas);
+    }
+
+    onRowUnselect(event: any) {
+        // console.log('❌ Row unselected:', event.data);
+        // console.log('📌 All selected rows:', this.selectedDatas);
+    }
+
+    onHeaderToggle(event: any) {
+        // console.log('Header checkbox toggled:', event.checked);
+        // console.log('All selected rows:', this.selectedDatas);
     }
 
     displayLabel(label: string | number | null | undefined): string {
@@ -298,6 +358,23 @@ export class EmployeeKaosComponent implements OnInit {
         }
     }
 
+    printSelected(selectionRow: any) {
+        this.data = [selectionRow];
+        this.cdr.detectChanges();
+
+        const logo = document.getElementById('printLogo') as HTMLImageElement;
+        if (logo.complete) {
+            window.print();
+        } else {
+            logo.onload = () => window.print();
+        }
+    }
+
+    printMultipleSelected() {
+        this.data = this.selectedDatas;
+        setTimeout(() => window.print(), 100);
+    }
+
     exportExcel() {
         this.request.exportData = true;
         this._service.serverside(this.request).subscribe((data) => {
@@ -307,20 +384,22 @@ export class EmployeeKaosComponent implements OnInit {
                 dataKey: col.field,
             }));
 
-            // mapping data sesuai urutan kolom
-            const formatted = data.data.map((emp: any) => {
-                return {
-                    // ID: emp.id,
-                    // Name: emp.name,
-                    Scan: emp.scan === 0 ? '' : emp.scan === 1 ? 'OK' : 'Print',
-                };
-            });
-
             // atur ulang agar sesuai urutan kolom di tabel
-            const ordered = formatted.map((row: any) => {
+            const ordered = data.data.map((row: any) => {
                 const newRow: any = {};
                 this.cols.forEach((col) => {
-                    newRow[col.header] = row[col.header] ?? row[col.field];
+                    let value = row[col.field];
+
+                    // jika kolom scan, format pakai displayText
+                    if (col.field === 'scan') {
+                        value = this.displayText(value);
+                    }
+
+                    if (col.field === 'scan_date') {
+                        value = value !== '01-01-1970 07:00:00' ? value : '';
+                    }
+
+                    newRow[col.header] = value;
                 });
                 return newRow;
             });
@@ -342,6 +421,74 @@ export class EmployeeKaosComponent implements OnInit {
                 type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             });
             saveAs(file, 'flatag_export.xlsx');
+        });
+    }
+
+    openDialog(action: string, obj: any) {
+        obj = obj;
+
+        obj.action = action;
+        let dialogBoxSettings = {
+            position: { top: '10px' },
+            width: '1000px',
+            margin: '0 auto',
+            disableClose: true,
+            hasBackdrop: true,
+            data: obj,
+        };
+
+        const dialogRef = this.dialog.open(
+            EditDialogEkComponent,
+            dialogBoxSettings
+        );
+
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result.event == 'Add') {
+                // this.redirectToAdd(result.formValue);
+            } else if (result.event == 'Update') {
+                this.redirectToUpdate(result.data, result.formValue);
+            } else if (result.event == 'Delete') {
+                this.redirectToDelete(result.data.id);
+            } else if (result.event == 'Upload') {
+                // this.load();
+            }
+        });
+    }
+
+    redirectToUpdate(data: any, formValue: any): void {
+        // return;
+        this._service.update(data.id, formValue).subscribe(
+            (res) => {
+                GlobalVariable.audioSuccess.play();
+                this.toastr.success('Success', 'Update data success');
+                this.load();
+            },
+            (error) => {
+                this.errorNotif(error);
+            }
+        );
+    }
+
+    redirectToDelete(row_obj: number) {
+        this._service
+            .delete(row_obj)
+            .pipe(first())
+            .subscribe(
+                (res) => {
+                    GlobalVariable.audioSuccess.play();
+                    this.toastr.success('Deleted', 'Success remove data');
+                    this.load();
+                },
+                (error) => {
+                    this.errorNotif(error);
+                }
+            );
+    }
+
+    errorNotif(error: any) {
+        GlobalVariable.audioFailed.play();
+        this.toastr.error('Failed', error.error.message, {
+            timeOut: 5000,
         });
     }
 }

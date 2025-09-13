@@ -1,25 +1,23 @@
 import {
+  BadRequestException,
+  Body,
+  ClassSerializerInterceptor,
   Controller,
   Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  Res,
   NotFoundException,
-  BadRequestException,
-  UseInterceptors,
-  ClassSerializerInterceptor,
-  UseGuards,
-  UnauthorizedException,
+  Post,
   Req,
+  Res,
+  UnauthorizedException,
+  UseInterceptors,
 } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { UsersService } from '../users/users.service';
-import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
+import { plainToInstance } from 'class-transformer';
 import { Request, Response } from 'express';
+import { User } from '../users/entities/user.entity';
+import { UsersService } from '../users/users.service';
+import { AuthService } from './auth.service';
 
 @Controller('auth')
 export class AuthController {
@@ -29,6 +27,7 @@ export class AuthController {
     private jwtService: JwtService,
   ) {}
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get('check-auth')
   async checkAuth(@Req() req: Request, @Res() res: Response) {
     const token = req.cookies['accessToken'];
@@ -38,14 +37,17 @@ export class AuthController {
     }
 
     try {
-      // Verifikasi token
       this.jwtService.verify(token);
       const { user, newToken } = await this.authService.signInWithToken(token);
 
-      // Jika verifikasi berhasil, user terotentikasi
-      res.json({ isAuthenticated: true, user: user, accessToken: newToken });
+      const safeUser = plainToInstance(User, user);
+
+      res.json({
+        isAuthenticated: true,
+        user: safeUser,
+        accessToken: newToken,
+      });
     } catch (error) {
-      // Jika terjadi error saat verifikasi, token tidak valid
       res.json({ isAuthenticated: false });
     }
   }

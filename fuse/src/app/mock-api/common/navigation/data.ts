@@ -1,15 +1,44 @@
 /* eslint-disable */
 import { FuseNavigationItem } from '@fuse/components/navigation';
 
-export const defaultNavigation: FuseNavigationItem[] = [
+const menu: FuseNavigationItem[] = [
     {
-        id: 'line',
-        title: 'Line',
+        id: 'merchandise',
+        title: 'Query',
         type: 'basic',
-        icon: 'feather:trello',
-        link: '/line',
+        icon: 'heroicons_outline:queue-list',
+        link: '/merchandise',
+    },
+    {
+        id: 'scan',
+        title: 'Sto Print',
+        type: 'basic',
+        icon: 'heroicons_outline:qr-code',
+        link: '/scan',
+    },
+    // {
+    //     id: 'scan',
+    //     title: 'Sto Vendor',
+    //     type: 'basic',
+    //     icon: 'heroicons_outline:qr-code',
+    //     link: '/scan',
+    // },
+    // {
+    //     id: 'scan',
+    //     title: 'Sto Receive',
+    //     type: 'basic',
+    //     icon: 'heroicons_outline:qr-code',
+    //     link: '/scan',
+    // },
+    {
+        id: 'permission',
+        title: 'Role',
+        type: 'basic',
+        icon: 'heroicons_outline:qr-code',
+        link: '/permission',
     },
 ];
+export const defaultNavigation: FuseNavigationItem[] = menu;
 
 export const compactNavigation: FuseNavigationItem[] = [
     {
@@ -36,26 +65,4 @@ export const futuristicNavigation: FuseNavigationItem[] = [
         link: '/example',
     },
 ];
-export const horizontalNavigation: FuseNavigationItem[] = [
-    {
-        id: 'merchandise',
-        title: 'Query',
-        type: 'basic',
-        icon: 'heroicons_outline:queue-list',
-        link: '/merchandise',
-    },
-    {
-        id: 'scan',
-        title: 'Scan Sto',
-        type: 'basic',
-        icon: 'heroicons_outline:qr-code',
-        link: '/scan',
-    },
-    {
-        id: 'server-side',
-        title: 'Server Side',
-        type: 'basic',
-        icon: 'heroicons_outline:qr-code',
-        link: '/server-side',
-    },
-];
+export const horizontalNavigation: FuseNavigationItem[] = menu;

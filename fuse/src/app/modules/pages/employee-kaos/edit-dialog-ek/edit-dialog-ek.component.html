@@ -1,5 +1,5 @@
 <div class="flex items-center justify-between border-b-2 border-gray-200">
-    <h1 class="items-start text-right text-xl font-bold uppercase">
+    <h1 class="items-start text-xl font-bold text-right uppercase">
         Form {{ this.action }} Data
     </h1>
     <button mat-icon-button (click)="closeDialog()">
@@ -24,6 +24,7 @@
                             trim="blur"
                             oninput="this.value = this.value.toUpperCase()"
                             value="{{ this.local_data.id }}"
+                            readonly="{{ action == 'Update' ? true : false }}"
                         />
                         <mat-error
                             *ngIf="f['id'].errors && f['id'].errors['required']"
@@ -47,7 +48,7 @@
                         </mat-error>
                     </mat-form-field>
                 </div>
-                <div class="gt-xs:flex-row flex-1">
+                <div class="flex-1 gt-xs:flex-row">
                     <mat-form-field class="w-full" floatLabel="always">
                         <mat-label>Name</mat-label>
                         <input
@@ -65,7 +66,7 @@
                         </mat-error>
                     </mat-form-field>
                 </div>
-                <div class="gt-xs:flex-row flex-1">
+                <div class="flex-1 gt-xs:flex-row">
                     <mat-form-field class="w-full" floatLabel="always">
                         <mat-label>Divisi</mat-label>
                         <input
@@ -83,7 +84,7 @@
                         </mat-error>
                     </mat-form-field>
                 </div>
-                <div class="gt-xs:flex-row flex-1">
+                <div class="flex-1 gt-xs:flex-row">
                     <mat-form-field class="w-full" floatLabel="always">
                         <mat-label>Department</mat-label>
                         <input
@@ -105,7 +106,7 @@
                 </div>
             </div>
             <div class="grid grid-cols-6 gap-4">
-                <div class="gt-xs:flex-row flex">
+                <div class="flex gt-xs:flex-row">
                     <mat-form-field class="w-full" floatLabel="always">
                         <mat-label>Plant</mat-label>
                         <mat-select
@@ -129,7 +130,7 @@
                     </mat-form-field>
                 </div>
 
-                <div class="gt-xs:flex-row flex">
+                <div class="flex gt-xs:flex-row">
                     <mat-form-field class="w-full" floatLabel="always">
                         <mat-label>Status</mat-label>
                         <mat-select formControlName="status">
@@ -141,7 +142,7 @@
                         </mat-error>
                     </mat-form-field>
                 </div>
-                <div class="gt-xs:flex-row flex">
+                <div class="flex gt-xs:flex-row">
                     <mat-form-field class="w-full" floatLabel="always">
                         <mat-label>Gender</mat-label>
                         <mat-select formControlName="gender">
@@ -153,7 +154,7 @@
                         </mat-error>
                     </mat-form-field>
                 </div>
-                <div class="gt-xs:flex-row flex">
+                <div class="flex gt-xs:flex-row">
                     <mat-form-field class="w-full" floatLabel="always">
                         <mat-label>Family Status</mat-label>
                         <mat-select formControlName="family_stats">
@@ -171,7 +172,7 @@
                         </mat-error>
                     </mat-form-field>
                 </div>
-                <div class="gt-xs:flex-row flex">
+                <div class="flex gt-xs:flex-row">
                     <mat-form-field class="w-full" floatLabel="always">
                         <mat-label>No. WhatsApp</mat-label>
                         <input
@@ -192,7 +193,7 @@
                         </mat-error>
                     </mat-form-field>
                 </div>
-                <div class="gt-xs:flex-row flex">
+                <div class="flex gt-xs:flex-row">
                     <mat-form-field class="w-full" floatLabel="always">
                         <mat-label>Terminated</mat-label>
                         <mat-select
@@ -217,7 +218,7 @@
                 </div>
             </div>
             <div class="grid grid-cols-2 gap-4">
-                <div class="gt-xs:flex-row flex">
+                <div class="flex gt-xs:flex-row">
                     <mat-form-field class="w-full" floatLabel="always">
                         <mat-label>Kaos Employee 1</mat-label>
                         <mat-select
@@ -242,7 +243,7 @@
                         </mat-error>
                     </mat-form-field>
                 </div>
-                <div class="gt-xs:flex-row flex">
+                <div class="flex gt-xs:flex-row">
                     <mat-form-field class="w-full" floatLabel="always">
                         <mat-label>Kaos Spouse</mat-label>
                         <mat-select
@@ -269,7 +270,7 @@
                 </div>
             </div>
             <div class="grid grid-cols-6 gap-4">
-                <div class="gt-xs:flex-row flex">
+                <div class="flex gt-xs:flex-row">
                     <mat-form-field class="w-full" floatLabel="always">
                         <mat-label>Kaos Child 1</mat-label>
                         <mat-select
@@ -295,7 +296,7 @@
                     </mat-form-field>
                 </div>
 
-                <div class="gt-xs:flex-row flex">
+                <div class="flex gt-xs:flex-row">
                     <mat-form-field class="w-full" floatLabel="always">
                         <mat-label>Kaos Child 2</mat-label>
                         <mat-select
@@ -321,7 +322,7 @@
                     </mat-form-field>
                 </div>
 
-                <div class="gt-xs:flex-row flex">
+                <div class="flex gt-xs:flex-row">
                     <mat-form-field class="w-full" floatLabel="always">
                         <mat-label>Kaos Child 3</mat-label>
                         <mat-select
@@ -347,7 +348,7 @@
                     </mat-form-field>
                 </div>
 
-                <div class="gt-xs:flex-row flex">
+                <div class="flex gt-xs:flex-row">
                     <mat-form-field class="w-full" floatLabel="always">
                         <mat-label>Kaos Child 4</mat-label>
                         <mat-select
@@ -373,7 +374,7 @@
                     </mat-form-field>
                 </div>
 
-                <div class="gt-xs:flex-row flex">
+                <div class="flex gt-xs:flex-row">
                     <mat-form-field class="w-full" floatLabel="always">
                         <mat-label>Kaos Child 5</mat-label>
                         <mat-select
@@ -399,7 +400,7 @@
                     </mat-form-field>
                 </div>
 
-                <div class="gt-xs:flex-row flex">
+                <div class="flex gt-xs:flex-row">
                     <mat-form-field class="w-full" floatLabel="always">
                         <mat-label>Kaos Child 6</mat-label>
                         <mat-select
@@ -426,7 +427,7 @@
                 </div>
             </div>
             <div class="grid grid-cols-4 gap-4">
-                <div class="gt-xs:flex-row flex">
+                <div class="flex gt-xs:flex-row">
                     <mat-form-field class="w-full" floatLabel="always">
                         <mat-label>Dewasa Pendek</mat-label>
                         <input
@@ -442,7 +443,7 @@
                     </mat-form-field>
                 </div>
 
-                <div class="gt-xs:flex-row flex">
+                <div class="flex gt-xs:flex-row">
                     <mat-form-field class="w-full" floatLabel="always">
                         <mat-label>Dewasa Panjang</mat-label>
                         <input
@@ -457,7 +458,7 @@
                         </mat-error>
                     </mat-form-field>
                 </div>
-                <div class="gt-xs:flex-row flex">
+                <div class="flex gt-xs:flex-row">
                     <mat-form-field class="w-full" floatLabel="always">
                         <mat-label>Anak Pendek</mat-label>
                         <input
@@ -472,7 +473,7 @@
                         </mat-error>
                     </mat-form-field>
                 </div>
-                <div class="gt-xs:flex-row flex">
+                <div class="flex gt-xs:flex-row">
                     <mat-form-field class="w-full" floatLabel="always">
                         <mat-label>Anak Panjang</mat-label>
                         <input
@@ -490,16 +491,16 @@
             </div>
         </div>
         <ng-template #elseTemplate>
-            <div class="-mt-2 mb-2 flex w-full flex-col">
+            <div class="flex flex-col w-full mb-2 -mt-2">
                 <span
                     ><strong
-                        class="rounded-sm px-2 py-1 font-normal text-gray-800"
+                        class="px-2 py-1 font-normal text-gray-800 rounded-sm"
                         >Are you sure to delete :
                     </strong></span
                 >
-                <div class="mb-4 mt-2 flex w-full items-center justify-center">
+                <div class="flex items-center justify-center w-full mt-2 mb-4">
                     <h3
-                        class="rounded-xl bg-black px-4 py-1 text-2xl font-extrabold text-indigo-50"
+                        class="px-4 py-1 text-2xl font-extrabold bg-black rounded-xl text-indigo-50"
                     >
                         {{ local_data.id }} & {{ local_data.name }}?
                     </h3>

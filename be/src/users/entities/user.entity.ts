@@ -39,11 +39,11 @@ export class User {
   @Column({ type: 'boolean', default: true })
   status: number;
 
-  @CreateDateColumn()
   @Exclude()
+  @CreateDateColumn()
   created_at: Date;
 
-  @UpdateDateColumn()
   @Exclude()
+  @UpdateDateColumn()
   updated_at: Date;
 }

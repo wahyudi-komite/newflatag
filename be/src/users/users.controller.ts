@@ -1,21 +1,17 @@
 import {
+  Body,
+  ClassSerializerInterceptor,
   Controller,
   Get,
   Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
   Request,
-  UseInterceptors,
-  ClassSerializerInterceptor,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
 import { AuthGuard } from '../auth/auth.guard';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UsersService } from './users.service';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @UseGuards(AuthGuard)
@@ -29,7 +25,6 @@ export class UsersController {
     const password = await bcrypt.hash(salt + createUserDto.password, 12);
 
     const { role_id, ...data } = createUserDto;
-    console.log(data);
 
     return this.usersService.create({
       ...data,
