@@ -1,22 +1,21 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  ClassSerializerInterceptor,
+  Controller,
   Delete,
+  Get,
+  Param,
+  Post,
   Put,
   Request,
   UseGuards,
   UseInterceptors,
-  ClassSerializerInterceptor,
 } from '@nestjs/common';
-import { PermissionsService } from './permissions.service';
+import { AuthGuard } from 'src/auth/auth.guard';
 import { CreatePermissionDto } from './dto/create-permission.dto';
 import { UpdatePermissionDto } from './dto/update-permission.dto';
 import { HasPermission } from './has-permission.decorator';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { PermissionsService } from './permissions.service';
 
 @UseGuards(AuthGuard)
 @UseInterceptors(ClassSerializerInterceptor)

@@ -164,6 +164,8 @@ export class AbstractService {
   }
 
   async paginateServerSide(tbl, relations, query): Promise<PaginatedResult> {
+    console.log(query);
+
     const take =
       query.exportData === 'true'
         ? 100000

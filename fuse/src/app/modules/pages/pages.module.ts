@@ -4,6 +4,7 @@ import { DialogEKComponent } from './employee-kaos/dialog-ek/dialog-ek.component
 import { PrintLabelComponent } from './employee-kaos/print-label/print-label.component';
 import { ScanDataComponent } from './scan-data/scan-data.component';
 import { ServerSideComponent } from './server-side/server-side.component';
+import { RoleComponent } from './app/admin/role/role.component';
 
 
 
@@ -12,7 +13,8 @@ import { ServerSideComponent } from './server-side/server-side.component';
     DialogEKComponent,
     PrintLabelComponent,
     ScanDataComponent,
-    ServerSideComponent
+    ServerSideComponent,
+    RoleComponent
   ],
   imports: [
     CommonModule

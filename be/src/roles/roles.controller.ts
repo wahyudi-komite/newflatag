@@ -1,28 +1,49 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  ClassSerializerInterceptor,
+  Controller,
   Delete,
-  Request,
+  Get,
+  Param,
+  Post,
   Put,
+  Request,
   UseGuards,
   UseInterceptors,
-  ClassSerializerInterceptor,
 } from '@nestjs/common';
-import { RolesService } from './roles.service';
-import { CreateRoleDto } from './dto/create-role.dto';
-import { UpdateRoleDto } from './dto/update-role.dto';
 import { HasPermission } from 'src/permissions/has-permission.decorator';
 import { AuthGuard } from '../auth/auth.guard';
+import { formatDate } from '../common/utils/date.utils';
+import { RolesService } from './roles.service';
+
+const tabel = 'roles';
+const columns = ['id', 'name'].map((col) => `${tabel}.${col}`);
 
 @UseGuards(AuthGuard)
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('roles')
 export class RolesController {
   constructor(private readonly rolesService: RolesService) {}
+
+  private async getDataServerSide(query): Promise<any> {
+    const request = {
+      ...query,
+      columns,
+    };
+    const returnData = await this.rolesService.paginateServerSide(
+      tabel,
+      [['roles.permissions', 'permissions']],
+      request,
+    );
+
+    returnData.data = returnData.data.map((item) => ({
+      ...item,
+      created_at: formatDate(new Date(item.created_at)),
+      updated_at: formatDate(new Date(item.updated_at)),
+    }));
+
+    return returnData;
+  }
 
   @Post()
   @HasPermission('roles')
@@ -39,20 +60,9 @@ export class RolesController {
   }
 
   @Get()
-  @HasPermission('roles')
+  // @HasPermission('roles')
   async findAll(@Request() request) {
-    return this.rolesService.paginate(
-      'roles',
-      [['roles.permissions', 'permissions']],
-      {
-        limit: request.query.limit,
-        page: request.query.page,
-        sort: request.query.sort,
-        direction: request.query.direction,
-        keyword: request.query.keyword,
-        column: ['roles.name'],
-      },
-    );
+    return this.getDataServerSide(request.query);
   }
 
   @Get('all')
@@ -63,6 +73,14 @@ export class RolesController {
       direction: request.query.direction,
       limit: request.query.limit,
     });
+  }
+
+  @Get('roleAccess')
+  async find(@Request() request) {
+    return this.rolesService.findOne(
+      { id: request.query.id, permissions: { name: request.query.name } },
+      ['permissions'],
+    );
   }
 
   @Get(':id')

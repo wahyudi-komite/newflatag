@@ -4,8 +4,9 @@
     <div
         class="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"
     >
-        <div class="card w-full">
+        <div class="card w-2/4">
             <p-table
+                class="bg w-1/4"
                 #dt1
                 sortField="id"
                 [sortOrder]="-1"
@@ -17,7 +18,7 @@
                 stripedRows
                 [paginator]="true"
                 [loading]="loading"
-                [rows]="50"
+                [rows]="10"
                 [scrollable]="true"
                 scrollHeight="65vh"
                 [(selection)]="selectedDatas"
@@ -26,8 +27,8 @@
                 (onRowUnselect)="onRowUnselect($event)"
                 (onHeaderCheckboxToggle)="onHeaderToggle($event)"
                 dataKey="id"
-                [tableStyle]="{ 'min-width': '50rem' }"
-                [rowsPerPageOptions]="[50]"
+                [tableStyle]=""
+                [rowsPerPageOptions]="[10, 20, 50, 100]"
                 [totalRecords]="this.total"
                 [showCurrentPageReport]="true"
                 [lazy]="true"
@@ -39,7 +40,7 @@
                             <span class="text-xl font-bold">Data Employee</span>
                         </div>
                         <div class="flex gap-2">
-                            <p-button
+                            <!-- <p-button
                                 styleClass="disabled:cursor-not-allowed"
                                 icon="pi pi-print"
                                 label="Print Selected"
@@ -48,18 +49,18 @@
                                 "
                                 (click)="printMultipleSelected()"
                                 severity="info"
-                            />
+                            /> -->
                             <p-button
                                 label="Clear Filter"
                                 [outlined]="true"
                                 icon="pi pi-filter-slash"
                                 (click)="clear(dt1)"
                             />
-                            <p-button
+                            <!-- <p-button
                                 icon="pi pi-external-link"
                                 label="Export"
                                 (click)="exportExcel(dt1)"
-                            />
+                            /> -->
                             <p-iconfield iconPosition="left" class="ml-auto">
                                 <p-inputicon>
                                     <i class="pi pi-search"></i>
@@ -81,11 +82,11 @@
                 </ng-template>
                 <ng-template #header let-columns>
                     <tr>
-                        <th style="width: 3rem" pFrozenColumn>
+                        <!-- <th style="width: 3rem" pFrozenColumn>
                             <p-tableHeaderCheckbox
                                 [value]="rowData"
                             ></p-tableHeaderCheckbox>
-                        </th>
+                        </th> -->
                         <th style="width: 3rem" pFrozenColumn>Action</th>
                         <th
                             *ngFor="let col of columns"
@@ -165,21 +166,21 @@
                         [pSelectableRow]="datas"
                         [pSelectableRowIndex]="rowIndex"
                     >
-                        <td pFrozenColumn>
+                        <!-- <td pFrozenColumn>
                             <p-tableCheckbox [value]="datas" />
-                        </td>
+                        </td> -->
                         <td class="p-0 text-center" pFrozenColumn>
                             <div
                                 class="mx-2 flex items-center justify-center gap-2 p-0"
                             >
-                                <p-button
+                                <!-- <p-button
                                     size="small"
                                     icon="pi pi-print"
                                     (click)="printSelected(datas)"
                                     severity="info"
                                     pTooltip="Print this row"
                                     tooltipPosition="top"
-                                />
+                                /> -->
                                 <p-button
                                     size="small"
                                     icon="pi pi-pen-to-square"
@@ -191,93 +192,15 @@
                             </div>
                         </td>
 
-                        <td class="text-center">{{ datas.id }}</td>
-                        <td>{{ datas.name }}</td>
-                        <td>{{ datas.divisi }}</td>
-                        <td>{{ datas.department }}</td>
-                        <td class="text-center">{{ datas.plant }}</td>
-                        <td class="text-center">
-                            <p-tag
-                                class="px-2 py-0"
-                                [value]="datas.status"
-                                [severity]="displayLabel(datas.status)"
-                            />
-                        </td>
-                        <td class="text-center">
-                            <p-tag
-                                class="px-2 py-0"
-                                [value]="datas.terminated"
-                                [severity]="displayLabel(datas.terminated)"
-                            />
-                        </td>
-                        <td class="text-center">
-                            <p-tag
-                                class="px-2 py-0"
-                                [value]="datas.gender"
-                                [severity]="displayLabel(datas.gender)"
-                            />
-                        </td>
-                        <td class="text-center">{{ datas.family_stats }}</td>
-                        <td>{{ datas.no_wa }}</td>
-                        <td class="text-center">{{ datas.souvenir }}</td>
-                        <td>
-                            <p-tag
-                                class="px-2 py-0"
-                                [value]="displayText(datas.scan)"
-                                [severity]="displayLabel(datas.scan)"
-                            />
-                        </td>
-                        <td>
-                            {{
-                                datas.scan_date !== '01-01-1970 07:00:00'
-                                    ? datas.scan_date
-                                    : ''
-                            }}
-                        </td>
-                        <td>{{ datas.kaos_employee1 }}</td>
-                        <td>{{ datas.kaos_spouse1 }}</td>
-                        <td>
-                            <p-tag
-                                class="px-2 py-0"
-                                [value]="datas.dlong"
-                                severity="info"
-                            />
-                        </td>
-                        <td>
-                            <p-tag
-                                class="px-2 py-0"
-                                [value]="datas.dshort"
-                                severity="warn"
-                            />
-                        </td>
-                        <td>{{ datas.kaos_child1 }}</td>
-                        <td>{{ datas.kaos_child2 }}</td>
-                        <td>{{ datas.kaos_child3 }}</td>
-                        <td>{{ datas.kaos_child4 }}</td>
-                        <td>{{ datas.kaos_child5 }}</td>
-                        <td>{{ datas.kaos_child6 }}</td>
-                        <td>
-                            <p-tag
-                                class="px-2 py-0"
-                                [value]="datas.clong"
-                                severity="info"
-                            />
-                        </td>
-                        <td>
-                            <p-tag
-                                class="px-2 py-0"
-                                [value]="datas.cshort"
-                                severity="warn"
-                            />
-                        </td>
+                        <td class="text-center">{{ datas.name }}</td>
                     </tr>
                 </ng-template>
 
                 <ng-template pTemplate="paginatorleft">
-                    <span
+                    <!-- <span
                         >✅ Selected
                         {{ selectedDatas?.length || 0 }} records</span
-                    >
+                    > -->
                 </ng-template>
 
                 <ng-template pTemplate="paginatorright">
@@ -291,4 +214,3 @@
         </div>
     </div>
 </div>
-<app-print-label id="print-section" [datas]="this.data"></app-print-label>

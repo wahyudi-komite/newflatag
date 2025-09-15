@@ -29,11 +29,11 @@ export class AuthController {
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Get('check-auth')
-  async checkAuth(@Req() req: Request, @Res() res: Response) {
+  async checkAuth(@Req() req: Request) {
     const token = req.cookies['accessToken'];
 
     if (!token) {
-      return res.json({ isAuthenticated: false });
+      return { isAuthenticated: false };
     }
 
     try {
@@ -42,13 +42,13 @@ export class AuthController {
 
       const safeUser = plainToInstance(User, user);
 
-      res.json({
+      return {
         isAuthenticated: true,
         user: safeUser,
         accessToken: newToken,
-      });
+      };
     } catch (error) {
-      res.json({ isAuthenticated: false });
+      return { isAuthenticated: false };
     }
   }
 

@@ -3,11 +3,11 @@ import { FuseNavigationItem } from '@fuse/components/navigation';
 
 const menu: FuseNavigationItem[] = [
     {
-        id: 'merchandise',
-        title: 'Query',
+        id: 'dashboard',
+        title: 'Dashboard',
         type: 'basic',
         icon: 'heroicons_outline:queue-list',
-        link: '/merchandise',
+        link: '/dashboard',
     },
     {
         id: 'scan',

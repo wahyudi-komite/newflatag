@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 
 export default [
     {
-        path: 'merchandise',
+        path: 'dashboard',
         loadChildren: () => import('./employee-kaos/employee-kaos.routes'),
     },
     {
@@ -18,7 +18,7 @@ export default [
     // admin routes
     {
         path: 'role',
-        loadChildren: () => import('./app/role/role.routes'),
+        loadChildren: () => import('./app/admin/role/role.routes'),
     },
     {
         path: 'permission',
