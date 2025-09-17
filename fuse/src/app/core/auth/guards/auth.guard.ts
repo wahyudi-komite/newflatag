@@ -1,8 +1,20 @@
 import { inject } from '@angular/core';
-import { CanActivateChildFn, CanActivateFn, Router } from '@angular/router';
+import {
+    ActivatedRouteSnapshot,
+    CanActivateChildFn,
+    CanActivateFn,
+    Router,
+} from '@angular/router';
 import { of, switchMap } from 'rxjs';
 import { UserService } from '../../user/user.service';
 import { AuthService } from './../auth.service';
+
+function getLeafRoute(route: ActivatedRouteSnapshot): ActivatedRouteSnapshot {
+    while (route.firstChild) {
+        route = route.firstChild;
+    }
+    return route;
+}
 
 export const AuthGuard: CanActivateFn | CanActivateChildFn = (route, state) => {
     const router: Router = inject(Router);
@@ -38,11 +50,6 @@ export const AuthGuard: CanActivateFn | CanActivateChildFn = (route, state) => {
                             return of(urlTree);
                         }
 
-                        const roleAccess = authService.roleAccess(
-                            user.role.id,
-                            route.data['state']
-                        );
-
                         if (
                             route.data['role'] &&
                             (!user.role ||
@@ -50,7 +57,6 @@ export const AuthGuard: CanActivateFn | CanActivateChildFn = (route, state) => {
                         ) {
                             return of(urlTree);
                         }
-
                         return of(true);
                     })
                 );

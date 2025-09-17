@@ -232,12 +232,11 @@ export class AuthService {
     }
 
     roleAccess(id, permission) {
-        return this._httpClient.get(
-            `${environment.apiUrl}api/role/roleAccess`,
-            {
-                id: id,
+        return this._httpClient.get(`${environment.apiUrl}/roles/roleAccess`, {
+            params: {
+                id: id.toString(),
                 permission: permission,
-            }
-        );
+            },
+        });
     }
 }

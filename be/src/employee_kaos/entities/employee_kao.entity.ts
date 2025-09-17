@@ -94,4 +94,23 @@ export class EmployeeKao {
 
   @Column({ type: 'enum', enum: ['YES', 'NO'], default: 'NO' })
   terminated: 'YES' | 'NO';
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  section: string;
+
+  @Column({ type: 'int', nullable: true })
+  golongan: number;
+
+  @Column({ type: 'varchar', length: 40, nullable: true })
+  jabatan: number;
+
+  @Column({ type: 'enum', enum: ['Expatriate', 'Local'], default: 'Local' })
+  expatriat: string;
+
+  @Column({
+    type: 'enum',
+    enum: ['NON SHIFT', 'SHIFT A', 'SHIFT B'],
+    nullable: true,
+  })
+  shift: string;
 }

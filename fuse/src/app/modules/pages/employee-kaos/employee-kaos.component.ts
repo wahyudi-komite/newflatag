@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
 import { saveAs } from 'file-saver';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { ButtonModule } from 'primeng/button';
@@ -43,6 +44,7 @@ interface Column {
         InputIconModule,
         PrintLabelComponent,
         TooltipModule,
+        MatIconModule,
     ],
     templateUrl: './employee-kaos.component.html',
     styleUrl: './employee-kaos.component.scss',
@@ -85,6 +87,15 @@ export class EmployeeKaosComponent implements OnInit {
         { label: 'OK', value: '1' },
         { label: 'PRINT', value: '2' },
     ];
+    shiftData = [
+        { label: 'NON SHIFT', value: 'NON SHIFT' },
+        { label: 'SHIFT A', value: 'SHIFT A' },
+        { label: 'SHIFT B', value: 'SHIFT B' },
+    ];
+    expatriatData = [
+        { label: 'Expatriate', value: 'Expatriate' },
+        { label: 'Local', value: 'Local' },
+    ];
 
     _service = inject(EmployeeKaosService);
     private cdr = inject(ChangeDetectorRef);
@@ -122,8 +133,43 @@ export class EmployeeKaosComponent implements OnInit {
                 filterType: 'text',
             },
             {
+                field: 'section',
+                header: 'Section',
+                sortable: true,
+                filter: true,
+                filterType: 'text',
+            },
+            {
+                field: 'shift',
+                header: 'Shift',
+                sortable: true,
+                filter: true,
+                filterType: 'select',
+            },
+            {
                 field: 'plant',
                 header: 'plant',
+                sortable: true,
+                filter: true,
+                filterType: 'select',
+            },
+            {
+                field: 'jabatan',
+                header: 'Jabatan',
+                sortable: true,
+                filter: true,
+                filterType: 'text',
+            },
+            {
+                field: 'golongan',
+                header: 'Golongan',
+                sortable: true,
+                filter: true,
+                filterType: 'numeric',
+            },
+            {
+                field: 'expatriat',
+                header: 'Expatriate',
                 sortable: true,
                 filter: true,
                 filterType: 'select',
@@ -172,14 +218,14 @@ export class EmployeeKaosComponent implements OnInit {
             },
             {
                 field: 'scan',
-                header: 'scan',
+                header: 'Scan STO',
                 sortable: true,
                 filter: true,
                 filterType: 'select',
             },
             {
                 field: 'scan_date',
-                header: 'scan date',
+                header: 'Scan STO Date',
                 sortable: true,
                 filter: true,
                 filterType: 'text',
@@ -337,6 +383,16 @@ export class EmployeeKaosComponent implements OnInit {
             case 1:
                 return 'success';
             case 2:
+                return 'info';
+            case 'NON SHIFT':
+                return 'secondary';
+            case 'SHIFT A':
+                return 'warn';
+            case 'SHIFT B':
+                return 'info';
+            case 'Local':
+                return 'secondary';
+            case 'Expatriate':
                 return 'info';
 
             case '':

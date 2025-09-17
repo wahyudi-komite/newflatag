@@ -44,6 +44,7 @@ export class EditDialogEkComponent implements OnInit {
 
     plantList: string[] = ['HO', 'PC', 'P5', 'P4', 'P3', 'P2', 'P1'];
     terminatedList: string[] = ['YES', 'NO'];
+    shiftList: string[] = ['NON SHIFT', 'SHIFT A', 'SHIFT B'];
 
     familyStatsList: string[] = [
         'K1',
@@ -129,7 +130,12 @@ export class EditDialogEkComponent implements OnInit {
             status: ['', [Validators.required]],
             gender: ['', [Validators.required]],
             family_stats: ['', [Validators.required]],
+            section: ['', []],
+            shift: ['', []],
             plant: ['', [Validators.required]],
+            jabatan: ['', []],
+            golongan: ['', []],
+            expatriat: ['', []],
             terminated: ['', [Validators.required]],
             no_wa: [
                 '',

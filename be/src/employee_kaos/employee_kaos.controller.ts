@@ -13,7 +13,7 @@ import {
   Request,
   UseInterceptors,
 } from '@nestjs/common';
-import { formatDate } from '../common/utils/date.utils';
+import { formatDate, formatDateYear } from '../common/utils/date.utils';
 import { UpdateEmployeeKaoDto } from './dto/update-employee_kao.dto';
 import { EmployeeKaosService } from './employee_kaos.service';
 
@@ -47,6 +47,11 @@ const columns = [
   'scan',
   'scan_date',
   'terminated',
+  'section',
+  'golongan',
+  'jabatan',
+  'expatriat',
+  'shift',
 ].map((col) => `${tabel}.${col}`);
 
 @UseInterceptors(ClassSerializerInterceptor)
@@ -64,12 +69,15 @@ export class EmployeeKaosController {
       keyword: request.query.keyword,
       column: columns,
     });
+    console.log(
+      '========================================================================',
+    );
 
+    console.log(returnData.data);
     returnData.data = returnData.data.map((item) => ({
       ...item,
-      created_at: formatDate(new Date(item.created_at)),
-      updated_at: formatDate(new Date(item.updated_at)),
-      scan_date: formatDate(new Date(item.scan_date)),
+      created_at: formatDateYear(new Date(item.created_at)),
+      updated_at: formatDateYear(new Date(item.updated_at)),
     }));
 
     return returnData;
@@ -90,7 +98,7 @@ export class EmployeeKaosController {
       ...item,
       created_at: formatDate(new Date(item.created_at)),
       updated_at: formatDate(new Date(item.updated_at)),
-      scan_date: formatDate(new Date(item.scan_date)),
+      scan_date: formatDateYear(new Date(item.scan_date)),
     }));
 
     return returnData;

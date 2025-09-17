@@ -78,7 +78,10 @@ export class RolesController {
   @Get('roleAccess')
   async find(@Request() request) {
     return this.rolesService.findOne(
-      { id: request.query.id, permissions: { name: request.query.name } },
+      {
+        id: Number(request.query.id),
+        permissions: { name: request.query.permission },
+      },
       ['permissions'],
     );
   }

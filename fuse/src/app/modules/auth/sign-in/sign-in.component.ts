@@ -103,7 +103,8 @@ export class AuthSignInComponent implements OnInit {
                     ) || '/signed-in-redirect';
 
                 // Navigate to the redirect url
-                this._router.navigateByUrl(redirectURL);
+                this._router.navigateByUrl('dashboard');
+                // No need to return or subscribe to navigateByUrl, as it returns a Promise, not an Observable
             },
             (response) => {
                 // Re-enable the form

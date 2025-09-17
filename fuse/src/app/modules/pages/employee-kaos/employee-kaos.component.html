@@ -2,6 +2,42 @@
 <div class="flex h-full w-full flex-col p-4 print:hidden">
     <!-- Toolbar -->
     <div
+        class="mb-4 grid w-full min-w-0 grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-8"
+    >
+        <ng-container *ngFor="let a of plantData; let i = index">
+            <div
+                class="bg-card flex flex-auto flex-col overflow-hidden rounded-2xl p-6 shadow"
+            >
+                <div class="flex items-start justify-between">
+                    <div
+                        class="truncate text-4xl font-medium leading-6 tracking-tight"
+                    >
+                        {{ a.label }}
+                    </div>
+                    <div class="-mr-3 -mt-2 ml-2"></div>
+                </div>
+                <div class="mt-2 flex flex-col items-center">
+                    <div
+                        class="text-7xl font-bold leading-none tracking-tight text-blue-500 sm:text-8xl"
+                    >
+                        3.429
+                    </div>
+                    <div
+                        class="text-lg font-medium text-blue-600 dark:text-blue-500"
+                    >
+                        Data
+                    </div>
+                    <!-- <div
+                    class="flex items-baseline justify-center w-full mt-5 text-secondary"
+                >
+                    <div class="font-medium truncate text-md">Completed:</div>
+                    <div class="ml-1.5 text-lg font-semibold">13</div>
+                </div> -->
+                </div>
+            </div>
+        </ng-container>
+    </div>
+    <div
         class="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"
     >
         <div class="card w-full">
@@ -195,7 +231,24 @@
                         <td>{{ datas.name }}</td>
                         <td>{{ datas.divisi }}</td>
                         <td>{{ datas.department }}</td>
+                        <td class="">{{ datas.section }}</td>
+                        <td class="text-center">
+                            <p-tag
+                                class="px-2 py-0"
+                                [value]="datas.shift"
+                                [severity]="displayLabel(datas.shift)"
+                            />
+                        </td>
                         <td class="text-center">{{ datas.plant }}</td>
+                        <td class="text-center">{{ datas.jabatan }}</td>
+                        <td class="text-center">{{ datas.golongan }}</td>
+                        <td class="text-center">
+                            <p-tag
+                                class="px-2 py-0"
+                                [value]="datas.expatriat"
+                                [severity]="displayLabel(datas.expatriat)"
+                            />
+                        </td>
                         <td class="text-center">
                             <p-tag
                                 class="px-2 py-0"

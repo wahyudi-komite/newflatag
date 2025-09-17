@@ -8,6 +8,9 @@ export default [
         path: '',
         component: ScanDataComponent,
         canActivate: [AuthGuard],
-        data: { role: [UserRole.Admin, UserRole.User], state: 'scan-sto' },
+        data: {
+            stateAccess: 'scan-sto',
+            role: [UserRole.Admin, UserRole.User],
+        },
     },
 ] as Routes;

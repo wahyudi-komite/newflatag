@@ -30,13 +30,13 @@ const menu: FuseNavigationItem[] = [
     //     icon: 'heroicons_outline:qr-code',
     //     link: '/scan',
     // },
-    {
-        id: 'permission',
-        title: 'Role',
-        type: 'basic',
-        icon: 'heroicons_outline:qr-code',
-        link: '/permission',
-    },
+    // {
+    //     id: 'permission',
+    //     title: 'Role',
+    //     type: 'basic',
+    //     icon: 'heroicons_outline:qr-code',
+    //     link: '/permission',
+    // },
 ];
 export const defaultNavigation: FuseNavigationItem[] = menu;
 
