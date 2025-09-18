@@ -211,4 +211,13 @@ export class AbstractService {
       },
     };
   }
+
+  async getCount(plant: string, where: any = {}): Promise<number> {
+    return this.repository.count({
+      where: {
+        plant,
+        ...where,
+      },
+    });
+  }
 }

@@ -84,6 +84,18 @@ export class EmployeeKao {
   @Column({ nullable: true, default: null })
   scan_date: Date | null;
 
+  @Column({ type: 'int', default: 0 })
+  scan_vendor: number;
+
+  @Column({ nullable: true, default: null })
+  scan_vendor_date: Date | null;
+
+  @Column({ type: 'varchar', default: null })
+  scan_plant: string;
+
+  @Column({ nullable: true, default: null })
+  scan_plant_date: Date | null;
+
   @CreateDateColumn()
   @Exclude()
   created_at: Date;

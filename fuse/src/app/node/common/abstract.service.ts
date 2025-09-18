@@ -146,4 +146,27 @@ export abstract class AbstractService {
     updateScan(data: any): Observable<any> {
         return this.http.patch(`${this.url}/updateScan`, data);
     }
+
+    updateScanVendor(data: any): Observable<any> {
+        return this.http.patch(`${this.url}/updateScanVendor`, data);
+    }
+
+    updateScanPlant(data: any): Observable<any> {
+        return this.http.patch(`${this.url}/updateScanPlant`, data);
+    }
+
+    getCount(
+        plant: string,
+        where?: Record<string, any>
+    ): Observable<{ plant: string; count: number }> {
+        return this.http.get<{ plant: string; count: number }>(
+            `${this.url}/count`,
+            {
+                params: {
+                    plant,
+                    ...(where ? { where: JSON.stringify(where) } : {}),
+                },
+            }
+        );
+    }
 }

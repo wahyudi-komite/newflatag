@@ -10,6 +10,7 @@ import {
   Param,
   Patch,
   Put,
+  Query,
   Request,
   UseInterceptors,
 } from '@nestjs/common';
@@ -46,6 +47,10 @@ const columns = [
   'updated_at',
   'scan',
   'scan_date',
+  'scan_vendor',
+  'scan_vendor_date',
+  'scan_plant',
+  'scan_plant_date',
   'terminated',
   'section',
   'golongan',
@@ -69,11 +74,7 @@ export class EmployeeKaosController {
       keyword: request.query.keyword,
       column: columns,
     });
-    console.log(
-      '========================================================================',
-    );
 
-    console.log(returnData.data);
     returnData.data = returnData.data.map((item) => ({
       ...item,
       created_at: formatDateYear(new Date(item.created_at)),
@@ -99,6 +100,8 @@ export class EmployeeKaosController {
       created_at: formatDate(new Date(item.created_at)),
       updated_at: formatDate(new Date(item.updated_at)),
       scan_date: formatDateYear(new Date(item.scan_date)),
+      scan_vendor_date: formatDateYear(new Date(item.scan_vendor_date)),
+      scan_plant_date: formatDateYear(new Date(item.scan_plant_date)),
     }));
 
     return returnData;
@@ -161,6 +164,76 @@ export class EmployeeKaosController {
     return this._service.findOne({ id: id.id });
   }
 
+  @Patch('updateScanVendor')
+  async updateScanVendor(@Body() updateUserDto: any) {
+    const inputValue = updateUserDto.id;
+    const id = await this._service.findOne({ id: inputValue });
+    if (!id) {
+      throw new BadRequestException('Not Found');
+    }
+
+    if (id && id.terminated === 'YES') {
+      throw new BadRequestException(
+        `${id.id} ${id.name} is already marked as terminated`,
+      );
+    }
+
+    // if (id.scan_vendor === 2 && id.scan_date === null) {
+    //   throw new BadRequestException(
+    //     id.id + ' ' + id.name + ' Please Print Again',
+    //   );
+    // }
+
+    if (id.scan_vendor_date !== null) {
+      throw new BadRequestException(
+        id.id +
+          ' ' +
+          id.name +
+          ' Already Taken at ' +
+          formatDate(id.scan_vendor_date),
+      );
+    }
+
+    await this._service.update(id.id, {
+      scan_vendor: 1,
+      scan_vendor_date: new Date(),
+    });
+
+    return this._service.findOne({ id: id.id });
+  }
+
+  @Patch('updateScanPlant')
+  async updateScanPlant(@Body() updateUserDto: any) {
+    const inputValue = updateUserDto.id;
+    const id = await this._service.findOne({ id: inputValue });
+    if (!id) {
+      throw new BadRequestException('Not Found');
+    }
+
+    if (id && id.terminated === 'YES') {
+      throw new BadRequestException(
+        `${id.id} ${id.name} is already marked as terminated`,
+      );
+    }
+
+    if (id.scan_plant_date !== null) {
+      throw new BadRequestException(
+        id.id +
+          ' ' +
+          id.name +
+          ' Already Taken at ' +
+          formatDate(id.scan_plant_date),
+      );
+    }
+
+    await this._service.update(id.id, {
+      scan_plant: updateUserDto.scan_plant,
+      scan_plant_date: new Date(),
+    });
+
+    return this._service.findOne({ id: id.id });
+  }
+
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this._service.remove(+id);
@@ -171,8 +244,27 @@ export class EmployeeKaosController {
     return this.getDataServerSide(request.query);
   }
 
-  @Get('server-side')
-  async findAll(@Request() request) {
-    return this.getData(request);
+  // @Get('server-side')
+  // async findAll(@Request() request) {
+  //   return this.getData(request);
+  // }
+
+  @Get('count')
+  async getCount(
+    @Query('plant') plant: string,
+    @Query('where') where?: string,
+  ) {
+    // parsing query where kalau ada
+    let parsedWhere: any = {};
+    if (where) {
+      try {
+        parsedWhere = JSON.parse(where); // kirim dari FE: JSON.stringify({ status: 'active' })
+      } catch (e) {
+        throw new BadRequestException('Invalid where JSON');
+      }
+    }
+
+    const count = await this._service.getCount(plant, parsedWhere);
+    return { plant, count };
   }
 }

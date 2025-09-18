@@ -16,6 +16,20 @@ const menu: FuseNavigationItem[] = [
         icon: 'heroicons_outline:qr-code',
         link: '/scan',
     },
+    {
+        id: 'scan-vendor',
+        title: 'Sto Vendor',
+        type: 'basic',
+        icon: 'heroicons_outline:qr-code',
+        link: '/scan-vendor',
+    },
+    {
+        id: 'scan-plant',
+        title: 'Sto Plant',
+        type: 'basic',
+        icon: 'heroicons_outline:qr-code',
+        link: '/scan-plant',
+    },
     // {
     //     id: 'scan',
     //     title: 'Sto Vendor',

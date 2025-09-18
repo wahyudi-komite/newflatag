@@ -5,6 +5,8 @@ import { PrintLabelComponent } from './employee-kaos/print-label/print-label.com
 import { ScanDataComponent } from './scan-data/scan-data.component';
 import { ServerSideComponent } from './server-side/server-side.component';
 import { RoleComponent } from './app/admin/role/role.component';
+import { ScanVendorComponent } from './scan-vendor/scan-vendor.component';
+import { ScanPlantComponent } from './scan-plant/scan-plant.component';
 
 
 
@@ -14,7 +16,9 @@ import { RoleComponent } from './app/admin/role/role.component';
     PrintLabelComponent,
     ScanDataComponent,
     ServerSideComponent,
-    RoleComponent
+    RoleComponent,
+    ScanVendorComponent,
+    ScanPlantComponent
   ],
   imports: [
     CommonModule

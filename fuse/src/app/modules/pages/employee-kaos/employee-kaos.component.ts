@@ -3,6 +3,7 @@ import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { saveAs } from 'file-saver';
+import { CountUpModule } from 'ngx-countup';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { ButtonModule } from 'primeng/button';
 import { IconFieldModule } from 'primeng/iconfield';
@@ -13,8 +14,10 @@ import { SelectModule } from 'primeng/select';
 import { Table, TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
-import { first } from 'rxjs';
+import { first, Subject, takeUntil } from 'rxjs';
 import * as XLSX from 'xlsx';
+import { UserService } from '../../../core/user/user.service';
+import { User } from '../../../core/user/user.types';
 import { cleanFilters } from '../../../node/common/cleanFilters';
 import { GlobalVariable } from '../../../node/common/global-variable';
 import { EditDialogEkComponent } from './edit-dialog-ek/edit-dialog-ek.component';
@@ -45,11 +48,13 @@ interface Column {
         PrintLabelComponent,
         TooltipModule,
         MatIconModule,
+        CountUpModule,
     ],
     templateUrl: './employee-kaos.component.html',
     styleUrl: './employee-kaos.component.scss',
 })
 export class EmployeeKaosComponent implements OnInit {
+    user: User;
     datas: EmployeeKaos[] = [];
     cols!: any[];
     loading: boolean = true;
@@ -96,13 +101,23 @@ export class EmployeeKaosComponent implements OnInit {
         { label: 'Expatriate', value: 'Expatriate' },
         { label: 'Local', value: 'Local' },
     ];
+    counts: { [key: string]: number } = {};
+    totalCounts = 0;
+
+    private _unsubscribeAll: Subject<any> = new Subject<any>();
 
     _service = inject(EmployeeKaosService);
     private cdr = inject(ChangeDetectorRef);
     readonly dialog = inject(MatDialog);
     private toastr = inject(ToastrService);
+    _userService = inject(UserService);
 
     ngOnInit() {
+        this._userService.user$
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((user: User) => {
+                this.user = user;
+            });
         this.cols = [
             {
                 field: 'id',
@@ -231,6 +246,34 @@ export class EmployeeKaosComponent implements OnInit {
                 filterType: 'text',
             },
             {
+                field: 'scan_vendor',
+                header: 'Scan STO Vendor',
+                sortable: true,
+                filter: true,
+                filterType: 'select',
+            },
+            {
+                field: 'scan_vendor_date',
+                header: 'Scan STO Vendor Date',
+                sortable: true,
+                filter: true,
+                filterType: 'text',
+            },
+            {
+                field: 'scan_plant',
+                header: 'Scan STO Plant',
+                sortable: true,
+                filter: true,
+                filterType: 'select',
+            },
+            {
+                field: 'scan_palnt_date',
+                header: 'Scan STO Plant Date',
+                sortable: true,
+                filter: true,
+                filterType: 'text',
+            },
+            {
                 field: 'kaos_employee1',
                 header: 'Kaos Employee',
                 sortable: true,
@@ -315,6 +358,8 @@ export class EmployeeKaosComponent implements OnInit {
                 filterType: 'text',
             },
         ];
+
+        this.getCount();
     }
 
     loadLazy($event: TableLazyLoadEvent) {
@@ -452,7 +497,7 @@ export class EmployeeKaosComponent implements OnInit {
                     }
 
                     if (col.field === 'scan_date') {
-                        value = value !== '01-01-1970 07:00:00' ? value : '';
+                        value = value !== '1970-01-01 07:00:00' ? value : '';
                     }
 
                     newRow[col.header] = value;
@@ -518,6 +563,7 @@ export class EmployeeKaosComponent implements OnInit {
                 GlobalVariable.audioSuccess.play();
                 this.toastr.success('Success', 'Update data success');
                 this.load();
+                this.getCount();
             },
             (error) => {
                 this.errorNotif(error);
@@ -545,6 +591,16 @@ export class EmployeeKaosComponent implements OnInit {
         GlobalVariable.audioFailed.play();
         this.toastr.error('Failed', error.error.message, {
             timeOut: 5000,
+        });
+    }
+
+    getCount(): void {
+        this.plantData.forEach((plant) => {
+            this.totalCounts = 0;
+            this._service.getCount(plant.value).subscribe((res) => {
+                this.counts[plant.value] = res.count;
+                this.totalCounts += res.count;
+            });
         });
     }
 }

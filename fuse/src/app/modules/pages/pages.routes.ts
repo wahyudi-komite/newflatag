@@ -14,6 +14,14 @@ export default [
         path: 'scan',
         loadChildren: () => import('./scan-data/scan-data.routes'),
     },
+    {
+        path: 'scan-plant',
+        loadChildren: () => import('./scan-plant/scan-plant.routes'),
+    },
+    {
+        path: 'scan-vendor',
+        loadChildren: () => import('./scan-vendor/scan-vendor.routes'),
+    },
 
     // admin routes
     {

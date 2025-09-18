@@ -1,6 +1,51 @@
-<!-- Start Page -->
 <div class="flex h-full w-full flex-col p-4 print:hidden">
     <!-- Toolbar -->
+    <div
+        class="mb-4 flex flex-col items-center justify-center gap-2 sm:flex-row sm:items-center sm:justify-between"
+    >
+        <div class="flex w-full items-center justify-center">
+            <form
+                class="rounded-md border-2 bg-white p-4"
+                [formGroup]="form"
+                (submit)="onSubmit()"
+                autocomplete="off"
+                novalidate
+            >
+                <div class="mx-auto flex w-full max-w-md flex-col items-center">
+                    <label
+                        for="big-input"
+                        class="mb-2 text-center text-lg font-medium text-gray-700"
+                    >
+                        Scan QR Code On Vendor
+                    </label>
+                    <input
+                        type="text"
+                        formControlName="id"
+                        value=""
+                        #id
+                        autofocus
+                        class="w-full rounded-2xl border-2 border-gray-300 p-4 text-center text-4xl focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                </div>
+                <div class="mt-4 flex items-center justify-between gap-6">
+                    <button
+                        class="align-middle h-12 w-full select-none rounded-lg bg-blue-800 px-6 py-3 text-center font-sans text-xl font-bold uppercase text-white shadow-md shadow-blue-500/20 transition-all hover:shadow-lg hover:shadow-blue-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                        type="submit"
+                    >
+                        SUBMIT
+                    </button>
+
+                    <button
+                        (click)="resetForm()"
+                        class="align-middle h-12 w-full select-none rounded-lg bg-crayola-300 px-6 py-3 text-center font-sans text-xl font-bold uppercase text-white shadow-md shadow-blue-500/20 transition-all hover:shadow-lg hover:shadow-blue-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                        type="button"
+                    >
+                        CLEAR
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
     <div
         class="mb-4 grid w-full min-w-0 grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-8"
     >
@@ -18,7 +63,7 @@
                 </div>
                 <div class="mt-2 flex flex-col items-center">
                     <div
-                        class="text-7xl font-bold leading-none tracking-tight text-gray-800 sm:text-7xl"
+                        class="text-7xl font-bold leading-none tracking-tight text-blue-500 sm:text-7xl"
                     >
                         <span
                             [countUp]="counts[a.value]"
@@ -29,7 +74,7 @@
                     <div
                         class="text-lg font-medium text-gray-500 dark:text-blue-500"
                     >
-                        Data
+                        Scanning
                     </div>
                     <!-- <div
                     class="flex items-baseline justify-center w-full mt-5 text-secondary"
@@ -64,7 +109,7 @@
                 <div
                     class="text-lg font-medium text-gray-500 dark:text-blue-500"
                 >
-                    Data
+                    Scanning
                 </div>
                 <!-- <div
                     class="flex items-baseline justify-center w-full mt-5 text-secondary"
@@ -81,7 +126,7 @@
         <div class="card w-full">
             <p-table
                 #dt1
-                sortField="id"
+                sortField="scan_vendor_date"
                 [sortOrder]="-1"
                 [value]="datas"
                 [columns]="cols"
@@ -91,7 +136,7 @@
                 stripedRows
                 [paginator]="true"
                 [loading]="loading"
-                [rows]="50"
+                [rows]="10"
                 [scrollable]="true"
                 scrollHeight="65vh"
                 [(selection)]="selectedDatas"
@@ -101,7 +146,7 @@
                 (onHeaderCheckboxToggle)="onHeaderToggle($event)"
                 dataKey="id"
                 [tableStyle]="{ 'min-width': '50rem' }"
-                [rowsPerPageOptions]="[50]"
+                [rowsPerPageOptions]="[10, 20, 50, 100, 1000]"
                 [totalRecords]="this.total"
                 [showCurrentPageReport]="true"
                 [lazy]="true"
@@ -113,7 +158,7 @@
                             <span class="text-xl font-bold">Data Employee</span>
                         </div>
                         <div class="flex gap-2">
-                            <p-button
+                            <!-- <p-button
                                 styleClass="disabled:cursor-not-allowed"
                                 icon="pi pi-print"
                                 label="Print Selected"
@@ -122,7 +167,7 @@
                                 "
                                 (click)="printMultipleSelected()"
                                 severity="info"
-                            />
+                            /> -->
                             <p-button
                                 label="Clear Filter"
                                 [outlined]="true"
@@ -155,12 +200,12 @@
                 </ng-template>
                 <ng-template #header let-columns>
                     <tr>
-                        <th style="width: 3rem" pFrozenColumn>
+                        <!-- <th style="width: 3rem" pFrozenColumn>
                             <p-tableHeaderCheckbox
                                 [value]="rowData"
                             ></p-tableHeaderCheckbox>
                         </th>
-                        <th style="width: 3rem" pFrozenColumn>Action</th>
+                        <th style="width: 3rem" pFrozenColumn>Action</th> -->
                         <th
                             *ngFor="let col of columns"
                             [pSortableColumn]="col.sortable ? col.field : null"
@@ -234,17 +279,36 @@
                         </th>
                     </tr>
                 </ng-template>
-                <ng-template #body let-datas let-rowIndex="rowIndex">
+                <ng-template
+                    #body
+                    let-datas
+                    let-rowIndex="rowIndex"
+                    class="bodyTable"
+                >
                     <tr
                         [pSelectableRow]="datas"
                         [pSelectableRowIndex]="rowIndex"
                     >
-                        <td pFrozenColumn>
-                            <p-tableCheckbox [value]="datas" />
+                        <td class="text-center">
+                            <p-tag
+                                class="px-2 py-0"
+                                [value]="displayText(datas.scan_vendor)"
+                                [severity]="displayLabel(datas.scan_vendor)"
+                            />
                         </td>
-                        <td class="p-0 text-center" pFrozenColumn>
+                        <td>
+                            {{
+                                datas.scan_vendor_date !== '1970-01-01 07:00:00'
+                                    ? datas.scan_vendor_date
+                                    : ''
+                            }}
+                        </td>
+                        <!-- <td pFrozenColumn>
+                            <p-tableCheckbox [value]="datas" />
+                        </td> -->
+                        <!-- <td class="p-0 text-center" pFrozenColumn>
                             <div
-                                class="mx-2 flex items-center justify-center gap-2 p-0"
+                                class="flex items-center justify-center gap-2 p-0 mx-2"
                             >
                                 <p-button
                                     size="small"
@@ -263,10 +327,10 @@
                                     tooltipPosition="top"
                                 />
                             </div>
-                        </td>
+                        </td> -->
 
                         <td class="text-center">{{ datas.id }}</td>
-                        <td>{{ datas.name }}</td>
+                        <td class="whitespace-nowrap">{{ datas.name }}</td>
                         <td>{{ datas.divisi }}</td>
                         <td>{{ datas.department }}</td>
                         <td class="">{{ datas.section }}</td>
@@ -278,15 +342,7 @@
                             />
                         </td>
                         <td class="text-center">{{ datas.plant }}</td>
-                        <td class="text-center">{{ datas.jabatan }}</td>
-                        <td class="text-center">{{ datas.golongan }}</td>
-                        <td class="text-center">
-                            <p-tag
-                                class="px-2 py-0"
-                                [value]="datas.expatriat"
-                                [severity]="displayLabel(datas.expatriat)"
-                            />
-                        </td>
+
                         <td class="text-center">
                             <p-tag
                                 class="px-2 py-0"
@@ -308,91 +364,18 @@
                                 [severity]="displayLabel(datas.gender)"
                             />
                         </td>
-                        <td class="text-center">{{ datas.family_stats }}</td>
+
+                        <td>{{ datas.family_stats }}</td>
                         <td>{{ datas.no_wa }}</td>
                         <td class="text-center">{{ datas.souvenir }}</td>
-                        <td>
-                            <p-tag
-                                class="px-2 py-0"
-                                [value]="displayText(datas.scan)"
-                                [severity]="displayLabel(datas.scan)"
-                            />
-                        </td>
-                        <td>
-                            {{
-                                datas.scan_date != '1970-01-01 07:00:00'
-                                    ? datas.scan_date
-                                    : ''
-                            }}
-                        </td>
-                        <td>
-                            <p-tag
-                                class="px-2 py-0"
-                                [value]="displayText(datas.scan_vendor)"
-                                [severity]="displayLabel(datas.scan_vendor)"
-                            />
-                        </td>
-                        <td>
-                            {{
-                                datas.scan_vendor_date != '1970-01-01 07:00:00'
-                                    ? datas.scan_vendor_date
-                                    : ''
-                            }}
-                        </td>
-                        <td>
-                            {{ datas.scan_plant }}
-                        </td>
-                        <td>
-                            {{
-                                datas.scan_plant_date != '1970-01-01 07:00:00'
-                                    ? datas.scan_plant_date
-                                    : ''
-                            }}
-                        </td>
-                        <td>{{ datas.kaos_employee1 }}</td>
-                        <td>{{ datas.kaos_spouse1 }}</td>
-                        <td>
-                            <p-tag
-                                class="px-2 py-0"
-                                [value]="datas.dlong"
-                                severity="info"
-                            />
-                        </td>
-                        <td>
-                            <p-tag
-                                class="px-2 py-0"
-                                [value]="datas.dshort"
-                                severity="warn"
-                            />
-                        </td>
-                        <td>{{ datas.kaos_child1 }}</td>
-                        <td>{{ datas.kaos_child2 }}</td>
-                        <td>{{ datas.kaos_child3 }}</td>
-                        <td>{{ datas.kaos_child4 }}</td>
-                        <td>{{ datas.kaos_child5 }}</td>
-                        <td>{{ datas.kaos_child6 }}</td>
-                        <td>
-                            <p-tag
-                                class="px-2 py-0"
-                                [value]="datas.clong"
-                                severity="info"
-                            />
-                        </td>
-                        <td>
-                            <p-tag
-                                class="px-2 py-0"
-                                [value]="datas.cshort"
-                                severity="warn"
-                            />
-                        </td>
                     </tr>
                 </ng-template>
 
                 <ng-template pTemplate="paginatorleft">
-                    <span
+                    <!-- <span
                         >✅ Selected
                         {{ selectedDatas?.length || 0 }} records</span
-                    >
+                    > -->
                 </ng-template>
 
                 <ng-template pTemplate="paginatorright">
@@ -406,4 +389,3 @@
         </div>
     </div>
 </div>
-<app-print-label id="print-section" [datas]="this.data"></app-print-label>

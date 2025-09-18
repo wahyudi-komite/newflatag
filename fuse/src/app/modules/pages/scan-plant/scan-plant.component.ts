@@ -27,14 +27,17 @@ import { SelectModule } from 'primeng/select';
 import { Table, TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
+import { Subject, takeUntil } from 'rxjs';
 import * as XLSX from 'xlsx';
+import { UserService } from '../../../core/user/user.service';
+import { User } from '../../../core/user/user.types';
 import { cleanFilters } from '../../../node/common/cleanFilters';
 import { GlobalVariable } from '../../../node/common/global-variable';
 import { EmployeeKaos } from '../employee-kaos/employee-kaos';
 import { EmployeeKaosService } from '../employee-kaos/employee-kaos.service';
 
 @Component({
-    selector: 'app-scan-data',
+    selector: 'app-scan-plant',
     standalone: true,
     imports: [
         CommonModule,
@@ -53,10 +56,51 @@ import { EmployeeKaosService } from '../employee-kaos/employee-kaos.service';
         MatIconModule,
         CountUpModule,
     ],
-    templateUrl: './scan-data.component.html',
-    styleUrl: './scan-data.component.scss',
+    templateUrl: './scan-plant.component.html',
+    styleUrl: './scan-plant.component.scss',
 })
-export class ScanDataComponent implements OnInit {
+export class ScanPlantComponent implements OnInit {
+    user: User;
+    responScan: any;
+    responScanx: any = {
+        id: 33947,
+        name: 'NURUL HUDA',
+        divisi: 'DIV SAP PAINT & ASSY',
+        department: 'DPT PRODUCTION CONTROL & LOGISTIC',
+        lokasiKerja: 'ADM Plant-4',
+        status: 'P',
+        gender: 'M',
+        family_stats: 'K3',
+        no_wa: '085227502727',
+        kaos_employee1: 'pendek - XL',
+        kaos_spouse1: 'pendek - XL',
+        kaos_child1: 'pendek - 6',
+        kaos_child2: 'pendek - 2',
+        kaos_child3: 'pendek - 4',
+        kaos_child4: '',
+        kaos_child5: '',
+        kaos_child6: '',
+        souvenir: 1,
+        plant: 'P4',
+        dlong: '',
+        dshort: 'XL-2',
+        clong: '',
+        cshort: '6-1; 4-1; 2-1',
+        scan: 2,
+        scan_date: '1970-01-01 07:00:00',
+        scan_vendor: 0,
+        scan_vendor_date: '1970-01-01 07:00:00',
+        scan_plant: null,
+        scan_plant_date: '1970-01-01 07:00:00',
+        created_at: '06-09-2025 13:29:48',
+        updated_at: '17-09-2025 10:53:38',
+        terminated: 'NO',
+        section: 'SCT PRODUCTION',
+        golongan: 2,
+        jabatan: 'Team Member / Clerk',
+        expatriat: 'Local',
+        shift: 'SHIFT A',
+    };
     form!: FormGroup;
     datas: EmployeeKaos[] = [];
     cols!: any[];
@@ -78,28 +122,37 @@ export class ScanDataComponent implements OnInit {
     ];
     counts: { [key: string]: number } = {};
     totalCounts = 0;
+    enableDataScan: boolean = false;
 
-    @ViewChild('scan', { static: false }) scan!: ElementRef;
+    private _unsubscribeAll: Subject<any> = new Subject<any>();
+    @ViewChild('id', { static: false }) scan!: ElementRef;
 
     private fb = inject(FormBuilder);
     private toastr = inject(ToastrService);
     private _service = inject(EmployeeKaosService);
+    _userService = inject(UserService);
 
     ngOnInit(): void {
+        this._userService.user$
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((user: User) => {
+                this.user = user;
+            });
+
         this.form = this.fb.group({
-            scan: ['', [Validators.required]],
+            id: ['', [Validators.required]],
         });
         this.cols = [
             {
-                field: 'scan',
-                header: 'Scan STO',
+                field: 'scan_plant',
+                header: 'Scan STO Plant',
                 sortable: true,
                 filter: true,
                 filterType: 'select',
             },
             {
-                field: 'scan_date',
-                header: 'Scan STO Date',
+                field: 'scan_plant_date',
+                header: 'Scan STO Plant Date',
                 sortable: true,
                 filter: true,
                 filterType: 'text',
@@ -188,13 +241,6 @@ export class ScanDataComponent implements OnInit {
                 filter: true,
                 filterType: 'text',
             },
-            {
-                field: 'souvenir',
-                header: 'souvenir',
-                sortable: true,
-                filter: true,
-                filterType: 'text',
-            },
         ];
         this.getCount();
     }
@@ -279,18 +325,25 @@ export class ScanDataComponent implements OnInit {
         this.setFocus();
     }
     onSubmit() {
+        this.enableDataScan = false;
         if (this.form.invalid) {
             this.form.markAllAsTouched();
             return;
         }
-
-        this._service.updateScan(this.form.getRawValue()).subscribe(
+        const data = {
+            ...this.form.getRawValue(),
+            scan_plant: this.user.name,
+        };
+        this._service.updateScanPlant(data).subscribe(
             (res) => {
+                this.enableDataScan = true;
+
                 GlobalVariable.audioSuccess.play();
-                this.toastr.success('Success', res.id + ' ' + res.name, {
-                    timeOut: 2000,
-                    positionClass: 'toast-bottom-center',
-                });
+                // this.toastr.success('Success', res.id + ' ' + res.name, {
+                //     timeOut: 2000,
+                //     positionClass: 'toast-bottom-center',
+                // });
+                this.responScan = res;
                 this.form.reset();
 
                 this.form.markAsUntouched();
@@ -300,13 +353,14 @@ export class ScanDataComponent implements OnInit {
                 this.getCount();
             },
             (error) => {
+                this.enableDataScan = true;
                 this.errorNotif(error);
             }
         );
     }
 
     getCount(): void {
-        const where = { scan: 1 };
+        const where = { scan_plant: 1 };
         this.plantData.forEach((plant) => {
             this.totalCounts = 0;
             this._service.getCount(plant.value, where).subscribe((res) => {

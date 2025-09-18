@@ -34,7 +34,7 @@ import { EmployeeKaos } from '../employee-kaos/employee-kaos';
 import { EmployeeKaosService } from '../employee-kaos/employee-kaos.service';
 
 @Component({
-    selector: 'app-scan-data',
+    selector: 'app-scan-vendor',
     standalone: true,
     imports: [
         CommonModule,
@@ -53,10 +53,10 @@ import { EmployeeKaosService } from '../employee-kaos/employee-kaos.service';
         MatIconModule,
         CountUpModule,
     ],
-    templateUrl: './scan-data.component.html',
-    styleUrl: './scan-data.component.scss',
+    templateUrl: './scan-vendor.component.html',
+    styleUrl: './scan-vendor.component.scss',
 })
-export class ScanDataComponent implements OnInit {
+export class ScanVendorComponent implements OnInit {
     form!: FormGroup;
     datas: EmployeeKaos[] = [];
     cols!: any[];
@@ -79,7 +79,7 @@ export class ScanDataComponent implements OnInit {
     counts: { [key: string]: number } = {};
     totalCounts = 0;
 
-    @ViewChild('scan', { static: false }) scan!: ElementRef;
+    @ViewChild('id', { static: false }) scan!: ElementRef;
 
     private fb = inject(FormBuilder);
     private toastr = inject(ToastrService);
@@ -87,19 +87,19 @@ export class ScanDataComponent implements OnInit {
 
     ngOnInit(): void {
         this.form = this.fb.group({
-            scan: ['', [Validators.required]],
+            id: ['', [Validators.required]],
         });
         this.cols = [
             {
-                field: 'scan',
-                header: 'Scan STO',
+                field: 'scan_vendor',
+                header: 'Scan STO Vendor',
                 sortable: true,
                 filter: true,
                 filterType: 'select',
             },
             {
-                field: 'scan_date',
-                header: 'Scan STO Date',
+                field: 'scan_vendor_date',
+                header: 'Scan STO Vendor Date',
                 sortable: true,
                 filter: true,
                 filterType: 'text',
@@ -284,7 +284,7 @@ export class ScanDataComponent implements OnInit {
             return;
         }
 
-        this._service.updateScan(this.form.getRawValue()).subscribe(
+        this._service.updateScanVendor(this.form.getRawValue()).subscribe(
             (res) => {
                 GlobalVariable.audioSuccess.play();
                 this.toastr.success('Success', res.id + ' ' + res.name, {
@@ -306,7 +306,7 @@ export class ScanDataComponent implements OnInit {
     }
 
     getCount(): void {
-        const where = { scan: 1 };
+        const where = { scan_vendor: 1 };
         this.plantData.forEach((plant) => {
             this.totalCounts = 0;
             this._service.getCount(plant.value, where).subscribe((res) => {
