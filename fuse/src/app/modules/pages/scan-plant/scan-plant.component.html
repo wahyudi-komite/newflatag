@@ -14,7 +14,7 @@
                         for="big-input"
                         class="mb-2 text-center text-lg font-medium text-gray-700"
                     >
-                        Scan QR Code By Admin Plant
+                        Scan QR Code By Admin Plant {{ this.user.plant }}
                     </label>
                     <input
                         type="text"
@@ -48,7 +48,7 @@
             *ngIf="this.enableDataScan"
             class="flex h-full min-w-2/3 flex-col items-start gap-2"
         >
-            <div class="grid w-full grid-cols-4 gap-1">
+            <div class="grid w-full grid-cols-2 gap-1">
                 <div class="grid w-full grid-cols-1">
                     <div
                         class="bg-card flex flex-auto flex-col overflow-hidden rounded-xl p-1 shadow"
@@ -75,88 +75,6 @@
                     class="bg-card flex flex-auto flex-col overflow-hidden rounded-xl p-1 shadow"
                 >
                     <div
-                        class="flex h-8 items-center justify-center rounded-xl border-b-2 bg-fuchsia-700 text-white"
-                    >
-                        <div
-                            class="truncate text-md font-bold leading-6 tracking-tight"
-                        >
-                            SHIFT
-                        </div>
-                    </div>
-                    <div class="flex flex-col items-center justify-center">
-                        <div
-                            class="flex min-h-10 items-center justify-center px-2 text-center text-xl font-bold text-indigo-900 dark:text-blue-500"
-                        >
-                            {{ this.responScan.shift }}
-                        </div>
-                    </div>
-                </div>
-                <div
-                    class="bg-card flex flex-auto flex-col overflow-hidden rounded-xl p-1 shadow"
-                >
-                    <div
-                        class="flex h-8 items-center justify-center border-b-2"
-                    >
-                        <div
-                            class="truncate text-md font-bold leading-6 tracking-tight"
-                        >
-                            PLANT
-                        </div>
-                    </div>
-                    <div class="flex items-center justify-center">
-                        <div
-                            class="flex min-h-10 items-center justify-center px-2 text-center text-xl font-bold text-indigo-800 dark:text-blue-500"
-                        >
-                            {{ this.responScan.plant }}
-                        </div>
-                    </div>
-                </div>
-                <div
-                    class="bg-card flex flex-auto flex-col overflow-hidden rounded-xl p-1 shadow"
-                >
-                    <div
-                        class="flex h-8 items-center justify-center border-b-2"
-                    >
-                        <div
-                            class="truncate text-md font-bold leading-6 tracking-tight"
-                        >
-                            STATUS
-                        </div>
-                    </div>
-                    <div class="flex flex-col items-center justify-center">
-                        <div
-                            class="flex min-h-10 items-center justify-center px-2 text-center text-xl font-bold text-indigo-800 dark:text-blue-500"
-                        >
-                            <p-button label="SUCCESS" />
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="grid w-full grid-cols-3 gap-1">
-                <div
-                    class="bg-card flex flex-auto flex-col overflow-hidden rounded-xl p-1 shadow"
-                >
-                    <div
-                        class="flex h-8 items-center justify-center rounded-xl border-b-2 bg-indigo-700 text-white"
-                    >
-                        <div
-                            class="truncate text-md font-bold leading-6 tracking-tight"
-                        >
-                            DIVISION
-                        </div>
-                    </div>
-                    <div class="flex flex-col items-center justify-center">
-                        <div
-                            class="flex min-h-10 items-center justify-center px-2 text-center text-xl font-bold text-indigo-900 dark:text-blue-500"
-                        >
-                            {{ this.responScan.divisi }}
-                        </div>
-                    </div>
-                </div>
-                <div
-                    class="bg-card flex flex-auto flex-col overflow-hidden rounded-xl p-1 shadow"
-                >
-                    <div
                         class="flex h-8 items-center justify-center rounded-xl border-b-2 bg-orange-700 text-white"
                     >
                         <div
@@ -173,6 +91,69 @@
                         </div>
                     </div>
                 </div>
+                <!-- <div
+                    class="flex flex-col flex-auto p-1 overflow-hidden shadow bg-card rounded-xl"
+                >
+                    <div
+                        class="flex items-center justify-center h-8 border-b-2"
+                    >
+                        <div
+                            class="font-bold leading-6 tracking-tight truncate text-md"
+                        >
+                            PLANT
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-center">
+                        <div
+                            class="flex items-center justify-center px-2 text-xl font-bold text-center text-indigo-800 min-h-10 dark:text-blue-500"
+                        >
+                            {{ this.responScan.plant }}
+                        </div>
+                    </div>
+                </div> -->
+                <!-- <div
+                    class="flex flex-col flex-auto p-1 overflow-hidden shadow bg-card rounded-xl"
+                >
+                    <div
+                        class="flex items-center justify-center h-8 border-b-2"
+                    >
+                        <div
+                            class="font-bold leading-6 tracking-tight truncate text-md"
+                        >
+                            STATUS
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-center justify-center">
+                        <div
+                            class="flex items-center justify-center px-2 text-xl font-bold text-center text-indigo-800 min-h-10 dark:text-blue-500"
+                        >
+                            <p-button label="SUCCESS" />
+                        </div>
+                    </div>
+                </div> -->
+            </div>
+            <div class="grid w-full grid-cols-2 gap-1">
+                <!-- <div
+                    class="flex flex-col flex-auto p-1 overflow-hidden shadow bg-card rounded-xl"
+                >
+                    <div
+                        class="flex items-center justify-center h-8 text-white bg-indigo-700 border-b-2 rounded-xl"
+                    >
+                        <div
+                            class="font-bold leading-6 tracking-tight truncate text-md"
+                        >
+                            DIVISION
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-center justify-center">
+                        <div
+                            class="flex items-center justify-center px-2 text-xl font-bold text-center text-indigo-900 min-h-10 dark:text-blue-500"
+                        >
+                            {{ this.responScan.divisi }}
+                        </div>
+                    </div>
+                </div> -->
+
                 <div
                     class="bg-card flex flex-auto flex-col overflow-hidden rounded-xl p-1 shadow"
                 >
@@ -193,13 +174,33 @@
                         </div>
                     </div>
                 </div>
+                <div
+                    class="bg-card flex flex-auto flex-col overflow-hidden rounded-xl p-1 shadow"
+                >
+                    <div
+                        class="flex h-8 items-center justify-center rounded-xl border-b-2 bg-fuchsia-700 text-white"
+                    >
+                        <div
+                            class="truncate text-md font-bold leading-6 tracking-tight"
+                        >
+                            SHIFT
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-center justify-center">
+                        <div
+                            class="flex min-h-10 items-center justify-center px-2 text-center text-xl font-bold text-indigo-900 dark:text-blue-500"
+                        >
+                            {{ this.responScan.shift }}
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
     <div
         class="mb-4 grid w-full min-w-0 grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-8"
     >
-        <ng-container *ngFor="let a of plantData; let i = index">
+        <ng-container *ngFor="let a of plantDataAll; let i = index">
             <div
                 class="bg-card flex flex-auto flex-col overflow-hidden rounded-2xl p-6 shadow"
             >
@@ -224,7 +225,33 @@
                     <div
                         class="text-lg font-medium text-gray-500 dark:text-blue-500"
                     >
-                        Scanning
+                        Progress :
+                        <p-tag
+                            [value]="
+                                counts[a.value] === 0
+                                    ? 0
+                                    : ((counts[a.value] / countsAll[a.value]) *
+                                          100 | number: '1.2-2')
+                            "
+                            severity="success"
+                        />%
+                    </div>
+                    <div
+                        class="text-lg font-medium text-gray-500 dark:text-blue-500"
+                    >
+                        OPEN :
+                        <p-tag
+                            [value]="
+                                countsAll[a.value] - counts[a.value] | number
+                            "
+                            severity="warn"
+                        />
+                    </div>
+                    <div
+                        class="text-lg font-medium text-gray-500 dark:text-blue-500"
+                    >
+                        Total data :
+                        <b>{{ countsAll[a.value] | number }}</b>
                     </div>
                 </div>
             </div>
@@ -253,7 +280,31 @@
                 <div
                     class="text-lg font-medium text-gray-500 dark:text-blue-500"
                 >
-                    Scanning
+                    Progress :
+                    <p-tag
+                        [value]="
+                            totalCounts === 0
+                                ? 0
+                                : ((totalCounts / totalCountsAll) * 100
+                                  | number: '1.2-2')
+                        "
+                        severity="success"
+                    />%
+                </div>
+                <div
+                    class="text-lg font-medium text-gray-500 dark:text-blue-500"
+                >
+                    OPEN :
+                    <p-tag
+                        [value]="totalCountsAll - totalCounts | number"
+                        severity="warn"
+                    />
+                </div>
+                <div
+                    class="text-lg font-medium text-gray-500 dark:text-blue-500"
+                >
+                    Total data :
+                    <b>{{ totalCountsAll | number }}</b>
                 </div>
             </div>
         </div>

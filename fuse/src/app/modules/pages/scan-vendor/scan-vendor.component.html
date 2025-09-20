@@ -74,14 +74,34 @@
                     <div
                         class="text-lg font-medium text-gray-500 dark:text-blue-500"
                     >
-                        Scanning
+                        Progress :
+                        <p-tag
+                            [value]="
+                                counts[a.value] === 0
+                                    ? 0
+                                    : ((counts[a.value] / countsAll[a.value]) *
+                                          100 | number: '1.2-2')
+                            "
+                            severity="success"
+                        />%
                     </div>
-                    <!-- <div
-                    class="flex items-baseline justify-center w-full mt-5 text-secondary"
-                >
-                    <div class="font-medium truncate text-md">Completed:</div>
-                    <div class="ml-1.5 text-lg font-semibold">13</div>
-                </div> -->
+                    <div
+                        class="text-lg font-medium text-gray-500 dark:text-blue-500"
+                    >
+                        OPEN :
+                        <p-tag
+                            [value]="
+                                countsAll[a.value] - counts[a.value] | number
+                            "
+                            severity="warn"
+                        />
+                    </div>
+                    <div
+                        class="text-lg font-medium text-gray-500 dark:text-blue-500"
+                    >
+                        Total data :
+                        <b>{{ countsAll[a.value] | number }}</b>
+                    </div>
                 </div>
             </div>
         </ng-container>
@@ -109,14 +129,32 @@
                 <div
                     class="text-lg font-medium text-gray-500 dark:text-blue-500"
                 >
-                    Scanning
+                    Progress :
+                    <p-tag
+                        [value]="
+                            totalCounts === 0
+                                ? 0
+                                : ((totalCounts / totalCountsAll) * 100
+                                  | number: '1.2-2')
+                        "
+                        severity="success"
+                    />%
                 </div>
-                <!-- <div
-                    class="flex items-baseline justify-center w-full mt-5 text-secondary"
+                <div
+                    class="text-lg font-medium text-gray-500 dark:text-blue-500"
                 >
-                    <div class="font-medium truncate text-md">Completed:</div>
-                    <div class="ml-1.5 text-lg font-semibold">13</div>
-                </div> -->
+                    OPEN :
+                    <p-tag
+                        [value]="totalCountsAll - totalCounts | number"
+                        severity="warn"
+                    />
+                </div>
+                <div
+                    class="text-lg font-medium text-gray-500 dark:text-blue-500"
+                >
+                    Total data :
+                    <b>{{ totalCountsAll | number }}</b>
+                </div>
             </div>
         </div>
     </div>

@@ -76,6 +76,34 @@ export class ScanDataComponent implements OnInit {
         { label: 'PC', value: 'PC' },
         { label: 'HO', value: 'HO' },
     ];
+    scanData = [
+        { label: 'Blank', value: '0' },
+        { label: 'OK', value: '1' },
+        { label: 'PRINT', value: '2' },
+    ];
+
+    statusData = [
+        { label: 'P', value: 'P' },
+        { label: 'C', value: 'C' },
+    ];
+    terminatedData = [
+        { label: 'YES', value: 'YES' },
+        { label: 'NO', value: 'NO' },
+    ];
+    genderData = [
+        { label: 'M', value: 'M' },
+        { label: 'F', value: 'F' },
+    ];
+
+    shiftData = [
+        { label: 'NON SHIFT', value: 'NON SHIFT' },
+        { label: 'SHIFT A', value: 'SHIFT A' },
+        { label: 'SHIFT B', value: 'SHIFT B' },
+    ];
+    expatriatData = [
+        { label: 'Expatriate', value: 'Expatriate' },
+        { label: 'Local', value: 'Local' },
+    ];
     counts: { [key: string]: number } = {};
     totalCounts = 0;
 

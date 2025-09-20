@@ -39,6 +39,9 @@ export class User {
   @Column({ type: 'boolean', default: true })
   status: number;
 
+  @Column({ type: 'varchar', length: 2, nullable: true })
+  plant: string;
+
   @Exclude()
   @CreateDateColumn()
   created_at: Date;

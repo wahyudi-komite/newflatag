@@ -8,6 +8,7 @@ const menu: FuseNavigationItem[] = [
         type: 'basic',
         icon: 'heroicons_outline:queue-list',
         link: '/dashboard',
+        meta: { roles: ['admin'] },
     },
     {
         id: 'scan',
@@ -15,6 +16,7 @@ const menu: FuseNavigationItem[] = [
         type: 'basic',
         icon: 'heroicons_outline:qr-code',
         link: '/scan',
+        meta: { roles: ['admin'] },
     },
     {
         id: 'scan-vendor',
@@ -22,6 +24,7 @@ const menu: FuseNavigationItem[] = [
         type: 'basic',
         icon: 'heroicons_outline:qr-code',
         link: '/scan-vendor',
+        meta: { roles: ['supplier', 'admin'] },
     },
     {
         id: 'scan-plant',
@@ -29,54 +32,10 @@ const menu: FuseNavigationItem[] = [
         type: 'basic',
         icon: 'heroicons_outline:qr-code',
         link: '/scan-plant',
+        meta: { roles: ['user'] },
     },
-    // {
-    //     id: 'scan',
-    //     title: 'Sto Vendor',
-    //     type: 'basic',
-    //     icon: 'heroicons_outline:qr-code',
-    //     link: '/scan',
-    // },
-    // {
-    //     id: 'scan',
-    //     title: 'Sto Receive',
-    //     type: 'basic',
-    //     icon: 'heroicons_outline:qr-code',
-    //     link: '/scan',
-    // },
-    // {
-    //     id: 'permission',
-    //     title: 'Role',
-    //     type: 'basic',
-    //     icon: 'heroicons_outline:qr-code',
-    //     link: '/permission',
-    // },
 ];
 export const defaultNavigation: FuseNavigationItem[] = menu;
-
-export const compactNavigation: FuseNavigationItem[] = [
-    {
-        id: 'example',
-        title: 'Example',
-        type: 'basic',
-        icon: 'heroicons_outline:chart-pie',
-        link: '/example',
-    },
-    {
-        id: 'test',
-        title: 'Test',
-        type: 'basic',
-        icon: 'heroicons_outline:chart-pie',
-        link: '/example/test',
-    },
-];
-export const futuristicNavigation: FuseNavigationItem[] = [
-    {
-        id: 'example',
-        title: 'Example',
-        type: 'basic',
-        icon: 'heroicons_outline:chart-pie',
-        link: '/example',
-    },
-];
+export const compactNavigation: FuseNavigationItem[] = menu;
+export const futuristicNavigation: FuseNavigationItem[] = menu;
 export const horizontalNavigation: FuseNavigationItem[] = menu;

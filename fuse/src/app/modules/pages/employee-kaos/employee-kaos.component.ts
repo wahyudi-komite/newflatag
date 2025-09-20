@@ -101,6 +101,11 @@ export class EmployeeKaosComponent implements OnInit {
         { label: 'Expatriate', value: 'Expatriate' },
         { label: 'Local', value: 'Local' },
     ];
+    scan_vendorData = [
+        { label: 'Blank', value: '0' },
+        { label: 'OK', value: '1' },
+    ];
+
     counts: { [key: string]: number } = {};
     totalCounts = 0;
 
@@ -264,7 +269,7 @@ export class EmployeeKaosComponent implements OnInit {
                 header: 'Scan STO Plant',
                 sortable: true,
                 filter: true,
-                filterType: 'select',
+                filterType: 'text',
             },
             {
                 field: 'scan_palnt_date',

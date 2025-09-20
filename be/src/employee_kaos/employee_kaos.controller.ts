@@ -167,6 +167,7 @@ export class EmployeeKaosController {
   @Patch('updateScanVendor')
   async updateScanVendor(@Body() updateUserDto: any) {
     const inputValue = updateUserDto.id;
+
     const id = await this._service.findOne({ id: inputValue });
     if (!id) {
       throw new BadRequestException('Not Found');
@@ -205,6 +206,8 @@ export class EmployeeKaosController {
   @Patch('updateScanPlant')
   async updateScanPlant(@Body() updateUserDto: any) {
     const inputValue = updateUserDto.id;
+    const plant = updateUserDto.plant;
+
     const id = await this._service.findOne({ id: inputValue });
     if (!id) {
       throw new BadRequestException('Not Found');
@@ -213,6 +216,18 @@ export class EmployeeKaosController {
     if (id && id.terminated === 'YES') {
       throw new BadRequestException(
         `${id.id} ${id.name} is already marked as terminated`,
+      );
+    }
+
+    if (id.scan_vendor !== 1) {
+      throw new BadRequestException(
+        id.id + ' ' + id.name + ' Not Yet Packing or Scan on Vendor ',
+      );
+    }
+
+    if (plant && id && id.plant !== plant) {
+      throw new BadRequestException(
+        `${id.id} ${id.name} is not your Plant Area`,
       );
     }
 
@@ -244,27 +259,34 @@ export class EmployeeKaosController {
     return this.getDataServerSide(request.query);
   }
 
-  // @Get('server-side')
-  // async findAll(@Request() request) {
-  //   return this.getData(request);
-  // }
-
   @Get('count')
   async getCount(
     @Query('plant') plant: string,
     @Query('where') where?: string,
+    @Query('whereNot') whereNot?: string,
   ) {
-    // parsing query where kalau ada
     let parsedWhere: any = {};
+    let parsedWhereNot: any = {};
     if (where) {
       try {
-        parsedWhere = JSON.parse(where); // kirim dari FE: JSON.stringify({ status: 'active' })
+        parsedWhere = JSON.parse(where);
+      } catch (e) {
+        throw new BadRequestException('Invalid where JSON');
+      }
+    }
+    if (whereNot) {
+      try {
+        parsedWhereNot = JSON.parse(whereNot);
       } catch (e) {
         throw new BadRequestException('Invalid where JSON');
       }
     }
 
-    const count = await this._service.getCount(plant, parsedWhere);
+    const count = await this._service.getCount(
+      plant,
+      parsedWhere,
+      parsedWhereNot,
+    );
     return { plant, count };
   }
 }

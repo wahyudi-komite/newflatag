@@ -76,8 +76,43 @@ export class ScanVendorComponent implements OnInit {
         { label: 'PC', value: 'PC' },
         { label: 'HO', value: 'HO' },
     ];
+
+    scan_vendorData = [
+        { label: 'Blank', value: '0' },
+        { label: 'OK', value: '1' },
+    ];
+
+    statusData = [
+        { label: 'P', value: 'P' },
+        { label: 'C', value: 'C' },
+    ];
+    terminatedData = [
+        { label: 'YES', value: 'YES' },
+        { label: 'NO', value: 'NO' },
+    ];
+    genderData = [
+        { label: 'M', value: 'M' },
+        { label: 'F', value: 'F' },
+    ];
+    scanData = [
+        { label: 'Blank', value: '0' },
+        { label: 'OK', value: '1' },
+        { label: 'PRINT', value: '2' },
+    ];
+    shiftData = [
+        { label: 'NON SHIFT', value: 'NON SHIFT' },
+        { label: 'SHIFT A', value: 'SHIFT A' },
+        { label: 'SHIFT B', value: 'SHIFT B' },
+    ];
+    expatriatData = [
+        { label: 'Expatriate', value: 'Expatriate' },
+        { label: 'Local', value: 'Local' },
+    ];
+
     counts: { [key: string]: number } = {};
+    countsAll: { [key: string]: number } = {};
     totalCounts = 0;
+    totalCountsAll = 0;
 
     @ViewChild('id', { static: false }) scan!: ElementRef;
 
@@ -197,6 +232,7 @@ export class ScanVendorComponent implements OnInit {
             },
         ];
         this.getCount();
+        this.getCountAll();
     }
     get f(): { [key: string]: AbstractControl } {
         return this.form.controls;
@@ -298,6 +334,7 @@ export class ScanVendorComponent implements OnInit {
                 this.setFocus();
                 this.load();
                 this.getCount();
+                this.getCountAll();
             },
             (error) => {
                 this.errorNotif(error);
@@ -312,6 +349,17 @@ export class ScanVendorComponent implements OnInit {
             this._service.getCount(plant.value, where).subscribe((res) => {
                 this.counts[plant.value] = res.count;
                 this.totalCounts += res.count;
+            });
+        });
+    }
+
+    getCountAll(): void {
+        const where = { terminated: 'NO' };
+        this.plantData.forEach((plant) => {
+            this.totalCounts = 0;
+            this._service.getCount(plant.value, where).subscribe((res) => {
+                this.countsAll[plant.value] = res.count;
+                this.totalCountsAll += res.count;
             });
         });
     }

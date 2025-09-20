@@ -157,7 +157,8 @@ export abstract class AbstractService {
 
     getCount(
         plant: string,
-        where?: Record<string, any>
+        where?: Record<string, any>,
+        whereNot?: Record<string, any>
     ): Observable<{ plant: string; count: number }> {
         return this.http.get<{ plant: string; count: number }>(
             `${this.url}/count`,
@@ -165,6 +166,7 @@ export abstract class AbstractService {
                 params: {
                     plant,
                     ...(where ? { where: JSON.stringify(where) } : {}),
+                    ...(whereNot ? { whereNot: JSON.stringify(whereNot) } : {}),
                 },
             }
         );

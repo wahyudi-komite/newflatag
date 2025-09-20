@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import * as ExcelJS from 'exceljs';
 import { Response } from 'express';
-import { Brackets, Repository } from 'typeorm';
+import { Brackets, Not, Repository } from 'typeorm';
 import { PaginatedResult } from './paginated-result.interface';
 import { applyPrimeNgFilters } from './utils/applyPrimeNgFilters';
 
@@ -212,11 +212,18 @@ export class AbstractService {
     };
   }
 
-  async getCount(plant: string, where: any = {}): Promise<number> {
+  async getCount(
+    plant: string,
+    where: any = {},
+    whereNot: any = {},
+  ): Promise<number> {
     return this.repository.count({
       where: {
         plant,
         ...where,
+        ...Object.fromEntries(
+          Object.entries(whereNot).map(([key, value]) => [key, Not(value)]),
+        ),
       },
     });
   }

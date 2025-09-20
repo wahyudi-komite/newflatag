@@ -120,8 +120,46 @@ export class ScanPlantComponent implements OnInit {
         { label: 'PC', value: 'PC' },
         { label: 'HO', value: 'HO' },
     ];
+    plantDataAll = [
+        { label: 'P1', value: 'P1' },
+        { label: 'P2', value: 'P2' },
+        { label: 'P3', value: 'P3' },
+        { label: 'P4', value: 'P4' },
+        { label: 'P5', value: 'P5' },
+        { label: 'PC', value: 'PC' },
+        { label: 'HO', value: 'HO' },
+    ];
+
+    statusData = [
+        { label: 'P', value: 'P' },
+        { label: 'C', value: 'C' },
+    ];
+    terminatedData = [
+        { label: 'YES', value: 'YES' },
+        { label: 'NO', value: 'NO' },
+    ];
+    genderData = [
+        { label: 'M', value: 'M' },
+        { label: 'F', value: 'F' },
+    ];
+    scanData = [
+        { label: 'Blank', value: '0' },
+        { label: 'OK', value: '1' },
+        { label: 'PRINT', value: '2' },
+    ];
+    shiftData = [
+        { label: 'NON SHIFT', value: 'NON SHIFT' },
+        { label: 'SHIFT A', value: 'SHIFT A' },
+        { label: 'SHIFT B', value: 'SHIFT B' },
+    ];
+    expatriatData = [
+        { label: 'Expatriate', value: 'Expatriate' },
+        { label: 'Local', value: 'Local' },
+    ];
     counts: { [key: string]: number } = {};
+    countsAll: { [key: string]: number } = {};
     totalCounts = 0;
+    totalCountsAll = 0;
     enableDataScan: boolean = false;
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
@@ -137,6 +175,11 @@ export class ScanPlantComponent implements OnInit {
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((user: User) => {
                 this.user = user;
+                if (this.user.plant) {
+                    this.plantData = [
+                        { label: this.user.plant, value: this.user.plant },
+                    ];
+                }
             });
 
         this.form = this.fb.group({
@@ -148,7 +191,7 @@ export class ScanPlantComponent implements OnInit {
                 header: 'Scan STO Plant',
                 sortable: true,
                 filter: true,
-                filterType: 'select',
+                filterType: 'text',
             },
             {
                 field: 'scan_plant_date',
@@ -243,6 +286,7 @@ export class ScanPlantComponent implements OnInit {
             },
         ];
         this.getCount();
+        this.getCountAll();
     }
     get f(): { [key: string]: AbstractControl } {
         return this.form.controls;
@@ -297,6 +341,7 @@ export class ScanPlantComponent implements OnInit {
     }
 
     errorNotif(error: any) {
+        this.loading = false;
         const message = error?.error?.message || 'Unknown error';
 
         if (message.toLowerCase().includes('print')) {
@@ -333,16 +378,17 @@ export class ScanPlantComponent implements OnInit {
         const data = {
             ...this.form.getRawValue(),
             scan_plant: this.user.name,
+            ...(this.user.plant ? { plant: this.user.plant } : { plant: null }),
         };
         this._service.updateScanPlant(data).subscribe(
             (res) => {
                 this.enableDataScan = true;
-
+                this.loading = false;
                 GlobalVariable.audioSuccess.play();
-                // this.toastr.success('Success', res.id + ' ' + res.name, {
-                //     timeOut: 2000,
-                //     positionClass: 'toast-bottom-center',
-                // });
+                this.toastr.success('Success', res.id + ' ' + res.name, {
+                    timeOut: 2000,
+                    positionClass: 'toast-bottom-center',
+                });
                 this.responScan = res;
                 this.form.reset();
 
@@ -351,21 +397,36 @@ export class ScanPlantComponent implements OnInit {
                 this.setFocus();
                 this.load();
                 this.getCount();
+                this.getCountAll();
             },
             (error) => {
-                this.enableDataScan = true;
+                this.enableDataScan = false;
                 this.errorNotif(error);
             }
         );
     }
 
     getCount(): void {
-        const where = { scan_plant: 1 };
+        const where = { souvenir: 1 };
+        const whereNot = { scan_plant: '' };
+        this.plantData.forEach((plant) => {
+            this.totalCounts = 0;
+            this._service
+                .getCount(plant.value, where, whereNot)
+                .subscribe((res) => {
+                    this.counts[plant.value] = res.count;
+                    this.totalCounts += res.count;
+                });
+        });
+    }
+
+    getCountAll(): void {
+        const where = { terminated: 'NO' };
         this.plantData.forEach((plant) => {
             this.totalCounts = 0;
             this._service.getCount(plant.value, where).subscribe((res) => {
-                this.counts[plant.value] = res.count;
-                this.totalCounts += res.count;
+                this.countsAll[plant.value] = res.count;
+                this.totalCountsAll += res.count;
             });
         });
     }
@@ -378,6 +439,9 @@ export class ScanPlantComponent implements OnInit {
         this.request.rows = $event.rows;
 
         this.request.filters = cleanFilters($event.filters);
+        this.request.filters['plant'] = [
+            { value: this.user.plant, matchMode: 'equals', operator: 'and' },
+        ];
         this._service.serverside(this.request).subscribe((res) => {
             this.datas = res.data;
             this.total = res.meta.total;
