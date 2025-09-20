@@ -8,7 +8,7 @@ const menu: FuseNavigationItem[] = [
         type: 'basic',
         icon: 'heroicons_outline:queue-list',
         link: '/dashboard',
-        meta: { roles: ['admin'] },
+        meta: { roles: ['admin', 'user'] },
     },
     {
         id: 'scan',
@@ -32,7 +32,7 @@ const menu: FuseNavigationItem[] = [
         type: 'basic',
         icon: 'heroicons_outline:qr-code',
         link: '/scan-plant',
-        meta: { roles: ['user'] },
+        meta: { roles: ['user', 'admin'] },
     },
 ];
 export const defaultNavigation: FuseNavigationItem[] = menu;
