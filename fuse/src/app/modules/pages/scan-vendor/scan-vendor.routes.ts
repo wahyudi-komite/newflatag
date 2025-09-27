@@ -10,7 +10,7 @@ export default [
         canActivate: [AuthGuard],
         data: {
             stateAccess: 'scan-vendor',
-            role: [UserRole.Admin],
+            role: [UserRole.Admin, UserRole.Supplier],
         },
     },
 ] as Routes;

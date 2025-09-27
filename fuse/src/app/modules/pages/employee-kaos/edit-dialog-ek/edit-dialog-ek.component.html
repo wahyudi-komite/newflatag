@@ -6,8 +6,20 @@
         <mat-icon>close</mat-icon>
     </button>
 </div>
-<form [formGroup]="form" (submit)="doAction()" autocomplete="off">
-    <mat-dialog-content class="px-0">
+<form
+    [formGroup]="form"
+    (submit)="doAction()"
+    autocomplete="off"
+    class="h-auto"
+>
+    <mat-dialog-content
+        class="px-0"
+        style="
+            max-height: none !important;
+            height: auto !important;
+            overflow: visible !important;
+        "
+    >
         <div *ngIf="action != 'Delete'; else elseTemplate">
             <div class="flex gap-2">
                 <div class="gt-xs:flex-row max-w-[80px] flex-1">
@@ -554,6 +566,104 @@
                         />
                         <mat-error *ngIf="f['clong'].errors?.['required']">
                             You must enter a value
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+            <!-- Scan Status -->
+            <div class="grid grid-cols-4 gap-4">
+                <div
+                    class="gt-xs:flex-row flex"
+                    *ngIf="this.local_data.scan_vendor === 1"
+                >
+                    <mat-form-field class="w-full" floatLabel="always">
+                        <mat-label>Scan Vendor</mat-label>
+                        <mat-select
+                            formControlName="scan_vendor"
+                            [ngClass]="
+                                f['scan_vendor'].value === null
+                                    ? 'text-rose-500'
+                                    : ''
+                            "
+                        >
+                            <mat-option
+                                *ngFor="let item of scan_vendorList"
+                                [value]="item.value"
+                            >
+                                {{ item.label }}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error
+                            *ngIf="f['scan_vendor'].errors?.['required']"
+                        >
+                            Pilihan scan vendor wajib diisi</mat-error
+                        >
+                    </mat-form-field>
+                </div>
+                <div
+                    class="gt-xs:flex-row flex"
+                    *ngIf="this.local_data.scan_vendor === 1"
+                >
+                    <mat-form-field class="w-full" floatLabel="always">
+                        <mat-label>Tanggal Vendor Plant</mat-label>
+                        <input
+                            matInput
+                            formControlName="scan_vendor_date"
+                            placeholder="Tanggal Vendor Plant.."
+                            readonly
+                        />
+
+                        <mat-error
+                            *ngIf="f['scan_vendor_date'].errors?.['required']"
+                        >
+                            Tanggal scan vendor wajib diisi
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+
+                <div
+                    class="gt-xs:flex-row flex"
+                    *ngIf="this.local_data.scan_plant"
+                >
+                    <mat-form-field class="w-full" floatLabel="always">
+                        <mat-label>Scan Plant</mat-label>
+                        <mat-select
+                            formControlName="scan_plant"
+                            [ngClass]="
+                                f['scan_plant'].value === null
+                                    ? 'text-rose-500'
+                                    : ''
+                            "
+                        >
+                            <mat-option
+                                *ngFor="let item of scan_plantList"
+                                [value]="item"
+                            >
+                                {{ item === '' ? 'Belum Scan' : item }}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="f['scan_plant'].errors?.['required']">
+                            Pilihan scan plant wajib diisi</mat-error
+                        >
+                    </mat-form-field>
+                </div>
+                <div
+                    class="gt-xs:flex-row flex"
+                    *ngIf="this.local_data.scan_plant"
+                >
+                    <mat-form-field class="w-full" floatLabel="always">
+                        <mat-label>Tanggal Scan Plant</mat-label>
+                        <input
+                            matInput
+                            formControlName="scan_plant_date"
+                            placeholder="Tanggal Scan Plant.."
+                            readonly
+                        />
+
+                        <mat-error
+                            *ngIf="f['scan_plant_date'].errors?.['required']"
+                        >
+                            Tanggal scan plant wajib diisi
                         </mat-error>
                     </mat-form-field>
                 </div>

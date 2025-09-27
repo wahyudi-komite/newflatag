@@ -8,7 +8,7 @@ const menu: FuseNavigationItem[] = [
         type: 'basic',
         icon: 'heroicons_outline:queue-list',
         link: '/dashboard',
-        meta: { roles: ['admin', 'user'] },
+        meta: { roles: ['admin', 'user', 'supplier'] },
     },
     {
         id: 'scan',
@@ -34,6 +34,14 @@ const menu: FuseNavigationItem[] = [
         link: '/scan-plant',
         meta: { roles: ['user', 'admin'] },
     },
+    // {
+    //     id: 'profile',
+    //     title: 'Sto Plant',
+    //     type: 'group',
+    //     icon: 'heroicons_outline:qr-code',
+    //     link: '/profile',
+    //     meta: { roles: ['user', 'admin'] },
+    // },
 ];
 export const defaultNavigation: FuseNavigationItem[] = menu;
 export const compactNavigation: FuseNavigationItem[] = menu;

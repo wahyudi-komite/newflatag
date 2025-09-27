@@ -68,13 +68,13 @@ export class ScanVendorComponent implements OnInit {
     selectedDatas: any[] = [];
     request: any = {};
     plantData = [
-        { label: 'P1', value: 'P1' },
-        { label: 'P2', value: 'P2' },
-        { label: 'P3', value: 'P3' },
-        { label: 'P4', value: 'P4' },
-        { label: 'P5', value: 'P5' },
-        { label: 'PC', value: 'PC' },
-        { label: 'HO', value: 'HO' },
+        { label: 'P1', value: 'P1', counting: 0, open: 0 },
+        { label: 'P2', value: 'P2', counting: 0, open: 0 },
+        { label: 'P3', value: 'P3', counting: 0, open: 0 },
+        { label: 'P4', value: 'P4', counting: 0, open: 0 },
+        { label: 'P5', value: 'P5', counting: 0, open: 0 },
+        { label: 'PC', value: 'PC', counting: 0, open: 0 },
+        { label: 'HO', value: 'HO', counting: 0, open: 0 },
     ];
 
     scan_vendorData = [
@@ -112,6 +112,7 @@ export class ScanVendorComponent implements OnInit {
     counts: { [key: string]: number } = {};
     countsAll: { [key: string]: number } = {};
     totalCounts = 0;
+    totalOpen = 0;
     totalCountsAll = 0;
 
     @ViewChild('id', { static: false }) scan!: ElementRef;
@@ -216,22 +217,23 @@ export class ScanVendorComponent implements OnInit {
                 filter: true,
                 filterType: 'text',
             },
-            {
-                field: 'no_wa',
-                header: 'whatsapp',
-                sortable: true,
-                filter: true,
-                filterType: 'text',
-            },
-            {
-                field: 'souvenir',
-                header: 'souvenir',
-                sortable: true,
-                filter: true,
-                filterType: 'text',
-            },
+            // {
+            //     field: 'no_wa',
+            //     header: 'whatsapp',
+            //     sortable: true,
+            //     filter: true,
+            //     filterType: 'text',
+            // },
+            // {
+            //     field: 'souvenir',
+            //     header: 'souvenir',
+            //     sortable: true,
+            //     filter: true,
+            //     filterType: 'text',
+            // },
         ];
         this.getCount();
+        this.getOpen();
         this.getCountAll();
     }
     get f(): { [key: string]: AbstractControl } {
@@ -322,7 +324,11 @@ export class ScanVendorComponent implements OnInit {
 
         this._service.updateScanVendor(this.form.getRawValue()).subscribe(
             (res) => {
-                GlobalVariable.audioSuccess.play();
+                if (GlobalVariable.audioSuccess) {
+                    GlobalVariable.audioSuccess.pause(); // pastikan berhenti dulu
+                    GlobalVariable.audioSuccess.currentTime = 0; // reset ke awal
+                    GlobalVariable.audioSuccess.play(); // mainkan ulang
+                }
                 this.toastr.success('Success', res.id + ' ' + res.name, {
                     timeOut: 2000,
                     positionClass: 'toast-bottom-center',
@@ -334,6 +340,7 @@ export class ScanVendorComponent implements OnInit {
                 this.setFocus();
                 this.load();
                 this.getCount();
+                this.getOpen();
                 this.getCountAll();
             },
             (error) => {
@@ -344,25 +351,58 @@ export class ScanVendorComponent implements OnInit {
 
     getCount(): void {
         const where = { scan_vendor: 1 };
+        this.totalCounts = 0;
         this.plantData.forEach((plant) => {
-            this.totalCounts = 0;
             this._service.getCount(plant.value, where).subscribe((res) => {
-                this.counts[plant.value] = res.count;
+                plant.counting = res.count;
                 this.totalCounts += res.count;
             });
         });
     }
 
-    getCountAll(): void {
-        const where = { terminated: 'NO' };
+    getOpen(): void {
+        const where = { scan_vendor: 0, terminated: 'NO' };
+        this.totalOpen = 0;
         this.plantData.forEach((plant) => {
-            this.totalCounts = 0;
+            this._service.getCount(plant.value, where).subscribe((resOpen) => {
+                plant.open = resOpen.count;
+                this.totalOpen += resOpen.count;
+            });
+        });
+    }
+
+    getCountAll(): void {
+        const where = {};
+        this.totalCountsAll = 0;
+        this.plantData.forEach((plant) => {
             this._service.getCount(plant.value, where).subscribe((res) => {
                 this.countsAll[plant.value] = res.count;
                 this.totalCountsAll += res.count;
             });
         });
     }
+
+    // getCountx(): void {
+    //     const where = { scan_vendor: 1 };
+    //     this.plantData.forEach((plant) => {
+    //         this.totalCounts = 0;
+    //         this._service.getCount(plant.value, where).subscribe((res) => {
+    //             this.counts[plant.value] = res.count;
+    //             this.totalCounts += res.count;
+    //         });
+    //     });
+    // }
+
+    // getCountAllx(): void {
+    //     const where = { terminated: 'NO' };
+    //     this.plantData.forEach((plant) => {
+    //         this.totalCounts = 0;
+    //         this._service.getCount(plant.value, where).subscribe((res) => {
+    //             this.countsAll[plant.value] = res.count;
+    //             this.totalCountsAll += res.count;
+    //         });
+    //     });
+    // }
 
     loadLazy($event: TableLazyLoadEvent) {
         this.request.globalFilter = $event.globalFilter || '';

@@ -27,7 +27,10 @@ import { SelectModule } from 'primeng/select';
 import { Table, TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
+import { Subject, takeUntil } from 'rxjs';
 import * as XLSX from 'xlsx';
+import { UserService } from '../../../core/user/user.service';
+import { User } from '../../../core/user/user.types';
 import { cleanFilters } from '../../../node/common/cleanFilters';
 import { GlobalVariable } from '../../../node/common/global-variable';
 import { EmployeeKaos } from '../employee-kaos/employee-kaos';
@@ -57,6 +60,7 @@ import { EmployeeKaosService } from '../employee-kaos/employee-kaos.service';
     styleUrl: './scan-data.component.scss',
 })
 export class ScanDataComponent implements OnInit {
+    user: User;
     form!: FormGroup;
     datas: EmployeeKaos[] = [];
     cols!: any[];
@@ -68,13 +72,13 @@ export class ScanDataComponent implements OnInit {
     selectedDatas: any[] = [];
     request: any = {};
     plantData = [
-        { label: 'P1', value: 'P1' },
-        { label: 'P2', value: 'P2' },
-        { label: 'P3', value: 'P3' },
-        { label: 'P4', value: 'P4' },
-        { label: 'P5', value: 'P5' },
-        { label: 'PC', value: 'PC' },
-        { label: 'HO', value: 'HO' },
+        { label: 'P1', value: 'P1', counting: 0 },
+        { label: 'P2', value: 'P2', counting: 0 },
+        { label: 'P3', value: 'P3', counting: 0 },
+        { label: 'P4', value: 'P4', counting: 0 },
+        { label: 'P5', value: 'P5', counting: 0 },
+        { label: 'PC', value: 'PC', counting: 0 },
+        { label: 'HO', value: 'HO', counting: 0 },
     ];
     scanData = [
         { label: 'Blank', value: '0' },
@@ -107,13 +111,21 @@ export class ScanDataComponent implements OnInit {
     counts: { [key: string]: number } = {};
     totalCounts = 0;
 
+    private _unsubscribeAll: Subject<any> = new Subject<any>();
     @ViewChild('scan', { static: false }) scan!: ElementRef;
 
     private fb = inject(FormBuilder);
     private toastr = inject(ToastrService);
     private _service = inject(EmployeeKaosService);
+    private _userService = inject(UserService);
 
     ngOnInit(): void {
+        this._userService.user$
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((user: User) => {
+                this.user = user;
+            });
+
         this.form = this.fb.group({
             scan: ['', [Validators.required]],
         });
@@ -314,7 +326,11 @@ export class ScanDataComponent implements OnInit {
 
         this._service.updateScan(this.form.getRawValue()).subscribe(
             (res) => {
-                GlobalVariable.audioSuccess.play();
+                if (GlobalVariable.audioSuccess) {
+                    GlobalVariable.audioSuccess.pause(); // pastikan berhenti dulu
+                    GlobalVariable.audioSuccess.currentTime = 0; // reset ke awal
+                    GlobalVariable.audioSuccess.play(); // mainkan ulang
+                }
                 this.toastr.success('Success', res.id + ' ' + res.name, {
                     timeOut: 2000,
                     positionClass: 'toast-bottom-center',
@@ -334,11 +350,10 @@ export class ScanDataComponent implements OnInit {
     }
 
     getCount(): void {
-        const where = { scan: 1 };
+        this.totalCounts = 0;
         this.plantData.forEach((plant) => {
-            this.totalCounts = 0;
-            this._service.getCount(plant.value, where).subscribe((res) => {
-                this.counts[plant.value] = res.count;
+            this._service.getCount(plant.value).subscribe((res) => {
+                plant.counting = res.count;
                 this.totalCounts += res.count;
             });
         });

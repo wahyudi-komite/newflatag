@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import {
     FormBuilder,
@@ -34,6 +34,7 @@ import { MatSelectModule } from '@angular/material/select';
     ],
     templateUrl: './edit-dialog-ek.component.html',
     styleUrl: './edit-dialog-ek.component.scss',
+    providers: [DatePipe],
 })
 export class EditDialogEkComponent implements OnInit {
     form!: FormGroup;
@@ -43,7 +44,20 @@ export class EditDialogEkComponent implements OnInit {
     selectStatus = [];
 
     plantList: string[] = ['HO', 'PC', 'P5', 'P4', 'P3', 'P2', 'P1'];
+    scan_plantList: string[] = [
+        'admin.p1',
+        'admin.p2',
+        'admin.p3',
+        'admin.p4',
+        'admin.p5',
+        'admin.pc',
+        'admin.ho',
+    ];
     terminatedList: string[] = ['YES', 'NO'];
+    scan_vendorList = [
+        { label: 'Blank', value: 0 },
+        { label: 'OK', value: 1 },
+    ];
     shiftList: string[] = ['NON SHIFT', 'SHIFT A', 'SHIFT B'];
 
     familyStatsList: string[] = [
@@ -117,6 +131,7 @@ export class EditDialogEkComponent implements OnInit {
     readonly dialogRef = inject(MatDialogRef<EditDialogEkComponent>);
     readonly data = inject<any>(MAT_DIALOG_DATA);
     private fb = inject(FormBuilder);
+    private datepipe = inject(DatePipe);
 
     ngOnInit(): void {
         this.local_data = this.data;
@@ -158,6 +173,10 @@ export class EditDialogEkComponent implements OnInit {
             dlong: ['', {}],
             cshort: ['', {}],
             clong: ['', {}],
+            scan_vendor: ['', []],
+            scan_vendor_date: [null, []],
+            scan_plant: [null, []],
+            scan_plant_date: [null, []],
         });
 
         if (this.action != 'Add') {
@@ -180,16 +199,11 @@ export class EditDialogEkComponent implements OnInit {
     }
 
     doAction() {
-        // Object.keys(this.form.controls).forEach((field) => {
-        //     const control = this.form.get(field);
-        //     if (control?.invalid) {
-        //         console.log(`❌ Field invalid: ${field}`, control.errors);
-        //     }
-        // });
-
         if (this.form.invalid) {
             return;
         }
+
+        console.log(this.form.value.scan_plant_date);
 
         this.dialogRef.close({
             event: this.action,

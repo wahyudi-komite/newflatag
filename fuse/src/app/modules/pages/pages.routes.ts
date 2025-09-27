@@ -32,4 +32,8 @@ export default [
         path: 'permission',
         loadChildren: () => import('./app/permission/permission.routes'),
     },
+    {
+        path: 'profile',
+        loadChildren: () => import('../pages/app/profile/profile.routes'),
+    },
 ] as Routes;

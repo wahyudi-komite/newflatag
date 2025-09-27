@@ -66,13 +66,13 @@ export class EmployeeKaosComponent implements OnInit {
     selectedDatas: any[] = [];
     request: any = {};
     plantData = [
-        { label: 'P1', value: 'P1' },
-        { label: 'P2', value: 'P2' },
-        { label: 'P3', value: 'P3' },
-        { label: 'P4', value: 'P4' },
-        { label: 'P5', value: 'P5' },
-        { label: 'PC', value: 'PC' },
-        { label: 'HO', value: 'HO' },
+        { label: 'P1', value: 'P1', counting: 0 },
+        { label: 'P2', value: 'P2', counting: 0 },
+        { label: 'P3', value: 'P3', counting: 0 },
+        { label: 'P4', value: 'P4', counting: 0 },
+        { label: 'P5', value: 'P5', counting: 0 },
+        { label: 'PC', value: 'PC', counting: 0 },
+        { label: 'HO', value: 'HO', counting: 0 },
     ];
 
     statusData = [
@@ -537,6 +537,8 @@ export class EmployeeKaosComponent implements OnInit {
         let dialogBoxSettings = {
             position: { top: '10px' },
             width: '1000px',
+            height: 'auto', // biar mengikuti konten
+            maxHeight: 'none',
             margin: '0 auto',
             disableClose: true,
             hasBackdrop: true,
@@ -599,11 +601,21 @@ export class EmployeeKaosComponent implements OnInit {
         });
     }
 
+    // getCount(): void {
+    //     this.plantData.forEach((plant) => {
+    //         this.totalCounts = 0;
+    //         this._service.getCount(plant.value).subscribe((res) => {
+    //             this.counts[plant.value] = res.count;
+    //             this.totalCounts += res.count;
+    //         });
+    //     });
+    // }
+
     getCount(): void {
+        this.totalCounts = 0;
         this.plantData.forEach((plant) => {
-            this.totalCounts = 0;
             this._service.getCount(plant.value).subscribe((res) => {
-                this.counts[plant.value] = res.count;
+                plant.counting = res.count;
                 this.totalCounts += res.count;
             });
         });

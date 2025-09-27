@@ -18,11 +18,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { saveAs } from 'file-saver';
 import { CountUpModule } from 'ngx-countup';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
+import { BadgeModule } from 'primeng/badge';
 import { ButtonModule } from 'primeng/button';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { OverlayBadgeModule } from 'primeng/overlaybadge';
 import { SelectModule } from 'primeng/select';
 import { Table, TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
@@ -55,6 +57,8 @@ import { EmployeeKaosService } from '../employee-kaos/employee-kaos.service';
         TooltipModule,
         MatIconModule,
         CountUpModule,
+        BadgeModule,
+        OverlayBadgeModule,
     ],
     templateUrl: './scan-plant.component.html',
     styleUrl: './scan-plant.component.scss',
@@ -111,6 +115,7 @@ export class ScanPlantComponent implements OnInit {
     data: any;
     selectedDatas: any[] = [];
     request: any = {};
+    errorNotifikasi: any = {};
     plantData = [
         { label: 'P1', value: 'P1' },
         { label: 'P2', value: 'P2' },
@@ -121,13 +126,13 @@ export class ScanPlantComponent implements OnInit {
         { label: 'HO', value: 'HO' },
     ];
     plantDataAll = [
-        { label: 'P1', value: 'P1' },
-        { label: 'P2', value: 'P2' },
-        { label: 'P3', value: 'P3' },
-        { label: 'P4', value: 'P4' },
-        { label: 'P5', value: 'P5' },
-        { label: 'PC', value: 'PC' },
-        { label: 'HO', value: 'HO' },
+        { label: 'P1', value: 'P1', counting: 0 },
+        { label: 'P2', value: 'P2', counting: 0 },
+        { label: 'P3', value: 'P3', counting: 0 },
+        { label: 'P4', value: 'P4', counting: 0 },
+        { label: 'P5', value: 'P5', counting: 0 },
+        { label: 'PC', value: 'PC', counting: 0 },
+        { label: 'HO', value: 'HO', counting: 0 },
     ];
 
     statusData = [
@@ -277,13 +282,13 @@ export class ScanPlantComponent implements OnInit {
                 filter: true,
                 filterType: 'text',
             },
-            {
-                field: 'no_wa',
-                header: 'whatsapp',
-                sortable: true,
-                filter: true,
-                filterType: 'text',
-            },
+            // {
+            //     field: 'no_wa',
+            //     header: 'whatsapp',
+            //     sortable: true,
+            //     filter: true,
+            //     filterType: 'text',
+            // },
         ];
         this.getCount();
         this.getCountAll();
@@ -343,19 +348,46 @@ export class ScanPlantComponent implements OnInit {
     errorNotif(error: any) {
         this.loading = false;
         const message = error?.error?.message || 'Unknown error';
-
         if (message.toLowerCase().includes('print')) {
             GlobalVariable.audioInfo.play();
-            this.toastr.info(message, 'Info', {
-                timeOut: 5000,
-                positionClass: 'toast-bottom-center',
-            });
+            // this.toastr.info(message, 'Info', {
+            //     timeOut: 5000,
+            //     positionClass: 'toast-bottom-center',
+            // });
+            this.errorNotifikasi = {
+                message: message,
+                divDisplay: true,
+                bgColor: 'bg-orange-500',
+            };
         } else {
             GlobalVariable.audioFailed.play();
-            this.toastr.error(message, 'Failed', {
-                timeOut: 5000,
-                positionClass: 'toast-bottom-center',
-            });
+            // this.toastr.error(message, 'Failed', {
+            //     timeOut: 5000,
+            //     positionClass: 'toast-bottom-center',
+            // });
+            let bgColor = 'bg-rose-500';
+            let sizeFont = 'text-10xl';
+
+            if (message.toLowerCase().includes('already')) {
+                bgColor = 'bg-pink-800';
+                sizeFont = 'text-7xl';
+            } else if (message.toLowerCase().includes('plant')) {
+                bgColor = 'bg-indigo-800';
+                sizeFont = 'text-8xl';
+            } else if (message.toLowerCase().includes('packing')) {
+                bgColor = 'bg-orange-500';
+                sizeFont = 'text-7xl';
+            } else if (message.toLowerCase().includes('terminated')) {
+                bgColor = 'bg-black';
+                sizeFont = 'text-8xl';
+            }
+
+            this.errorNotifikasi = {
+                message: message,
+                divDisplay: true,
+                bgColor: bgColor,
+                sizeFont: sizeFont,
+            };
         }
     }
 
@@ -384,7 +416,11 @@ export class ScanPlantComponent implements OnInit {
             (res) => {
                 this.enableDataScan = true;
                 this.loading = false;
-                GlobalVariable.audioSuccess.play();
+                if (GlobalVariable.audioSuccess) {
+                    GlobalVariable.audioSuccess.pause(); // pastikan berhenti dulu
+                    GlobalVariable.audioSuccess.currentTime = 0; // reset ke awal
+                    GlobalVariable.audioSuccess.play(); // mainkan ulang
+                }
                 this.toastr.success('Success', res.id + ' ' + res.name, {
                     timeOut: 2000,
                     positionClass: 'toast-bottom-center',
@@ -409,20 +445,45 @@ export class ScanPlantComponent implements OnInit {
     getCount(): void {
         const where = { souvenir: 1 };
         const whereNot = { scan_plant: '' };
-        this.plantData.forEach((plant) => {
-            this.totalCounts = 0;
+        this.totalCounts = 0;
+        this.plantDataAll.forEach((plant) => {
             this._service
                 .getCount(plant.value, where, whereNot)
                 .subscribe((res) => {
-                    this.counts[plant.value] = res.count;
+                    plant.counting = res.count;
                     this.totalCounts += res.count;
                 });
         });
     }
 
+    // getCountx(): void {
+    //     const where = { souvenir: 1 };
+    //     const whereNot = { scan_plant: '' };
+    //     this.plantDataAll.forEach((plant) => {
+    //         this.totalCounts = 0;
+    //         this._service
+    //             .getCount(plant.value, where, whereNot)
+    //             .subscribe((res) => {
+    //                 this.counts[plant.value] = res.count;
+    //                 this.totalCounts += res.count;
+    //             });
+    //     });
+    // }
+
+    // getCountAll(): void {
+    //     const where = { terminated: 'NO' };
+    //     this.totalCountsAll = 0;
+    //     this.plantData.forEach((plant) => {
+    //         this._service.getCount(plant.value, where).subscribe((res) => {
+    //             this.countsAll[plant.value] = res.count;
+    //             this.totalCountsAll += res.count;
+    //         });
+    //     });
+    // }
+
     getCountAll(): void {
         const where = { terminated: 'NO' };
-        this.plantData.forEach((plant) => {
+        this.plantDataAll.forEach((plant) => {
             this.totalCounts = 0;
             this._service.getCount(plant.value, where).subscribe((res) => {
                 this.countsAll[plant.value] = res.count;
@@ -439,9 +500,15 @@ export class ScanPlantComponent implements OnInit {
         this.request.rows = $event.rows;
 
         this.request.filters = cleanFilters($event.filters);
-        this.request.filters['plant'] = [
-            { value: this.user.plant, matchMode: 'equals', operator: 'and' },
-        ];
+        if (this.user.plant !== null) {
+            this.request.filters['plant'] = [
+                {
+                    value: this.user.plant,
+                    matchMode: 'equals',
+                    operator: 'and',
+                },
+            ];
+        }
         this._service.serverside(this.request).subscribe((res) => {
             this.datas = res.data;
             this.total = res.meta.total;

@@ -9,8 +9,7 @@ export default [
         component: EmployeeKaosComponent,
         canActivate: [AuthGuard],
         data: {
-            stateAccess: 'dashboard',
-            role: [UserRole.Admin, UserRole.User],
+            role: [UserRole.Admin, UserRole.User, UserRole.Supplier],
         },
     },
 ] as Routes;

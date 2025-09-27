@@ -66,7 +66,7 @@
                         class="text-7xl font-bold leading-none tracking-tight text-blue-500 sm:text-7xl"
                     >
                         <span
-                            [countUp]="counts[a.value]"
+                            [countUp]="a.counting"
                             duration="3"
                             [options]="{ separator: '.', decimal: ',' }"
                         ></span>
@@ -79,7 +79,11 @@
                             [value]="
                                 counts[a.value] === 0
                                     ? 0
-                                    : ((counts[a.value] / countsAll[a.value]) *
+                                    : ((a.counting /
+                                          (countsAll[a.value] -
+                                              (countsAll[a.value] -
+                                                  a.counting -
+                                                  a.open))) *
                                           100 | number: '1.2-2')
                             "
                             severity="success"
@@ -89,11 +93,19 @@
                         class="text-lg font-medium text-gray-500 dark:text-blue-500"
                     >
                         OPEN :
+                        <p-tag [value]="a.open | number" severity="warn" />
+                    </div>
+
+                    <div
+                        class="text-lg font-medium text-gray-500 dark:text-blue-500"
+                    >
+                        Terminated :
                         <p-tag
                             [value]="
-                                countsAll[a.value] - counts[a.value] | number
+                                countsAll[a.value] - a.counting - a.open
+                                    | number
                             "
-                            severity="warn"
+                            severity="danger"
                         />
                     </div>
                     <div
@@ -134,12 +146,17 @@
                         [value]="
                             totalCounts === 0
                                 ? 0
-                                : ((totalCounts / totalCountsAll) * 100
-                                  | number: '1.2-2')
+                                : ((totalCounts /
+                                      (totalCountsAll -
+                                          (totalCountsAll -
+                                              totalCounts -
+                                              totalOpen))) *
+                                      100 | number: '1.2-2')
                         "
                         severity="success"
                     />%
                 </div>
+
                 <div
                     class="text-lg font-medium text-gray-500 dark:text-blue-500"
                 >
@@ -147,6 +164,17 @@
                     <p-tag
                         [value]="totalCountsAll - totalCounts | number"
                         severity="warn"
+                    />
+                </div>
+                <div
+                    class="text-lg font-medium text-gray-500 dark:text-blue-500"
+                >
+                    Terminated :
+                    <p-tag
+                        [value]="
+                            totalCountsAll - totalCounts - totalOpen | number
+                        "
+                        severity="danger"
                     />
                 </div>
                 <div
@@ -404,8 +432,8 @@
                         </td>
 
                         <td>{{ datas.family_stats }}</td>
-                        <td>{{ datas.no_wa }}</td>
-                        <td class="text-center">{{ datas.souvenir }}</td>
+                        <!-- <td>{{ datas.no_wa }}</td> -->
+                        <!-- <td class="text-center">{{ datas.souvenir }}</td> -->
                     </tr>
                 </ng-template>
 

@@ -185,7 +185,7 @@ export class EmployeeKaosController {
     //   );
     // }
 
-    if (id.scan_vendor_date !== null) {
+    if (id.scan_vendor !== 0) {
       throw new BadRequestException(
         id.id +
           ' ' +
@@ -214,9 +214,7 @@ export class EmployeeKaosController {
     }
 
     if (id && id.terminated === 'YES') {
-      throw new BadRequestException(
-        `${id.id} ${id.name} is already marked as terminated`,
-      );
+      throw new BadRequestException(`${id.id} ${id.name} marked as terminated`);
     }
 
     if (id.scan_vendor !== 1) {
@@ -227,16 +225,16 @@ export class EmployeeKaosController {
 
     if (plant && id && id.plant !== plant) {
       throw new BadRequestException(
-        `${id.id} ${id.name} is not your Plant Area`,
+        `${id.id} ${id.name} are not your Plant Area`,
       );
     }
 
     if (id.scan_plant_date !== null) {
       throw new BadRequestException(
         id.id +
-          ' ' +
+          '-' +
           id.name +
-          ' Already Taken at ' +
+          ' Already Scan at ' +
           formatDate(id.scan_plant_date),
       );
     }

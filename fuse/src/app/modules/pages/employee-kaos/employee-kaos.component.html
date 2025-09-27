@@ -21,7 +21,7 @@
                         class="text-7xl font-bold leading-none tracking-tight text-gray-800 sm:text-7xl"
                     >
                         <span
-                            [countUp]="counts[a.value]"
+                            [countUp]="a.counting"
                             duration="3"
                             [options]="{ separator: '.', decimal: ',' }"
                         ></span>
@@ -76,6 +76,7 @@
         </div>
     </div>
     <div
+        *ngIf="this.user.role.name == 'admin'"
         class="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"
     >
         <div class="card w-full">

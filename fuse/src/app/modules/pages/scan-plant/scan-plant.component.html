@@ -1,7 +1,7 @@
 <div class="flex h-full w-full flex-col p-4 print:hidden">
     <!-- Toolbar -->
     <div class="mb-4 flex flex-col items-center gap-2 sm:flex-row">
-        <div class="flex items-center justify-center">
+        <div class="flex w-full items-center justify-center">
             <form
                 class="rounded-md border-2 border-white bg-white p-4 shadow-xl"
                 [formGroup]="form"
@@ -43,10 +43,26 @@
                 </div>
             </form>
         </div>
-
+        <!-- Notifikasi NOT OK -->
         <div
-            *ngIf="this.enableDataScan"
+            *ngIf="errorNotifikasi.divDisplay"
+            class="flex h-full min-w-2/3 items-center justify-center gap-2 rounded-2xl p-2 text-center {{
+                errorNotifikasi.bgColor
+            }}"
+        >
+            <h1
+                class="{{
+                    this.errorNotifikasi.sizeFont
+                }} font-bold uppercase text-white"
+            >
+                {{ this.errorNotifikasi.message }}
+            </h1>
+        </div>
+
+        <!-- Notifikasi OK -->
+        <div
             class="flex h-full min-w-2/3 flex-col items-start gap-2"
+            *ngIf="this.enableDataScan"
         >
             <div class="grid w-full grid-cols-2 gap-1">
                 <div class="grid w-full grid-cols-1">
@@ -91,69 +107,8 @@
                         </div>
                     </div>
                 </div>
-                <!-- <div
-                    class="flex flex-col flex-auto p-1 overflow-hidden shadow bg-card rounded-xl"
-                >
-                    <div
-                        class="flex items-center justify-center h-8 border-b-2"
-                    >
-                        <div
-                            class="font-bold leading-6 tracking-tight truncate text-md"
-                        >
-                            PLANT
-                        </div>
-                    </div>
-                    <div class="flex items-center justify-center">
-                        <div
-                            class="flex items-center justify-center px-2 text-xl font-bold text-center text-indigo-800 min-h-10 dark:text-blue-500"
-                        >
-                            {{ this.responScan.plant }}
-                        </div>
-                    </div>
-                </div> -->
-                <!-- <div
-                    class="flex flex-col flex-auto p-1 overflow-hidden shadow bg-card rounded-xl"
-                >
-                    <div
-                        class="flex items-center justify-center h-8 border-b-2"
-                    >
-                        <div
-                            class="font-bold leading-6 tracking-tight truncate text-md"
-                        >
-                            STATUS
-                        </div>
-                    </div>
-                    <div class="flex flex-col items-center justify-center">
-                        <div
-                            class="flex items-center justify-center px-2 text-xl font-bold text-center text-indigo-800 min-h-10 dark:text-blue-500"
-                        >
-                            <p-button label="SUCCESS" />
-                        </div>
-                    </div>
-                </div> -->
             </div>
             <div class="grid w-full grid-cols-2 gap-1">
-                <!-- <div
-                    class="flex flex-col flex-auto p-1 overflow-hidden shadow bg-card rounded-xl"
-                >
-                    <div
-                        class="flex items-center justify-center h-8 text-white bg-indigo-700 border-b-2 rounded-xl"
-                    >
-                        <div
-                            class="font-bold leading-6 tracking-tight truncate text-md"
-                        >
-                            DIVISION
-                        </div>
-                    </div>
-                    <div class="flex flex-col items-center justify-center">
-                        <div
-                            class="flex items-center justify-center px-2 text-xl font-bold text-center text-indigo-900 min-h-10 dark:text-blue-500"
-                        >
-                            {{ this.responScan.divisi }}
-                        </div>
-                    </div>
-                </div> -->
-
                 <div
                     class="bg-card flex flex-auto flex-col overflow-hidden rounded-xl p-1 shadow"
                 >
@@ -202,7 +157,9 @@
     >
         <ng-container *ngFor="let a of plantDataAll; let i = index">
             <div
-                class="bg-card flex flex-auto flex-col overflow-hidden rounded-2xl p-6 shadow"
+                class="flex flex-auto flex-col overflow-hidden rounded-2xl {{
+                    countsAll[a.value] - a.counting == 0 ? 'bg-card' : 'bg-card'
+                }} p-6 shadow"
             >
                 <div class="flex items-start justify-between">
                     <div
@@ -210,14 +167,20 @@
                     >
                         {{ a.label }}
                     </div>
-                    <div class="-mr-3 -mt-2 ml-2"></div>
+                    <div class="-mr-3 -mt-2 ml-2">
+                        <p-badge
+                            value="Closed"
+                            severity="info"
+                            *ngIf="countsAll[a.value] - a.counting === 0"
+                        />
+                    </div>
                 </div>
                 <div class="mt-2 flex flex-col items-center">
                     <div
                         class="text-7xl font-bold leading-none tracking-tight text-fuchsia-600 sm:text-7xl"
                     >
                         <span
-                            [countUp]="counts[a.value]"
+                            [countUp]="a.counting"
                             duration="3"
                             [options]="{ separator: '.', decimal: ',' }"
                         ></span>
@@ -230,8 +193,8 @@
                             [value]="
                                 counts[a.value] === 0
                                     ? 0
-                                    : ((counts[a.value] / countsAll[a.value]) *
-                                          100 | number: '1.2-2')
+                                    : ((a.counting / countsAll[a.value]) * 100
+                                      | number: '1.2-2')
                             "
                             severity="success"
                         />%
@@ -241,9 +204,7 @@
                     >
                         OPEN :
                         <p-tag
-                            [value]="
-                                countsAll[a.value] - counts[a.value] | number
-                            "
+                            [value]="countsAll[a.value] - a.counting | number"
                             severity="warn"
                         />
                     </div>
@@ -261,7 +222,7 @@
         >
             <div class="flex items-start justify-between">
                 <div
-                    class="truncate text-3xl font-medium leading-6 tracking-tight"
+                    class="truncate text-3xl font-bold leading-6 tracking-tight"
                 >
                     TOTAL
                 </div>
@@ -555,7 +516,7 @@
                         </td>
 
                         <td>{{ datas.family_stats }}</td>
-                        <td>{{ datas.no_wa }}</td>
+                        <!-- <td>{{ datas.no_wa }}</td> -->
                     </tr>
                 </ng-template>
 

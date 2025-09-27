@@ -56,10 +56,11 @@
                     <input
                         id="username"
                         matInput
+                        [placeholder]="'username'"
                         [formControlName]="'username'"
                     />
                     @if (signInForm.get('username').hasError('required')) {
-                        <mat-error> Npk is required </mat-error>
+                        <mat-error> Username is required </mat-error>
                     }
                     @if (signInForm.get('username').hasError('username')) {
                         <mat-error> Please enter a valid username </mat-error>
