@@ -34,14 +34,14 @@ const menu: FuseNavigationItem[] = [
         link: '/scan-plant',
         meta: { roles: ['user', 'admin'] },
     },
-    // {
-    //     id: 'profile',
-    //     title: 'Sto Plant',
-    //     type: 'group',
-    //     icon: 'heroicons_outline:qr-code',
-    //     link: '/profile',
-    //     meta: { roles: ['user', 'admin'] },
-    // },
+    {
+        id: 'reject',
+        title: 'Reject',
+        type: 'basic',
+        icon: 'heroicons_outline:qr-code',
+        link: '/reject',
+        meta: { roles: ['user', 'admin'] },
+    },
 ];
 export const defaultNavigation: FuseNavigationItem[] = menu;
 export const compactNavigation: FuseNavigationItem[] = menu;

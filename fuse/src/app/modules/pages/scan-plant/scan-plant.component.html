@@ -46,10 +46,11 @@
         <!-- Notifikasi NOT OK -->
         <div
             *ngIf="errorNotifikasi.divDisplay"
-            class="flex h-full min-w-2/3 items-center justify-center gap-2 rounded-2xl p-2 text-center {{
+            class="flex flex-col h-full min-w-2/3 items-center justify-center gap-2 rounded-2xl p-2 text-center {{
                 errorNotifikasi.bgColor
             }}"
         >
+            <!-- <div class=""> -->
             <h1
                 class="{{
                     this.errorNotifikasi.sizeFont
@@ -57,6 +58,17 @@
             >
                 {{ this.errorNotifikasi.message }}
             </h1>
+            <!-- </div>
+            <div class=""> -->
+            <p-message
+                *ngIf="this.errorNotifikasi.returnHro"
+                variant="outlined"
+                severity="error"
+                size="large"
+                class="bg-card"
+                >PLEASE RETURN TO HRO FOR JUDGE</p-message
+            >
+            <!-- </div> -->
         </div>
 
         <!-- Notifikasi OK -->
@@ -153,13 +165,13 @@
         </div>
     </div>
     <div
-        class="mb-4 grid w-full min-w-0 grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-8"
+        class="mb-4 grid w-full min-w-0 grid-cols-1 sm:grid-cols-2 md:grid-cols-8 md:gap-6 lg:gap-2 xl:gap-6"
     >
         <ng-container *ngFor="let a of plantDataAll; let i = index">
             <div
                 class="flex flex-auto flex-col overflow-hidden rounded-2xl {{
                     countsAll[a.value] - a.counting == 0 ? 'bg-card' : 'bg-card'
-                }} p-6 shadow"
+                }} xl:p-6 lg:p-4 shadow"
             >
                 <div class="flex items-start justify-between">
                     <div
@@ -186,18 +198,17 @@
                         ></span>
                     </div>
                     <div
-                        class="text-lg font-medium text-gray-500 dark:text-blue-500"
+                        class="font-medium text-gray-500 dark:text-blue-500 lg:text-md xl:text-lg"
                     >
-                        Progress :
-                        <p-tag
+                        Progress:<p-tag
                             [value]="
                                 counts[a.value] === 0
-                                    ? 0
+                                    ? '0%'
                                     : ((a.counting / countsAll[a.value]) * 100
-                                      | number: '1.2-2')
+                                          | number: '1.0-2') + '%'
                             "
                             severity="success"
-                        />%
+                        />
                     </div>
                     <div
                         class="text-lg font-medium text-gray-500 dark:text-blue-500"
@@ -209,16 +220,16 @@
                         />
                     </div>
                     <div
-                        class="text-lg font-medium text-gray-500 dark:text-blue-500"
+                        class="font-medium text-gray-500 dark:text-blue-500 lg:text-md xl:text-lg"
                     >
-                        Total data :
+                        Total Data :
                         <b>{{ countsAll[a.value] | number }}</b>
                     </div>
                 </div>
             </div>
         </ng-container>
         <div
-            class="bg-card flex flex-auto flex-col overflow-hidden rounded-2xl p-6 shadow"
+            class="bg-card flex flex-auto flex-col overflow-hidden rounded-2xl shadow lg:p-4 xl:p-6"
         >
             <div class="flex items-start justify-between">
                 <div
@@ -239,18 +250,17 @@
                     ></span>
                 </div>
                 <div
-                    class="text-lg font-medium text-gray-500 dark:text-blue-500"
+                    class="font-medium text-gray-500 dark:text-blue-500 lg:text-md xl:text-lg"
                 >
-                    Progress :
-                    <p-tag
+                    Progress:<p-tag
                         [value]="
                             totalCounts === 0
-                                ? 0
+                                ? '0%'
                                 : ((totalCounts / totalCountsAll) * 100
-                                  | number: '1.2-2')
+                                      | number: '1.0-2') + '%'
                         "
                         severity="success"
-                    />%
+                    />
                 </div>
                 <div
                     class="text-lg font-medium text-gray-500 dark:text-blue-500"
@@ -262,7 +272,7 @@
                     />
                 </div>
                 <div
-                    class="text-lg font-medium text-gray-500 dark:text-blue-500"
+                    class="font-medium text-gray-500 dark:text-blue-500 lg:text-md xl:text-lg"
                 >
                     Total data :
                     <b>{{ totalCountsAll | number }}</b>

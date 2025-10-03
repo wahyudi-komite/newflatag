@@ -23,6 +23,7 @@ import { ButtonModule } from 'primeng/button';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
+import { MessageModule } from 'primeng/message';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { OverlayBadgeModule } from 'primeng/overlaybadge';
 import { SelectModule } from 'primeng/select';
@@ -59,6 +60,7 @@ import { EmployeeKaosService } from '../employee-kaos/employee-kaos.service';
         CountUpModule,
         BadgeModule,
         OverlayBadgeModule,
+        MessageModule,
     ],
     templateUrl: './scan-plant.component.html',
     styleUrl: './scan-plant.component.scss',
@@ -367,19 +369,22 @@ export class ScanPlantComponent implements OnInit {
             // });
             let bgColor = 'bg-rose-500';
             let sizeFont = 'text-10xl';
+            let returnHro = false;
 
             if (message.toLowerCase().includes('already')) {
                 bgColor = 'bg-pink-800';
                 sizeFont = 'text-7xl';
             } else if (message.toLowerCase().includes('plant')) {
                 bgColor = 'bg-indigo-800';
-                sizeFont = 'text-8xl';
+                sizeFont = 'text-7xl';
+                returnHro = true;
             } else if (message.toLowerCase().includes('packing')) {
                 bgColor = 'bg-orange-500';
                 sizeFont = 'text-7xl';
             } else if (message.toLowerCase().includes('terminated')) {
                 bgColor = 'bg-black';
-                sizeFont = 'text-8xl';
+                sizeFont = 'text-7xl';
+                returnHro = true;
             }
 
             this.errorNotifikasi = {
@@ -387,6 +392,7 @@ export class ScanPlantComponent implements OnInit {
                 divDisplay: true,
                 bgColor: bgColor,
                 sizeFont: sizeFont,
+                returnHro: returnHro,
             };
         }
     }
@@ -402,6 +408,7 @@ export class ScanPlantComponent implements OnInit {
         this.setFocus();
     }
     onSubmit() {
+        this.errorNotifikasi = {};
         this.enableDataScan = false;
         if (this.form.invalid) {
             this.form.markAllAsTouched();

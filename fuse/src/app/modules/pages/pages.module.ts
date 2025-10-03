@@ -7,6 +7,7 @@ import { ServerSideComponent } from './server-side/server-side.component';
 import { RoleComponent } from './app/admin/role/role.component';
 import { ScanVendorComponent } from './scan-vendor/scan-vendor.component';
 import { ScanPlantComponent } from './scan-plant/scan-plant.component';
+import { RejectComponent } from './reject/reject.component';
 
 
 
@@ -18,7 +19,8 @@ import { ScanPlantComponent } from './scan-plant/scan-plant.component';
     ServerSideComponent,
     RoleComponent,
     ScanVendorComponent,
-    ScanPlantComponent
+    ScanPlantComponent,
+    RejectComponent
   ],
   imports: [
     CommonModule

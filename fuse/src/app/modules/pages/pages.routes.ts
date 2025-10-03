@@ -22,6 +22,10 @@ export default [
         path: 'scan-vendor',
         loadChildren: () => import('./scan-vendor/scan-vendor.routes'),
     },
+    {
+        path: 'reject',
+        loadChildren: () => import('./reject/reject.routes'),
+    },
 
     // admin routes
     {

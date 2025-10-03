@@ -238,6 +238,14 @@ export class EmployeeKaosController {
           formatDate(id.scan_plant_date),
       );
     }
+    // if (
+    //   id.scan_plant_date !== null &&
+    //   new Date().getTime() - new Date(id.scan_plant_date).getTime() > 5000
+    // ) {
+    //   throw new BadRequestException(
+    //     `${id.id}-${id.name} Already Scan at ${formatDate(id.scan_plant_date)}`,
+    //   );
+    // }
 
     await this._service.update(id.id, {
       scan_plant: updateUserDto.scan_plant,
