@@ -161,10 +161,7 @@
                     class="text-lg font-medium text-gray-500 dark:text-blue-500"
                 >
                     OPEN :
-                    <p-tag
-                        [value]="totalCountsAll - totalCounts | number"
-                        severity="warn"
-                    />
+                    <p-tag [value]="totalOpen | number" severity="warn" />
                 </div>
                 <div
                     class="text-lg font-medium text-gray-500 dark:text-blue-500"
